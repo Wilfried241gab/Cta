@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset='utf-8'><!--CTA_BOOT--><script src="assets/app-607e8be36c.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Application de gestion – CTA de Lambaréné</title>
+<link rel="stylesheet" href="assets/app-f1a374fa59.css">
+<style id="desk">
+@media(min-width:1100px){
+ header,main,#nav,nav,#agentBar,#compBar,#respBar,#home,.wrap,#basepage .wrap{max-width:1600px!important}
+ body{font-size:17px}
+ table{font-size:.95rem}
+ .card{padding:22px}
+ .sheet{max-width:760px}
+ .kpis{gap:14px}
+}
+@media(min-width:1700px){header,main,#nav,nav,#agentBar,#compBar,#respBar,#home,.wrap,#basepage .wrap{max-width:1880px!important}}
+</style>
+<style id="theme">
+/* ===== Thème CTA : sobre, médical, premium ===== */
+:root{
+  --brand-d:#073b2b; --brand:#0f5a41; --brand-l:#1d7a57; --accent:#e0ac12;
+  --grad:linear-gradient(135deg,#06342a 0%,#0f5a41 52%,#1f8a62 100%);
+  --shadow-s:0 1px 2px rgba(10,40,30,.06),0 1px 1px rgba(10,40,30,.04);
+  --shadow-m:0 1px 2px rgba(10,40,30,.06),0 10px 28px -12px rgba(10,40,30,.22);
+  --shadow-l:0 2px 4px rgba(10,40,30,.06),0 24px 48px -20px rgba(10,40,30,.35);
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root{--shadow-m:0 1px 2px rgba(0,0,0,.4),0 10px 28px -12px rgba(0,0,0,.6);--grad:linear-gradient(135deg,#052a21 0%,#0b4733 55%,#17694b 100%)}}
+html{scroll-behavior:smooth}
+body{background:var(--bg);background-image:radial-gradient(1100px 420px at 88% -120px,rgba(31,138,98,.16),transparent 70%),radial-gradient(800px 320px at -10% 0,rgba(224,172,18,.07),transparent 70%);background-attachment:fixed;font-family:"Segoe UI Variable Text","Segoe UI","Inter","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:.005em}
+h1,h2,h3{letter-spacing:-.015em}
+
+/* cartes, boutons, champs */
+.card{border-radius:var(--r)!important;box-shadow:var(--shadow-m);border:1px solid color-mix(in srgb,var(--line) 70%,transparent)!important}
+.card h2{font-size:1.08rem;display:flex;align-items:center;gap:10px}
+.card h2::before{content:"";width:4px;height:1.05em;border-radius:3px;background:var(--grad);flex:none}
+.btn{border-radius:10px!important;background:var(--grad)!important;color:#fff!important;box-shadow:0 6px 14px -6px rgba(15,90,65,.55),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;letter-spacing:.01em}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.06);box-shadow:0 10px 18px -8px rgba(15,90,65,.6),inset 0 1px 0 rgba(255,255,255,.2)}
+.btn:active{transform:translateY(0)}
+.btn.ghost,button.ghost{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:var(--shadow-s)}
+.btn.ghost:hover{border-color:var(--brand-l)!important;color:var(--brand)!important}
+.btn[disabled]{filter:grayscale(.6) opacity(.55);transform:none;box-shadow:none}
+input[type=text],input[type=number],input[type=date],input[type=password],input[type=search],select,textarea{border-radius:10px!important;border:1px solid var(--line);transition:border-color .12s,box-shadow .12s;background:var(--surface)}
+input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--brand-l)!important;box-shadow:0 0 0 4px rgba(31,138,98,.18)}
+label{letter-spacing:.01em}
+
+/* segments et onglets */
+.seg{border-radius:12px!important;padding:3px;background:color-mix(in srgb,var(--soft) 80%,transparent);border:1px solid var(--line)!important;gap:3px}
+.seg button{border-radius:9px!important;border:0!important;background:transparent!important;transition:background .15s,color .15s,box-shadow .15s}
+.seg button:hover{background:color-mix(in srgb,var(--surface) 70%,transparent)!important}
+.seg button[aria-pressed="true"]{background:var(--grad)!important;color:#fff!important;box-shadow:0 4px 10px -4px rgba(15,90,65,.6)}
+nav button[aria-selected="true"],[role=tab][aria-selected="true"]{color:var(--brand)!important}
+.tabs button.on,.tabs button[aria-selected="true"]{color:var(--brand)}
+
+/* indicateurs */
+.kpi{border-radius:14px!important;box-shadow:var(--shadow-s);border:1px solid var(--line)!important;position:relative;overflow:hidden;background:var(--surface)}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad)}
+.kpi .n{letter-spacing:-.02em}
+
+/* tableaux */
+.scroll{border-radius:12px!important;box-shadow:var(--shadow-s);border:1px solid var(--line)!important}
+table thead th{background:color-mix(in srgb,var(--soft) 88%,var(--surface))!important;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:700;position:sticky;top:0;z-index:1}
+table.cnx thead th{text-transform:none;letter-spacing:.01em;font-size:.88rem;color:var(--ink)}
+table tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--soft) 28%,transparent)}
+table tbody tr:hover td{background:color-mix(in srgb,var(--soft) 70%,transparent)}
+table.cnx tbody tr:nth-child(even) td{background:#fff}
+table.cnx tbody tr:hover td{background:#fff}
+table.cnx tr.tot td{background:color-mix(in srgb,var(--soft) 88%,#fff)!important}
+#fTable td.sel{background:#d6e8ff!important}
+.pill{border-radius:99px;letter-spacing:.02em}
+.modal .sheet,.sheet{border-radius:18px!important;box-shadow:var(--shadow-l)}
+.modal{backdrop-filter:blur(3px);background:rgba(6,30,22,.5)!important}
+.toast{border-radius:12px!important;box-shadow:var(--shadow-l);background:var(--brand-d)!important;color:#fff!important}
+.banner{border-radius:12px}
+
+/* barre du module (shell) */
+.bar{background:var(--grad)!important;color:#fff;border-bottom:0!important;box-shadow:0 6px 18px -10px rgba(6,40,28,.7);height:56px!important}
+.bar b{color:#fff;font-size:1.02rem;letter-spacing:.01em}
+.bar button{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.28)!important;color:#fff!important;border-radius:10px!important;backdrop-filter:blur(4px);transition:background .12s}
+.bar button:hover{background:rgba(255,255,255,.26)!important}
+
+/* en-tête dans les modules */
+header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.demo b,span.demo{border-radius:99px!important}
+
+/* ===== accueil ===== */
+#home{max-width:1180px!important;padding:0 20px 40px!important}
+.hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin:18px 0 6px;padding:26px 30px;border-radius:22px;background:var(--grad);color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-l)}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(520px 220px at 92% -30%,rgba(255,255,255,.22),transparent 70%),radial-gradient(420px 240px at 8% 130%,rgba(224,172,18,.28),transparent 70%);pointer-events:none}
+.hero::after{content:"";position:absolute;right:-40px;bottom:-60px;width:260px;height:260px;border-radius:50%;border:34px solid rgba(255,255,255,.06);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.logo{width:68px;height:68px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);display:grid;place-items:center;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 24px -10px rgba(0,0,0,.5);backdrop-filter:blur(6px)}
+.logo svg{width:38px;height:38px}
+.hero-t{flex:1;min-width:260px}
+.hero-t .hi{font-size:.85rem;opacity:.85;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.hero-t h1{color:#fff!important;-webkit-text-fill-color:#fff;background:none!important;margin:2px 0 2px!important;font-size:1.95rem!important;line-height:1.15}
+.hero-t p{color:rgba(255,255,255,.82)!important;margin:0!important;font-size:1rem}
+.hero .demo{background:rgba(255,255,255,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.3)!important;padding:3px 10px;border-radius:99px;font-size:.74rem;font-weight:700;letter-spacing:.04em;display:inline-block;margin-bottom:6px}
+.hero .who{margin:0!important;display:flex;flex-direction:column;align-items:flex-end;gap:8px;color:#fff}
+.hero .who .row-u{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);display:grid;place-items:center;font-weight:800;letter-spacing:.02em}
+.hero .who b{color:#fff}
+.hero .who .pill{background:var(--accent)!important;color:#3a2a00!important;font-weight:800}
+.hero .who .btn.ghost{background:rgba(255,255,255,.14)!important;color:#fff!important;border:1px solid rgba(255,255,255,.35)!important;box-shadow:none;padding:8px 14px;border-radius:10px!important}
+.hero .who .btn.ghost:hover{background:rgba(255,255,255,.28)!important;color:#fff!important}
+#saveSt{display:flex;align-items:center;gap:8px;margin:12px 4px 0!important;font-size:.8rem!important}
+#saveSt::before{content:"";width:8px;height:8px;border-radius:50%;background:#2fbf7f;box-shadow:0 0 0 4px rgba(47,191,127,.2);flex:none}
+.cards{gap:18px!important;margin-top:20px!important}
+@media(min-width:760px){.cards{grid-template-columns:repeat(2,1fr)!important}}
+@media(min-width:1150px){.cards{grid-template-columns:repeat(3,1fr)!important}}
+.mod{position:relative;overflow:hidden;border:1px solid var(--line)!important;border-left:1px solid var(--line)!important;border-radius:18px!important;padding:22px 22px 20px 88px!important;min-height:132px;box-shadow:var(--shadow-m);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;background:var(--surface)!important}
+.mod::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--grad)}
+.mod.base::before{background:linear-gradient(180deg,#f3c53a,#c99207)}
+.mod:hover{transform:translateY(-4px);box-shadow:var(--shadow-l);border-color:var(--brand-l)!important;background:var(--surface)!important}
+.mod .ico{position:absolute;left:22px;top:22px;width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:var(--grad);color:#fff;box-shadow:0 10px 20px -10px rgba(15,90,65,.8)}
+.mod.base .ico{background:linear-gradient(135deg,#f6cf4d,#c99207);color:#3a2a00;box-shadow:0 10px 20px -10px rgba(201,146,7,.8)}
+.mod .ico svg{width:26px;height:26px}
+.mod .n{color:var(--brand-l)!important;font-size:.7rem!important;letter-spacing:.14em!important}
+.mod.base .n{color:#a87800!important}
+.mod b{font-size:1.14rem!important;letter-spacing:-.01em}
+.mod small{line-height:1.4}
+.mod::after{content:"→";position:absolute;right:18px;bottom:14px;color:var(--brand-l);font-weight:700;opacity:0;transform:translateX(-6px);transition:all .18s}
+.mod:hover::after{opacity:1;transform:none}
+.mod[disabled]{opacity:.45!important;filter:grayscale(.7);box-shadow:none}
+.mod[disabled]:hover{transform:none;box-shadow:none;border-color:var(--line)!important}
+.mod[disabled]::after{display:none}
+@media(max-width:560px){.mod{padding-left:84px!important}.hero{padding:20px}.hero .who{align-items:flex-start}}
+
+/* ===== connexion ===== */
+#login[hidden]{display:none!important}
+#login:not([hidden]){display:grid!important}
+#login{grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);padding:0!important}
+#login .brand{background:var(--grad);color:#fff;padding:7vh 56px;display:flex;flex-direction:column;justify-content:center;gap:26px;position:relative;overflow:hidden}
+#login .brand::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 360px at 85% -10%,rgba(255,255,255,.2),transparent 70%),radial-gradient(520px 320px at -5% 105%,rgba(224,172,18,.32),transparent 70%)}
+#login .brand::after{content:"";position:absolute;right:-90px;bottom:-110px;width:420px;height:420px;border-radius:50%;border:56px solid rgba(255,255,255,.06)}
+#login .brand>*{position:relative;z-index:1}
+#login .brand .logo{width:84px;height:84px;border-radius:24px}
+#login .brand .logo svg{width:48px;height:48px}
+#login .brand h2{margin:0;font-size:2.3rem;line-height:1.12;letter-spacing:-.025em;max-width:520px}
+#login .brand h2::before{display:none}
+#login .brand p{margin:0;max-width:480px;opacity:.86;font-size:1.05rem;line-height:1.5}
+#login .brand ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:12px;max-width:480px}
+#login .brand li{display:flex;gap:12px;align-items:center;font-size:.95rem;opacity:.95}
+#login .brand li i{width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.26);display:grid;place-items:center;flex:none;font-style:normal}
+#login .brand li svg{width:16px;height:16px}
+#login>div:not(.brand){width:100%;max-width:470px!important;margin:0 auto!important;padding:8vh 28px!important;align-self:center}
+#login>div:not(.brand)>h1{font-size:1.5rem!important;margin-top:14px!important}
+#login #lgForm{box-shadow:var(--shadow-l);padding:26px!important;border-radius:20px!important}
+#login #lgGo{width:100%;padding:14px;font-size:1.02rem}
+@media(max-width:900px){#login{grid-template-columns:1fr}#login .brand{display:none}#login>div:not(.brand){padding:6vh 18px!important}}
+
+/* impression : on garde le blanc simple */
+@media print{.bar,.hero{display:none!important}body{background:#fff!important}}
+</style>
+<script src="assets/app-5e24bbac98.js"></script>
+</head>
+<body>
+<section id="home">
+  <div class="ctaHero" role="img" aria-label="Façade du CTA de Lambaréné"><div class="heroTxt"><h1>Application de gestion</h1><p>Centre de Traitement Ambulatoire de Lambaréné</p></div></div>
+  <div class="who"><span>Connecté : <b id="whoName"></b></span><span class="pill" id="whoRole"></span><button class="btn ghost sm" id="myAcc" style="width:auto;margin:0">Mon compte</button><button class="btn ghost sm" id="logout" style="width:auto;margin:0">Se déconnecter</button><button class="btn ghost sm" id="aboutBtn" style="width:auto;margin:0 0 0 auto;font-size:.8rem" aria-haspopup="dialog">ⓘ À propos</button></div>
+  <div id="aboutBox" hidden style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px"><div role="dialog" aria-modal="true" aria-labelledby="aboutT" style="background:var(--surface);color:var(--ink);border-radius:14px;padding:22px;max-width:380px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)"><h3 id="aboutT" style="margin:0 0 4px">À propos</h3><p class="muted" style="margin:0 0 14px">Application de gestion du CTA de Lambaréné</p><dl style="margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:.95rem"><dt class="muted">Version</dt><dd style="margin:0;font-weight:700">1.0 (première version)</dd><dt class="muted">Contact</dt><dd style="margin:0;font-weight:700"><a href="mailto:wilfriedmassala@gmail.com" style="color:var(--blue,#1a5fb4)">wilfriedmassala@gmail.com</a></dd></dl><button class="btn" id="aboutOk" style="margin-top:18px;width:100%">Fermer</button></div></div>
+  <div class="muted" id="saveSt" role="status" style="font-size:.8rem;margin-top:6px">Données enregistrées automatiquement dans ce navigateur.</div>
+  <div class="cards">
+    <button class="mod" data-m="caisse"><span class="n">MODULE 1</span><b>Gestion de la caisse</b><small>PVVIH, consultation externe, reçus, dettes, synthèse et statistiques (certificat médical à venir)</small></button>
+    <button class="mod" data-m="rh"><span class="n">MODULE 2</span><b>Gestion RH et CNAMGS</b><small>Personnel, factures, récapitulatifs, état de la dette</small></button>
+    <button class="mod" data-m="pharma"><span class="n">MODULE 3</span><b>Gestion de la pharmacie</b><small>Registre ARV, dispensation, patients, stock en 4 compartiments, inventaire, commandes</small></button>
+    <button class="mod" data-m="ptme"><span class="n">MODULE 4</span><b>Suivi PTME</b><small>Prévention de la transmission mère-enfant : tableau de suivi mère et nouveau-né</small></button>
+    <button class="mod" data-m="lab"><span class="n">MODULE 5</span><b>Laboratoire</b><small>Stock des réactifs : entrées, corrections, ajout d’un réactif absent de la liste</small></button>
+    <button class="mod base" data-m="base"><span class="n">COMMUN</span><b>Base patients</b><small>Une fiche par n° de dossier, partagée par la caisse et la pharmacie</small></button>
+    <button class="mod base" data-m="audit"><span class="n">ADMINISTRATION</span><b>Journal d’audit</b><small>Qui a fait quoi et quand, avec contrôle d’intégrité</small></button>
+    <button class="mod base" data-m="backup"><span class="n">ADMINISTRATION</span><b>Sauvegardes</b><small>Export chiffré, restauration, instantanés quotidiens</small></button>
+    <button class="mod base" data-m="help"><span class="n">AIDE</span><b>Guide d’utilisation</b><small>Mode d’emploi selon votre rôle, confidentialité</small></button>
+    <button class="mod base" data-m="params"><span class="n">ADMINISTRATION</span><b>Paramètres</b><small>Utilisateurs, remplacements, prix et articles</small></button>
+  </div>
+</section>
+<section id="view" hidden>
+  <div class="bar"><button class="back">← Menu principal</button><b id="vt"></b><button id="printBtn" style="margin-left:auto">Imprimer</button></div>
+  <div id="frames"></div>
+</section>
+<section id="basepage" hidden>
+  <div class="bar"><button class="back">← Menu principal</button><b>Base patients</b></div>
+  <div class="wrap">
+    <p class="muted" style="margin-top:0;font-size:.9rem">Une seule fiche par n° de dossier. Elle se crée à la première saisie, à la caisse ou à la pharmacie, et se complète au fil des passages. <span id="bcount"></span></p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input type="text" id="bq" placeholder="Rechercher par n° de dossier ou nom" autocomplete="off" style="flex:1;min-width:220px"><select id="bf" aria-label="Filtrer par rendez-vous" style="max-width:260px"><option value="">Tous les patients</option><option value="late">En retard pour leur rendez-vous</option><option value="ok">À jour</option><option value="none">Sans rendez-vous</option></select></div>
+    <div id="bLate" role="status" style="margin:8px 0"></div>
+    <div class="scroll"><table id="bt"></table></div>
+  </div>
+</section>
+<section id="params" hidden>
+  <div class="bar"><button class="back">← Menu principal</button><b>Paramètres</b></div>
+  <div class="wrap" style="flex:1;overflow:auto;padding:14px 16px;max-width:1180px;width:100%;margin:0 auto">
+    <div class="ptabs" role="tablist" style="display:flex;gap:8px;margin-bottom:12px"><button class="btn sm" role="tab" id="ptU" style="margin:0;width:auto">Utilisateurs</button><button class="btn ghost sm" role="tab" id="ptT" style="margin:0;width:auto">Tarifs de la caisse</button></div>
+    <div id="pgU">
+      <div class="card"><h2>Utilisateurs par poste</h2>
+        <p class="muted" style="margin-top:0;font-size:.85rem">Un poste peut avoir plusieurs utilisateurs (caisse, pharmacie, RH, CNAMGS, PTME). Chacun a son propre compte et son mot de passe : le journal d’audit et les enregistrements indiquent qui a fait quoi. Un compte n’est jamais supprimé (pour garder l’historique) : on le désactive.</p>
+        <div class="scroll" style="margin-top:0"><table id="uT"></table></div></div>
+      <div class="card" id="uAddCard"><h2>Ajouter un utilisateur</h2>
+        <div class="row2"><div><label for="nuPoste" style="margin:0 0 4px;display:block;font-size:.85rem;color:var(--mute)">Poste</label><select class="f" id="nuPoste"><option>Caisse</option><option>IDEP</option><option>Pharmacie</option><option>RH</option><option>CNAMGS</option><option>PTME</option><option>Laboratoire</option></select></div><div></div></div>
+        <div class="row2" style="margin-top:8px"><div><label for="nuLast" style="margin:0 0 4px;display:block;font-size:.85rem;color:var(--mute)">Nom</label><input class="f" id="nuLast" autocomplete="off"></div><div><label for="nuFirst" style="margin:0 0 4px;display:block;font-size:.85rem;color:var(--mute)">Prénom</label><input class="f" id="nuFirst" autocomplete="off"></div></div>
+        <label for="nuPw" style="margin:8px 0 4px;display:block;font-size:.85rem;color:var(--mute)">Mot de passe provisoire (8 caractères minimum, lettres et chiffres) : la personne devra le changer à sa première connexion</label><input class="f" type="password" id="nuPw" autocomplete="new-password" style="max-width:360px">
+        <div class="err" id="nuErr" role="alert" style="color:var(--red);font-size:.88rem;min-height:1.2em"></div>
+        <button class="btn sm" id="nuAdd">Créer le compte</button></div>
+    </div>
+    <div id="pgT" hidden>
+    <div class="card"><h2>Tarifs de la caisse</h2>
+      <p class="muted" style="margin-top:0;font-size:.85rem">Les prix modifiés s’appliquent aux prochains enregistrements. Les reçus déjà émis gardent leurs prix.</p>
+      <div class="scroll" style="margin-top:0"><table id="tT"></table></div>
+      <div class="row2" style="margin-top:10px"><div><label style="margin:0 0 4px;display:block;font-size:.85rem;color:var(--mute)">Désignation</label><input class="f" id="tNom" autocomplete="off"></div><div><label style="margin:0 0 4px;display:block;font-size:.85rem;color:var(--mute)">Catégorie</label><select class="f" id="tGrp"></select></div></div>
+      <div class="row2" style="margin-top:8px"><div><label style="margin:0 0 4px;display:block;font-size:.85rem;color:var(--mute)">Prix hors assurance (F)</label><input class="f" type="number" id="tNa" min="0"></div><div><label style="margin:0 0 4px;display:block;font-size:.85rem;color:var(--mute)">Prix assuré CNAMGS (F)</label><input class="f" type="number" id="tAs" min="0"></div></div>
+      <div class="err" id="tErr" style="color:var(--red);font-size:.88rem;min-height:1.2em"></div>
+      <button class="btn sm" id="tAdd">Ajouter un examen</button></div>
+    </div>
+  </div>
+</section>
+<section id="audit" hidden>
+  <div class="bar"><button class="back">← Menu principal</button><b>Journal d’audit</b></div>
+  <div class="wrap" style="flex:1;overflow:auto;padding:14px 16px;max-width:1040px;width:100%;margin:0 auto">
+    <p class="muted" style="margin-top:0;font-size:.9rem">Journal en ajout seul : chaque événement est relié au précédent par une empreinte (SHA-256). Toute modification ou suppression après coup est détectée par la vérification.</p>
+    <div class="row2"><input type="text" id="auQ" placeholder="Rechercher (utilisateur, action, détail)" autocomplete="off"><select class="f" id="auMod" aria-label="Module"></select></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" id="auVerify" style="margin:0">Vérifier l’intégrité</button><button class="btn ghost sm" id="auCsv" style="margin:0">Exporter en CSV</button></div>
+    <p id="auRes" role="status" style="min-height:1.3em;margin:8px 0 0"></p><p class="muted" id="auCount" style="font-size:.85rem;margin:4px 0"></p>
+    <div class="scroll"><table id="auT"></table></div>
+  </div>
+</section>
+<section id="backup" hidden>
+  <div class="bar"><button class="back">← Menu principal</button><b>Sauvegardes</b></div>
+  <div class="wrap" style="flex:1;overflow:auto;padding:14px 16px;max-width:1040px;width:100%;margin:0 auto">
+    <div class="card"><h2>Sauvegarde automatique</h2><div id="bkStatus" role="status"></div></div>
+    <div class="card"><h2>Copie automatique dans un dossier</h2>
+      <p class="muted" style="margin-top:0;font-size:.85rem">Pour qu’une copie existe en dehors du navigateur (disque externe, clé USB, dossier synchronisé), choisissez un dossier une seule fois : l’application y écrit ensuite toute seule, à chaque changement. Les fichiers contiennent des données de santé : choisissez un emplacement protégé. Fonctionne avec Chrome ou Edge sur ordinateur.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="bkDir" style="margin:0">Choisir le dossier de sauvegarde</button><button class="btn ghost sm" id="bkDirAsk" style="margin:0" hidden>Réautoriser l’accès au dossier</button></div></div>
+    <div class="card"><h2>Points de restauration</h2><p class="muted" style="margin-top:0;font-size:.85rem">Revenir à un état antérieur. L’état actuel est conservé avant toute restauration.</p><div id="bkSnaps"></div></div>
+    <p id="bkMsg" role="status" style="min-height:1.3em"></p>
+    <div class="card"><h2>Export et restauration par fichier (facultatif)</h2>
+      <label for="bkPass" style="display:block;font-size:.85rem;color:var(--mute);margin:6px 0 4px">Phrase secrète pour chiffrer l’export (facultative)</label><input class="f" type="password" id="bkPass" autocomplete="new-password">
+      <button class="btn sm" id="bkExp">Télécharger une sauvegarde</button>
+      <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+      <input type="file" id="bkFile" accept=".json,application/json" style="margin-bottom:8px">
+      <label for="bkPass2" style="display:block;font-size:.85rem;color:var(--mute);margin:6px 0 4px">Phrase secrète (si le fichier est chiffré)</label><input class="f" type="password" id="bkPass2" autocomplete="off">
+      <button class="btn sm" id="bkImp">Restaurer depuis le fichier</button></div>
+    <div class="card"><h2>Démonstration</h2><button class="btn ghost sm" id="bkReset" style="margin:0">Réinitialiser toutes les données</button></div>
+  </div>
+</section>
+<section id="help" hidden>
+  <div class="bar"><button class="back">← Menu principal</button><b>Guide d’utilisation</b></div>
+  <div class="wrap" id="helpBody" style="flex:1;overflow:auto;padding:14px 16px;max-width:1040px;width:100%;margin:0 auto"></div>
+</section>
+<section id="login" role="dialog" aria-modal="true" aria-label="Connexion" style="position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto">
+  <div style="max-width:400px;margin:7vh auto;padding:16px">
+      <h1 style="margin:10px 0 2px;font-size:1.4rem">Centre de Traitement Ambulatoire de Lambaréné</h1>
+    <p class="muted" id="lgMsg" role="status" style="margin:0 0 14px;min-height:1.3em"></p>
+    <form id="lgForm" class="card" autocomplete="off">
+      <div id="lgIn"><label for="lgUsers" style="display:block;font-size:.85rem;color:var(--mute);margin-bottom:4px">Utilisateur</label><select class="f" id="lgUsers"></select>
+        <label for="lgPw" style="display:block;font-size:.85rem;color:var(--mute);margin:10px 0 4px">Mot de passe</label><input class="f" type="password" id="lgPw" autocomplete="off">
+        <div id="lgErr" role="alert" style="color:var(--red);font-size:.88rem;min-height:1.3em;margin-top:6px"></div>
+        <button class="btn" type="submit" id="lgGo">Se connecter</button>
+        </div>
+      <div id="lgCh" hidden><label for="chOld" style="display:block;font-size:.85rem;color:var(--mute);margin-bottom:4px">Mot de passe actuel</label><input class="f" type="password" id="chOld" autocomplete="off">
+        <label for="chNew" style="display:block;font-size:.85rem;color:var(--mute);margin:10px 0 4px">Nouveau mot de passe (8 caractères, lettres et chiffres)</label><input class="f" type="password" id="chNew" autocomplete="off">
+        <label for="chNew2" style="display:block;font-size:.85rem;color:var(--mute);margin:10px 0 4px">Confirmer</label><input class="f" type="password" id="chNew2" autocomplete="off">
+        <div id="chErr" role="alert" style="color:var(--red);font-size:.88rem;min-height:1.3em;margin-top:6px"></div>
+        <div class="acts"><button class="btn ghost" type="button" id="chCancel">Annuler</button><button class="btn" type="button" id="chGo">Enregistrer</button></div></div>
+    </form>
+    <p class="muted" style="font-size:.8rem">Les données de santé sont confidentielles. Chaque connexion et chaque action importante sont inscrites au journal d’audit. Mode démonstration : les données restent dans ce navigateur.</p>
+  </div>
+</section>
+<div class="modal" id="modal" hidden><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast" hidden></div>
+<script src="assets/app-472331fb47.js"></script>
+<script src="assets/app-87b824dfbd.js"></script>
+</body>
+</html>

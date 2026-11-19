@@ -1,0 +1,85 @@
+MODÈLES WORD — FACTURE, RÉCAPITULATIF, ÉTAT DE LA DETTE CNAMGS
+==============================================================
+
+Le logiciel ne fabrique pas la mise en page : il remplit VOTRE modèle Word.
+Trois fichiers sont attendus dans ce dossier :
+
+    facture.docx          feuille 1 : facture CNAMGS (une facture par document)
+    recapitulatif.docx    feuille 2 : récapitulatif des factures
+    dette.docx            feuille 3 : listing de la production et solde de la dette
+
+Vous pouvez ouvrir ces fichiers dans Word, changer les libellés, les largeurs,
+les couleurs, la police, ajouter le logo du CTA dans l'en-tête, etc. : tout ce
+qui n'est pas une balise est conservé tel quel. Il suffit de garder les balises
+{{...}} en place et de garder le même nom de fichier.
+
+Si vous remplacez un modèle par le vôtre, veillez simplement à conserver les
+balises aux endroits voulus (la liste complète est plus bas).
+
+COMMENT ÉCRIRE UNE BALISE
+-------------------------
+Une balise s'écrit entre doubles accolades, dans le texte :
+
+    {{champ}}
+
+Elle est remplacée au moment de l'export. Les balises placées dans un en-tête
+ou un pied de page sont aussi remplacées.
+
+RÉPÉTER LES LIGNES D'UN TABLEAU
+-------------------------------
+Deux balises encadrent la ligne à recopier, dans la MÊME ligne du tableau :
+
+    {{#lignes}} ... {{/lignes}}
+
+La balise d'ouverture se met dans la première cellule de la ligne, la balise
+de fermeture dans la dernière. La ligne est recopiée pour chaque élément et
+{{n}} donne son numéro (1, 2, 3...).
+
+CHAMPS DE facture.docx
+----------------------
+En-tête et cases à cocher
+  {{c_f1}} {{c_f2}} {{c_f3}}                        X sous le fonds choisi
+  {{c_consult}} {{c_examens}} {{c_hospit}} {{c_medicament}}
+  {{num}} {{date}} {{fonds}} {{fonds_libelle}} {{nature}}
+  {{recap}} {{statut}}
+Tableau (boucle lignes : 10 lignes, vides comprises)
+  {{n}} {{feuille}} {{nom}} {{nag}} {{total}} {{part}} {{remb}}
+Totaux et pied de page
+  {{total}} {{part}} {{remb}} {{somme_lettres}} {{date_lettres}}
+  {{edite_le}} {{edite_par}}
+
+CHAMPS DE recapitulatif.docx
+----------------------------
+  {{num}} {{nature}} {{fonds}} {{fonds_libelle}} {{date}} {{nb}}
+  {{c_f1}} {{c_f2}} {{c_f3}}
+  {{c_consult}} {{c_examens}} {{c_hospit}} {{c_medicament}}
+  boucle factures : {{n}} {{num}} {{date}} {{remb}}
+  {{total}} {{somme_lettres}} {{date_lettres}} {{mois_annee_lettres}}
+  {{edite_le}} {{edite_par}}
+
+CHAMPS DE dette.docx
+--------------------
+  {{annee}} {{numero}} {{date_situation}} {{date_lettres}}
+  {{statut}} {{mode}}
+  Dette reportée (ligne ANNÉE)
+    {{init1}} {{init2}} {{init3}} {{init_t}}
+  Boucle mois : {{mois}} {{d1}} {{p1}} {{d2}} {{p2}} {{d3}} {{p3}} {{dt}} {{pt}}
+    (dépôt et payé de chaque fonds, puis total du mois)
+  Totaux
+    {{t1_f1}} {{t1_f2}} {{t1_f3}}          dépôts de l'année par fonds
+    {{t2_f1}} {{t2_f2}} {{t2_f3}}          report + dépôts par fonds
+    {{paye_f1}} {{paye_f2}} {{paye_f3}}    paiements par fonds
+    {{total_depots}} {{total_paiements}} {{total_t2}}
+    {{dette_f1}} {{dette_f2}} {{dette_f3}} {{dette_totale}}
+  ({{statut}}, {{mode}}, {{edite_le}}, {{edite_par}} sont aussi disponibles)
+
+REMARQUES
+---------
+- Les montants arrivent déjà mis en forme à la française : 1 500 000.
+- {{somme_lettres}} donne le montant en lettres (QUARANTE-CINQ MILLE...).
+- {{date_lettres}} donne 12 JANVIER 2026 ; {{mois_annee_lettres}} donne
+  JANVIER 2026.
+- Une balise sans valeur connue reste visible dans le document : c'est le
+  moyen de repérer un champ à compléter.
+- La ligne « N° .../MS/SG/DRSC/CTAL » de la dette est laissée à remplir à la
+  main : elle reçoit la balise {{numero}}, vide par défaut.

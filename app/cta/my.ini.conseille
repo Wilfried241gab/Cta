@@ -1,0 +1,6 @@
+# Reglage conseille pour XAMPP : c:\xampp\mysql\bin\my.ini, section [mysqld]
+max_allowed_packet=64M
+innodb_buffer_pool_size=256M
+# Securite : MySQL joignable seulement depuis le serveur lui-meme
+bind-address=127.0.0.1
+# Puis redemarrer MySQL dans le panneau de controle XAMPP.

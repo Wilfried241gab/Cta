@@ -1,0 +1,13 @@
+# Données et logs locaux (ne pas versionner)
+app/cta/data/
+app/cta/logs/*.log
+app/cta/logs/sessions/
+app/server.log
+app/server.pid
+
+# Captures d'écran de mise au point
+artifacts/
+
+# Systèmes
+.DS_Store
+Thumbs.db

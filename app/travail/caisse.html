@@ -1,0 +1,1606 @@
+<!doctype html>
+<html lang="fr">
+<head><script>try{Object.defineProperty(window,'localStorage',{value:window.parent.CTA_LS,configurable:true})}catch(e){}
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Caisse – CTA de Lambaréné (démo)</title>
+<style>
+:root{
+  color-scheme: light dark;
+  --bg:#f2f5f2; --surface:#ffffff; --ink:#1b2a24; --mute:#5b6d64; --line:#d3ddd7;
+  --green:#1d6b4d; --green-ink:#ffffff; --soft:#e5eee8; --gold:#e0ac12; --gold-soft:#fdf3cf;
+  --blue:#2a5d8f; --red:#b3261e; --red-soft:#fbe4e1; --ticket:#fffdf3;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1a15; --surface:#17241e; --ink:#e6efe9; --mute:#9bb0a5; --line:#2b3c34;
+    --green:#4cb98a; --green-ink:#08150f; --soft:#1f3128; --gold:#f0c43a; --gold-soft:#2f2a12;
+    --blue:#86b5e4; --red:#ff8f85; --red-soft:#3a1d1a; --ticket:#1c2a22;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Segoe UI","Helvetica Neue",system-ui,sans-serif;padding-bottom:84px}
+.num{font-variant-numeric:tabular-nums}
+header{padding:18px 16px 8px;max-width:1000px;margin:0 auto;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+h1{margin:0;font-size:1.5rem;letter-spacing:-.01em}
+header p{margin:2px 0 0;color:var(--mute);font-size:.9rem}
+.demo{display:flex;gap:8px;align-items:center;font-size:.8rem;color:var(--mute)}
+.demo b{background:var(--gold-soft);color:var(--ink);border:1px solid var(--gold);border-radius:6px;padding:2px 8px;font-weight:600}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;z-index:5}
+nav button{flex:1;border:0;background:none;color:var(--mute);padding:12px 4px 14px;font:inherit;font-size:.58rem;font-weight:600;cursor:pointer;border-top:3px solid transparent}
+nav button[aria-selected="true"]{color:var(--green);border-top-color:var(--green)}
+nav button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+main{max-width:1000px;margin:0 auto;padding:8px 16px}
+section[hidden]{display:none}
+.grid{display:grid;gap:16px}
+@media(min-width:820px){
+  body{padding-bottom:0}
+  nav{position:static;max-width:1000px;margin:8px auto 0;border:0;border-bottom:1px solid var(--line);background:none}
+  nav button{flex:none;padding:12px 22px;border-top:0;border-bottom:3px solid transparent;font-size:.95rem}
+  nav button[aria-selected="true"]{border-bottom-color:var(--green)}
+  .grid.two{grid-template-columns:1.25fr 1fr;align-items:start}
+  .sticky{position:sticky;top:12px}
+}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.card h2{margin:0 0 12px;font-size:1.05rem}
+label,.lab{display:block;font-size:.85rem;color:var(--mute);margin:12px 0 4px;font-weight:600}
+input[type=text],input[type=number],input[type=date],select{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;border:0;background:var(--bg);color:var(--ink);padding:10px 6px;font:inherit;font-size:.9rem;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--green);color:var(--green-ink);font-weight:700}
+.banner{margin-top:8px;padding:8px 10px;border-radius:8px;font-size:.9rem;background:var(--soft)}
+.banner.debt{background:var(--gold-soft);border:1px solid var(--gold)}
+.actes{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.acte{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;min-height:44px}
+.acte:last-child{border-bottom:0}
+.acte input{width:20px;height:20px;accent-color:var(--green)}
+.acte span.p{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--mute)}
+.acte.on{background:var(--soft)}
+.acte.off{opacity:.6;cursor:not-allowed}
+.acte.off input{accent-color:var(--mute)}
+.rupt{display:block;color:var(--red);font-size:.78rem;font-weight:600}
+.links{display:flex;gap:14px;margin:6px 0}
+.link{background:none;border:0;color:var(--blue);font:inherit;font-size:.85rem;padding:4px 0;cursor:pointer;text-decoration:underline}
+.ticket{background:var(--ticket);border:1px dashed var(--mute);border-radius:6px;padding:16px}
+.ticket .t{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;gap:10px}
+.ticket .t .v{font-variant-numeric:tabular-nums;font-weight:700}
+.ticket .big{font-size:2rem;font-weight:800;letter-spacing:-.02em;border-bottom:1px dashed var(--mute);padding-bottom:10px;margin-bottom:6px}
+.ticket .rest{font-size:1.15rem;border-top:1px dashed var(--mute);margin-top:6px;padding-top:10px}
+.ticket .rest .v{color:var(--ink)}
+.ticket .rest.owe .v{color:var(--red)}
+.ticket input{width:130px;text-align:right;font-weight:700;padding:8px 10px}
+.ticket .hint{font-size:.8rem;color:var(--mute);margin:2px 0 0}
+.exo-note{background:var(--gold-soft);border:1px solid var(--gold);border-radius:6px;padding:8px 10px;font-size:.85rem;margin-top:8px}
+.btn{display:block;width:100%;margin-top:14px;padding:14px;border:0;border-radius:8px;background:var(--green);color:var(--green-ink);font:inherit;font-weight:700;cursor:pointer}
+.btn.ghost{background:none;color:var(--mute);border:1px solid var(--line);font-weight:600;width:auto;display:inline-block;margin:0;padding:8px 12px;font-size:.85rem}
+.err{color:var(--red);font-size:.88rem;margin-top:8px;min-height:1.2em}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--soft);font-weight:700;position:sticky;top:0}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+tr.total td{font-weight:800;background:var(--soft)}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:.75rem;font-weight:700;background:var(--soft)}
+.pill.exo{background:var(--gold-soft);border:1px solid var(--gold)}
+.muted{color:var(--mute)}
+.neg{color:var(--red);font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:620px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.kpi .k{font-size:.78rem;color:var(--mute)}
+.kpi .n{font-size:1.35rem;font-weight:800;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:.75rem;color:var(--mute)}
+.split{display:grid;gap:16px}
+@media(min-width:720px){.split{grid-template-columns:1fr 1fr}}
+.bar{height:8px;background:var(--soft);border-radius:4px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--green)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.modal[hidden]{display:none}
+.sheet{background:var(--surface);width:100%;max-width:460px;border-radius:14px 14px 0 0;padding:20px;max-height:94vh;overflow:auto}
+#recuModal .sheet{display:flex;flex-direction:column;max-width:640px;overflow:hidden}
+#recuModal #recu{flex:1;min-height:0;overflow:auto;padding-bottom:6px}
+#recuModal .acts{flex:none;padding-top:12px;margin-top:8px;border-top:1px solid var(--line);background:var(--surface)}
+@media(min-width:820px){.modal{align-items:center}.sheet{border-radius:14px}}
+.sheet h3{margin:0 0 10px}
+.sheet dl{margin:0 0 14px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.92rem}
+.sheet dt{color:var(--mute)}.sheet dd{margin:0;text-align:right;font-weight:600}
+.sheet .acts{display:flex;gap:10px}
+.sheet .acts .btn{margin-top:0}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;z-index:20}
+.toast[hidden]{display:none}
+@media (prefers-reduced-motion: no-preference){.toast{transition:opacity .2s}}
+.rl{display:flex;justify-content:space-between;padding:4px 0;gap:10px;font-size:.92rem}
+.rl.b{font-weight:800;border-top:1px dashed var(--mute);margin-top:4px;padding-top:8px}
+@media print{html:has(body.print-recu),body.print-recu{height:auto!important;min-height:0!important;overflow:visible!important;background:#fff!important}body.print-recu{padding:0!important;margin:0!important}body.print-recu>*:not(#recuModal){display:none!important}body.print-recu #recuModal{position:static!important;display:block!important;background:none!important;padding:0!important;height:auto!important;overflow:visible!important}body.print-recu #recuModal .sheet{position:static!important;display:block!important;box-shadow:none!important;border:0!important;border-radius:0!important;width:100%!important;max-width:none!important;max-height:none!important;height:auto!important;overflow:visible!important;padding:0!important;margin:0!important;background:none!important}body.print-recu #recuModal .acts{display:none!important}body.print-recu #recu{position:static!important;width:100%!important}body.print-rg header,body.print-rg nav,body.print-rg #compBar,body.print-rg #agentBar,body.print-rg .noprint{display:none!important}body.print-rg section:not(#rg){display:none!important}}
+td.c,th.c{text-align:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.8rem}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;margin:8px 0}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.grp{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:var(--bg)}
+.grp summary{padding:10px 12px;cursor:pointer;font-weight:700;display:flex;justify-content:space-between}
+.grp .acte{border-top:1px solid var(--line);border-bottom:0}
+svg.chart{width:100%;height:auto;display:block}
+svg.chart text{fill:var(--mute);font-size:11px}
+svg.chart .val{fill:var(--ink);font-weight:700}
+#compBar{max-width:1000px;margin:6px auto 0;padding:0 16px}
+@page{size:A4 portrait;margin:8mm}
+.copy{padding:6px 0;font-size:var(--fs,10pt)}.cut{text-align:center;color:var(--mute);font-size:.72rem;margin:4px 0;letter-spacing:.1em}
+.mini{width:100%;border-collapse:collapse;font-size:.82rem}.mini td{padding:2px 4px;border-bottom:1px solid var(--line)}
+@media print{.copy{height:86mm;box-sizing:border-box;overflow:hidden}.cut{color:#000;margin:0;height:4mm;line-height:4mm;overflow:hidden}#recu{break-inside:avoid;page-break-inside:avoid}}
+.void td{opacity:.55;text-decoration:line-through}.void td.act{opacity:1;text-decoration:none}
+#regTable tr.day td{background:var(--soft);font-weight:700;text-decoration:none}
+</style>
+<style id="desk">
+@media(min-width:1100px){
+ header,main,#nav,nav,#agentBar,#compBar,#respBar,#home,.wrap,#basepage .wrap{max-width:1600px!important}
+ body{font-size:17px}
+ table{font-size:.95rem}
+ .card{padding:22px}
+ .sheet{max-width:760px}
+ .kpis{gap:14px}
+}
+@media(min-width:1700px){header,main,#nav,nav,#agentBar,#compBar,#respBar,#home,.wrap,#basepage .wrap{max-width:1880px!important}}
+</style>
+<style id="theme">
+/* ===== Thème CTA : sobre, médical, premium ===== */
+:root{
+  --brand-d:#073b2b; --brand:#0f5a41; --brand-l:#1d7a57; --accent:#e0ac12;
+  --grad:linear-gradient(135deg,#06342a 0%,#0f5a41 52%,#1f8a62 100%);
+  --shadow-s:0 1px 2px rgba(10,40,30,.06),0 1px 1px rgba(10,40,30,.04);
+  --shadow-m:0 1px 2px rgba(10,40,30,.06),0 10px 28px -12px rgba(10,40,30,.22);
+  --shadow-l:0 2px 4px rgba(10,40,30,.06),0 24px 48px -20px rgba(10,40,30,.35);
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root{--shadow-m:0 1px 2px rgba(0,0,0,.4),0 10px 28px -12px rgba(0,0,0,.6);--grad:linear-gradient(135deg,#052a21 0%,#0b4733 55%,#17694b 100%)}}
+html{scroll-behavior:smooth}
+body{background:var(--bg);background-image:radial-gradient(1100px 420px at 88% -120px,rgba(31,138,98,.16),transparent 70%),radial-gradient(800px 320px at -10% 0,rgba(224,172,18,.07),transparent 70%);background-attachment:fixed;font-family:"Segoe UI Variable Text","Segoe UI","Inter","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:.005em}
+h1,h2,h3{letter-spacing:-.015em}
+
+/* cartes, boutons, champs */
+.card{border-radius:var(--r)!important;box-shadow:var(--shadow-m);border:1px solid color-mix(in srgb,var(--line) 70%,transparent)!important}
+.card h2{font-size:1.08rem;display:flex;align-items:center;gap:10px}
+.card h2::before{content:"";width:4px;height:1.05em;border-radius:3px;background:var(--grad);flex:none}
+.btn{border-radius:10px!important;background:var(--grad)!important;color:#fff!important;box-shadow:0 6px 14px -6px rgba(15,90,65,.55),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;letter-spacing:.01em}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.06);box-shadow:0 10px 18px -8px rgba(15,90,65,.6),inset 0 1px 0 rgba(255,255,255,.2)}
+.btn:active{transform:translateY(0)}
+.btn.ghost,button.ghost{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:var(--shadow-s)}
+.btn.ghost:hover{border-color:var(--brand-l)!important;color:var(--brand)!important}
+.btn[disabled]{filter:grayscale(.6) opacity(.55);transform:none;box-shadow:none}
+input[type=text],input[type=number],input[type=date],input[type=password],input[type=search],select,textarea{border-radius:10px!important;border:1px solid var(--line);transition:border-color .12s,box-shadow .12s;background:var(--surface)}
+input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--brand-l)!important;box-shadow:0 0 0 4px rgba(31,138,98,.18)}
+label{letter-spacing:.01em}
+
+/* segments et onglets */
+.seg{border-radius:12px!important;padding:3px;background:color-mix(in srgb,var(--soft) 80%,transparent);border:1px solid var(--line)!important;gap:3px}
+.seg button{border-radius:9px!important;border:0!important;background:transparent!important;transition:background .15s,color .15s,box-shadow .15s}
+.seg button:hover{background:color-mix(in srgb,var(--surface) 70%,transparent)!important}
+.seg button[aria-pressed="true"]{background:var(--grad)!important;color:#fff!important;box-shadow:0 4px 10px -4px rgba(15,90,65,.6)}
+nav button[aria-selected="true"],[role=tab][aria-selected="true"]{color:var(--brand)!important}
+.tabs button.on,.tabs button[aria-selected="true"]{color:var(--brand)}
+
+/* indicateurs */
+.kpi{border-radius:14px!important;box-shadow:var(--shadow-s);border:1px solid var(--line)!important;position:relative;overflow:hidden;background:var(--surface)}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad)}
+.kpi .n{letter-spacing:-.02em}
+
+/* tableaux */
+.scroll{border-radius:12px!important;box-shadow:var(--shadow-s);border:1px solid var(--line)!important}
+table thead th{background:color-mix(in srgb,var(--soft) 88%,var(--surface))!important;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:700;position:sticky;top:0;z-index:1}
+table.cnx thead th{text-transform:none;letter-spacing:.01em;font-size:.88rem;color:var(--ink)}
+table tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--soft) 28%,transparent)}
+table tbody tr:hover td{background:color-mix(in srgb,var(--soft) 70%,transparent)}
+table.cnx tbody tr:nth-child(even) td{background:#fff}
+table.cnx tbody tr:hover td{background:#fff}
+table.cnx tr.tot td{background:color-mix(in srgb,var(--soft) 88%,#fff)!important}
+#fTable td.sel{background:#d6e8ff!important}
+.pill{border-radius:99px;letter-spacing:.02em}
+.modal .sheet,.sheet{border-radius:18px!important;box-shadow:var(--shadow-l)}
+.modal{backdrop-filter:blur(3px);background:rgba(6,30,22,.5)!important}
+.toast{border-radius:12px!important;box-shadow:var(--shadow-l);background:var(--brand-d)!important;color:#fff!important}
+.banner{border-radius:12px}
+
+/* barre du module (shell) */
+.bar{background:var(--grad)!important;color:#fff;border-bottom:0!important;box-shadow:0 6px 18px -10px rgba(6,40,28,.7);height:56px!important}
+.bar b{color:#fff;font-size:1.02rem;letter-spacing:.01em}
+.bar button{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.28)!important;color:#fff!important;border-radius:10px!important;backdrop-filter:blur(4px);transition:background .12s}
+.bar button:hover{background:rgba(255,255,255,.26)!important}
+
+/* en-tête dans les modules */
+header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.demo b,span.demo{border-radius:99px!important}
+
+/* ===== accueil ===== */
+#home{max-width:1180px!important;padding:0 20px 40px!important}
+.hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin:18px 0 6px;padding:26px 30px;border-radius:22px;background:var(--grad);color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-l)}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(520px 220px at 92% -30%,rgba(255,255,255,.22),transparent 70%),radial-gradient(420px 240px at 8% 130%,rgba(224,172,18,.28),transparent 70%);pointer-events:none}
+.hero::after{content:"";position:absolute;right:-40px;bottom:-60px;width:260px;height:260px;border-radius:50%;border:34px solid rgba(255,255,255,.06);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.logo{width:68px;height:68px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);display:grid;place-items:center;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 24px -10px rgba(0,0,0,.5);backdrop-filter:blur(6px)}
+.logo svg{width:38px;height:38px}
+.hero-t{flex:1;min-width:260px}
+.hero-t .hi{font-size:.85rem;opacity:.85;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.hero-t h1{color:#fff!important;-webkit-text-fill-color:#fff;background:none!important;margin:2px 0 2px!important;font-size:1.95rem!important;line-height:1.15}
+.hero-t p{color:rgba(255,255,255,.82)!important;margin:0!important;font-size:1rem}
+.hero .demo{background:rgba(255,255,255,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.3)!important;padding:3px 10px;border-radius:99px;font-size:.74rem;font-weight:700;letter-spacing:.04em;display:inline-block;margin-bottom:6px}
+.hero .who{margin:0!important;display:flex;flex-direction:column;align-items:flex-end;gap:8px;color:#fff}
+.hero .who .row-u{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);display:grid;place-items:center;font-weight:800;letter-spacing:.02em}
+.hero .who b{color:#fff}
+.hero .who .pill{background:var(--accent)!important;color:#3a2a00!important;font-weight:800}
+.hero .who .btn.ghost{background:rgba(255,255,255,.14)!important;color:#fff!important;border:1px solid rgba(255,255,255,.35)!important;box-shadow:none;padding:8px 14px;border-radius:10px!important}
+.hero .who .btn.ghost:hover{background:rgba(255,255,255,.28)!important;color:#fff!important}
+#saveSt{display:flex;align-items:center;gap:8px;margin:12px 4px 0!important;font-size:.8rem!important}
+#saveSt::before{content:"";width:8px;height:8px;border-radius:50%;background:#2fbf7f;box-shadow:0 0 0 4px rgba(47,191,127,.2);flex:none}
+.cards{gap:18px!important;margin-top:20px!important}
+@media(min-width:760px){.cards{grid-template-columns:repeat(2,1fr)!important}}
+@media(min-width:1150px){.cards{grid-template-columns:repeat(3,1fr)!important}}
+.mod{position:relative;overflow:hidden;border:1px solid var(--line)!important;border-left:1px solid var(--line)!important;border-radius:18px!important;padding:22px 22px 20px 88px!important;min-height:132px;box-shadow:var(--shadow-m);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;background:var(--surface)!important}
+.mod::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--grad)}
+.mod.base::before{background:linear-gradient(180deg,#f3c53a,#c99207)}
+.mod:hover{transform:translateY(-4px);box-shadow:var(--shadow-l);border-color:var(--brand-l)!important;background:var(--surface)!important}
+.mod .ico{position:absolute;left:22px;top:22px;width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:var(--grad);color:#fff;box-shadow:0 10px 20px -10px rgba(15,90,65,.8)}
+.mod.base .ico{background:linear-gradient(135deg,#f6cf4d,#c99207);color:#3a2a00;box-shadow:0 10px 20px -10px rgba(201,146,7,.8)}
+.mod .ico svg{width:26px;height:26px}
+.mod .n{color:var(--brand-l)!important;font-size:.7rem!important;letter-spacing:.14em!important}
+.mod.base .n{color:#a87800!important}
+.mod b{font-size:1.14rem!important;letter-spacing:-.01em}
+.mod small{line-height:1.4}
+.mod::after{content:"→";position:absolute;right:18px;bottom:14px;color:var(--brand-l);font-weight:700;opacity:0;transform:translateX(-6px);transition:all .18s}
+.mod:hover::after{opacity:1;transform:none}
+.mod[disabled]{opacity:.45!important;filter:grayscale(.7);box-shadow:none}
+.mod[disabled]:hover{transform:none;box-shadow:none;border-color:var(--line)!important}
+.mod[disabled]::after{display:none}
+@media(max-width:560px){.mod{padding-left:84px!important}.hero{padding:20px}.hero .who{align-items:flex-start}}
+
+/* ===== connexion ===== */
+#login[hidden]{display:none!important}
+#login:not([hidden]){display:grid!important}
+#login{grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);padding:0!important}
+#login .brand{background:var(--grad);color:#fff;padding:7vh 56px;display:flex;flex-direction:column;justify-content:center;gap:26px;position:relative;overflow:hidden}
+#login .brand::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 360px at 85% -10%,rgba(255,255,255,.2),transparent 70%),radial-gradient(520px 320px at -5% 105%,rgba(224,172,18,.32),transparent 70%)}
+#login .brand::after{content:"";position:absolute;right:-90px;bottom:-110px;width:420px;height:420px;border-radius:50%;border:56px solid rgba(255,255,255,.06)}
+#login .brand>*{position:relative;z-index:1}
+#login .brand .logo{width:84px;height:84px;border-radius:24px}
+#login .brand .logo svg{width:48px;height:48px}
+#login .brand h2{margin:0;font-size:2.3rem;line-height:1.12;letter-spacing:-.025em;max-width:520px}
+#login .brand h2::before{display:none}
+#login .brand p{margin:0;max-width:480px;opacity:.86;font-size:1.05rem;line-height:1.5}
+#login .brand ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:12px;max-width:480px}
+#login .brand li{display:flex;gap:12px;align-items:center;font-size:.95rem;opacity:.95}
+#login .brand li i{width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.26);display:grid;place-items:center;flex:none;font-style:normal}
+#login .brand li svg{width:16px;height:16px}
+#login>div:not(.brand){width:100%;max-width:470px!important;margin:0 auto!important;padding:8vh 28px!important;align-self:center}
+#login>div:not(.brand)>h1{font-size:1.5rem!important;margin-top:14px!important}
+#login #lgForm{box-shadow:var(--shadow-l);padding:26px!important;border-radius:20px!important}
+#login #lgGo{width:100%;padding:14px;font-size:1.02rem}
+@media(max-width:900px){#login{grid-template-columns:1fr}#login .brand{display:none}#login>div:not(.brand){padding:6vh 18px!important}}
+
+/* impression : on garde le blanc simple */
+@media print{.bar,.hero{display:none!important}body{background:#fff!important}}
+</style>
+<script>
+(function(){
+  var LOGO='<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 7v34M7 24h34"/><circle cx="24" cy="24" r="17" stroke-width="2" opacity=".55"/></svg>';
+  var IC={
+    caisse:'<path d="M3 7h18v10H3z"/><circle cx="12" cy="12" r="2.6"/><path d="M6.5 9.5v.01M17.5 14.5v.01"/>',
+    rh:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c3 .1 5 2 5 5.3"/>',
+    pharma:'<path d="M10.5 3.5l10 10a4.2 4.2 0 01-6 6l-10-10a4.2 4.2 0 016-6z"/><path d="M8.5 8.5l7 7"/>',
+    ptme:'<path d="M12 20s-7-4.4-7-10a4 4 0 017-2.4A4 4 0 0119 10c0 5.6-7 10-7 10z"/>',
+    base:'<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+    audit:'<path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+    backup:'<path d="M7 18a4.5 4.5 0 01-.6-8.9A6 6 0 0118 10a4 4 0 01-.5 8z"/><path d="M12 11v6m-3-3l3 3 3-3"/>',
+    help:'<path d="M4 5.5A2.5 2.5 0 016.5 3H20v16H6.5A2.5 2.5 0 004 21.5z"/><path d="M4 5.5v16M9 8h7"/>',
+    params:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/>'
+  };
+  function svg(p,sz){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>'}
+  function ready(f){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',f):f()}
+  ready(function(){
+    var home=document.getElementById('home');
+    if(home&&!home.querySelector('.hero')){
+      var demo=home.querySelector('.demo'),h1=home.querySelector('h1'),p=h1&&h1.nextElementSibling,who=home.querySelector('.who');
+      if(demo&&h1&&p&&who){
+        var hero=document.createElement('div');hero.className='hero';
+        var logo=document.createElement('div');logo.className='logo';logo.innerHTML=LOGO;
+        var t=document.createElement('div');t.className='hero-t';
+        var hi=document.createElement('div');hi.className='hi';hi.id='heroHi';
+        function hello(){var d=new Date(),h=d.getHours(),g=h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir';var nm=(document.getElementById('whoName')||{}).textContent||'';var ds=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});hi.textContent=g+(nm?', '+nm:'')+' · '+ds}
+        hello();setInterval(hello,30000);
+        h1.removeAttribute('style');
+        t.appendChild(demo);t.appendChild(hi);t.appendChild(h1);t.appendChild(p);
+        hero.appendChild(logo);hero.appendChild(t);hero.appendChild(who);
+        home.insertBefore(hero,home.firstChild);
+        // avatar + ligne utilisateur
+        var nameEl=who.querySelector('#whoName'),ru=document.createElement('div');ru.className='row-u';
+        var av=document.createElement('div');av.className='avatar';av.id='whoAv';
+        function ini(){var n=(nameEl&&nameEl.textContent||'?').trim().split(/\s+/);av.textContent=((n[0]||'?')[0]+(n[1]?n[1][0]:'')).toUpperCase()}
+        ini();
+        if(nameEl){new MutationObserver(function(){ini();hello()}).observe(nameEl,{childList:true,characterData:true,subtree:true})}
+        var first=who.firstElementChild;ru.appendChild(av);
+        while(who.firstChild&&who.firstChild.id!=='myAcc'){ru.appendChild(who.firstChild)}
+        who.insertBefore(ru,who.firstChild);
+        var btns=document.createElement('div');btns.className='row-u';
+        ['myAcc','logout'].forEach(function(id){var b=document.getElementById(id);if(b)btns.appendChild(b)});
+        who.appendChild(btns);
+      }
+      home.querySelectorAll('.mod').forEach(function(m){
+        if(m.querySelector('.ico'))return;var k=m.dataset.m;var i=document.createElement('i');i.className='ico';i.innerHTML=svg(IC[k]||IC.help);m.insertBefore(i,m.firstChild);
+      });
+    }
+    var lg=document.getElementById('login');
+    if(lg&&!lg.querySelector('.brand')){
+      var b=document.createElement('div');b.className='brand';
+      var chk='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+      b.innerHTML='<div class="logo">'+LOGO+'</div><h2>Centre de Traitement Ambulatoire de Lambaréné</h2><p>Caisse, pharmacie, RH et CNAMGS, suivi PTME : une seule application, des données partagées et tracées.</p><ul><li><i>'+chk+'</i>Chaque action est inscrite au journal d’audit</li><li><i>'+chk+'</i>Un compte par poste, accès limité à votre mission</li><li><i>'+chk+'</i>Sauvegardes automatiques et points de restauration</li></ul>';
+      lg.insertBefore(b,lg.firstChild);
+    }
+  });
+})();
+</script>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Gestion de la caisse</h1>
+    <p>Centre de Traitement Ambulatoire de Lambaréné</p>
+  </div>
+  
+</header>
+<div id="agentBar" style="max-width:1000px;margin:0 auto;padding:0 16px"><label for="agent" style="margin:6px 0 4px">Caissier connecté (chaque encaissement est enregistré à son nom)</label><input type="text" id="agent" value="Agent de caisse" readonly style="max-width:320px;background:var(--bg)"></div>
+
+<nav role="tablist" aria-label="Pages du module">
+  <button role="tab" data-tab="acc" aria-selected="true">Accueil</button>
+  <button role="tab" data-tab="reg" aria-selected="false">Saisie</button>
+  <button role="tab" data-tab="rg" aria-selected="false">Registre</button>
+  <button role="tab" data-tab="pat" aria-selected="false">Patients</button>
+  <button role="tab" data-tab="dep" aria-selected="false">Dépenses</button>
+  <button role="tab" data-tab="clo" aria-selected="false">Clôture</button>
+  <button role="tab" data-tab="syn" aria-selected="false">Synthèse</button>
+  <button role="tab" data-tab="sta" aria-selected="false" aria-label="Statistiques">Stats</button>
+</nav>
+<div id="compBar"><div class="lab" style="margin-top:10px">Compartiment</div>
+  <div class="seg" id="comp"><button data-v="pvvih" aria-pressed="true">PVVIH</button><button data-v="ext" aria-pressed="false">Consultation externe</button><button data-v="cert" aria-pressed="false">Certificat médical</button></div></div>
+
+<main>
+<!-- ACCUEIL -->
+<section id="acc">
+  <div class="card"><h2 id="accT">Tableau de bord</h2>
+    <div class="kpis" id="accK"></div>
+    <div id="accAlert" style="margin-top:12px"></div>
+    <p class="muted" style="font-size:.85rem;margin-bottom:0">Les chiffres sont ceux d’aujourd’hui. Le détail se trouve dans les autres pages.</p></div>
+</section>
+
+<!-- REGISTRE -->
+<section id="reg" hidden>
+  <div class="grid two">
+    <div class="card">
+      <h2>Enregistrer une prestation</h2>
+      <div class="lab" style="margin-top:0">Profil du patient</div>
+      <div class="seg" id="profil">
+        <button data-v="nouveau" aria-pressed="false">Nouveau</button>
+        <button data-v="ancien" aria-pressed="true">Ancien</button>
+      </div>
+      <div class="row">
+        <div><label for="date">Date d’arrivée</label><input type="date" id="date"></div>
+        <div><label for="dossier">N° de dossier</label><input type="text" id="dossier" inputmode="numeric" autocomplete="off" placeholder="ex. 0231 · facultatif si nouveau patient"></div>
+      </div>
+      <div id="found"></div>
+      <label for="nom">Nom et prénom</label><input type="text" id="nom" autocomplete="off">
+      <div class="row">
+        <div><label for="age">Âge</label><input type="number" id="age" min="0" max="120" inputmode="numeric"></div>
+        <div><label for="tel">Numéro de téléphone</label><input type="text" id="tel" inputmode="tel" autocomplete="off"></div>
+      </div>
+      <div class="row">
+        <div><label for="sexe">Sexe</label><select id="sexe"><option value="M">Masculin</option><option value="F">Féminin</option></select></div>
+        <div><div class="lab">Assuré CNAMGS</div><div class="seg" id="assure"><button data-v="1" aria-pressed="true">Oui</button><button data-v="0" aria-pressed="false">Non</button></div></div>
+      </div>
+      <div id="statutBox"><div class="lab">Statut <span class="muted" id="statNote" style="font-weight:400"></span></div>
+      <div class="seg" id="statut">
+        <button data-v="plein" aria-pressed="false">Plein</button>
+        <button data-v="ald" aria-pressed="true">Plein ALD</button>
+        <button data-v="exo" aria-pressed="false">Exonéré</button>
+      </div></div>
+      <div id="exoBox" hidden><div class="lab">Exonéré</div>
+      <div class="seg" id="exoNA"><button data-v="1" aria-pressed="false">Oui</button><button data-v="0" aria-pressed="true">Non</button></div></div>
+      <div class="lab" id="packlab">Éléments à payer</div>
+      <div class="links"><button class="link" id="none">Tout décocher</button></div>
+      <div class="actes" id="actes"></div>
+      <label for="obs">Observation (facultative)</label><input type="text" id="obs" autocomplete="off">
+    </div>
+
+    <div class="sticky">
+      <div class="ticket" aria-live="polite">
+        <div class="t big"><span style="font-size:.9rem;font-weight:600" class="muted">Prestation du jour</span><span class="v num" id="tPrest">0 F</span></div>
+        <div class="t" id="debtRow" hidden><span>Dette reprise</span><span class="v num" id="tDebt">0 F</span></div>
+        <div class="t" id="totRow" hidden><span><b>Total à payer</b></span><span class="v num" id="tTot">0 F</span></div>
+        <div class="t"><span>Encaissé</span><span><input type="number" id="enc" min="0" step="50" inputmode="numeric" placeholder="0"></span></div>
+        <p class="hint"><button class="link" id="full">Payé en totalité</button></p>
+        <div class="t" id="regRow" hidden><span class="muted">dont règlement de dette</span><span class="v num" id="tReg">0 F</span></div>
+        <div class="t rest" id="restRow"><span>Non recouvré</span><span class="v num" id="tRest">0 F</span></div>
+        <div id="exoNote"></div>
+      </div>
+      <div class="err" id="err" role="alert"></div>
+      <button class="btn" id="valider">Valider</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- REGISTRES -->
+<section id="rg" hidden>
+  <div class="card">
+    <h2>Registres</h2>
+    <p class="muted" style="font-size:.85rem;margin-top:0">Consultation des enregistrements, du plus récent au plus ancien. Aucune ligne n’est supprimée : une erreur s’annule avec un motif et reste visible.</p>
+    <div class="seg" id="rgSeg" style="max-width:560px"><button data-v="pvvih" aria-pressed="true">PVVIH</button><button data-v="ext" aria-pressed="false">Consultation externe</button><button data-v="cert" aria-pressed="false">Certificat médical</button></div>
+    <div id="rgTypesW" hidden><div class="lab">Consultation</div><div class="seg" id="rgTypes" style="max-width:560px"></div></div>
+    <label for="rgQ">Recherche (nom, n° de dossier ou de pièce)</label><input type="text" id="rgQ" placeholder="Rechercher" autocomplete="off" style="max-width:320px">
+    <div class="row" style="max-width:520px">
+      <div><label for="rgD1">Du jour</label><input type="date" id="rgD1"></div>
+      <div><label for="rgD2">Au jour</label><input type="date" id="rgD2"></div>
+    </div>
+    <div class="banner" id="rgSum"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button class="btn ghost" id="rgPrint">Imprimer</button><button class="btn ghost" id="rgCsv">Exporter (Excel)</button></div>
+    <div class="scroll"><table id="regTable"></table></div>
+  </div>
+</section>
+
+<!-- CONSULTATION EXTERNE -->
+<section id="ext" hidden>
+  <div class="grid two" id="xForm">
+    <div class="card">
+      <h2>Consultation externe</h2>
+      <p class="muted" style="font-size:.85rem;margin-top:0">Le patient paie d’abord sa consultation. Si le médecin demande des examens, il revient à la caisse : utilisez « Encaisser des examens » dans la liste ci-dessous.</p>
+      <div class="row">
+        <div><label for="xDate" style="margin-top:0">Date</label><input type="date" id="xDate"></div>
+        <div><label for="xAge" style="margin-top:0">Âge</label><input type="number" id="xAge" min="0" max="120" inputmode="numeric"></div>
+      </div>
+      <label for="xNom">Nom et prénom</label><input type="text" id="xNom" autocomplete="off">
+      <div class="row">
+        <div><label for="xSexe">Sexe</label><select id="xSexe"><option value="M">Masculin</option><option value="F">Féminin</option></select></div>
+        <div><label for="xTel">Numéro de téléphone</label><input type="text" id="xTel" inputmode="tel" autocomplete="off"></div>
+      </div>
+      <div class="lab">Consultation demandée</div>
+      <div class="seg" id="xCons"></div>
+    </div>
+    <div class="sticky">
+      <div class="ticket" aria-live="polite">
+        <div class="t big"><span style="font-size:.9rem;font-weight:600" class="muted">Consultation à payer</span><span class="v num" id="xTot">0 F</span></div>
+        <p class="hint">Les examens éventuels se paient plus tard, au retour du patient.</p>
+      </div>
+      <div class="err" id="xErr" role="alert"></div>
+      <button class="btn" id="xVal">Valider et encaisser la consultation</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h2 id="xListT">Patients en consultation (pour les examens)</h2>
+    <div class="seg" id="xTabs" style="max-width:520px"></div>
+    <label for="xQ">Nom du patient</label><input type="text" id="xQ" placeholder="Rechercher" autocomplete="off" style="max-width:260px">
+    <div class="scroll" style="margin-top:12px"><table id="xTable"></table></div>
+  </div>
+</section>
+
+<!-- CERTIFICAT MEDICAL -->
+<section id="cert" hidden>
+  <div class="grid two">
+    <div class="card">
+      <h2>Certificat médical</h2>
+      <div class="row">
+        <div><label for="cDate" style="margin-top:0">Date de réception</label><input type="date" id="cDate"></div>
+        <div><label for="cNaiss" style="margin-top:0">Date de naissance</label><input type="date" id="cNaiss"></div>
+      </div>
+      <label for="cNom">Nom et prénom</label><input type="text" id="cNom" autocomplete="off">
+      <label for="cPiece">Numéro de la pièce d’identité</label><input type="text" id="cPiece" autocomplete="off">
+      <label for="cObs">Observation (motif)</label><input type="text" id="cObs" placeholder="ex. coups et blessures, accident" autocomplete="off">
+      <label for="cMont">Montant (F)</label><input type="number" id="cMont" min="0" step="50" inputmode="numeric">
+      <div class="err" id="cErr" role="alert"></div>
+      <button class="btn" id="cOk">Enregistrer le certificat</button>
+    </div>
+    <div class="card">
+      <h2>Liste récapitulative du mois</h2>
+      <label for="cMois" style="margin-top:0">Mois</label><input type="month" id="cMois" style="max-width:200px">
+      <div class="banner" id="cSum"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h2 id="cMT">Détail du mois</h2>
+    <div class="scroll"><table id="cMT2"></table></div>
+  </div>
+</section>
+
+<!-- PATIENTS -->
+<section id="pat" hidden>
+  <div class="card">
+    <h2>Liste des patients</h2>
+    <div class="seg" id="patSeg" style="max-width:420px"><button data-v="pvvih" aria-pressed="true">PVVIH</button><button data-v="ext" aria-pressed="false">Consultation externe</button></div>
+    <p class="muted" style="font-size:.85rem" id="patHelp"></p>
+    <label for="patQ" id="patQl" style="margin-top:0">N° de dossier</label><input type="text" id="patQ" placeholder="Rechercher" autocomplete="off" style="max-width:260px">
+    <div class="scroll" style="margin-top:12px"><table id="patT"></table></div>
+  </div>
+</section>
+
+<!-- DEPENSES -->
+<!-- CLÔTURE -->
+<section id="clo" hidden>
+  <div class="card"><h2>Clôture de caisse</h2>
+    <p class="muted" style="font-size:.85rem">Chaque caissier clôture sa propre caisse en fin de service ou avant de passer la main. Le système sait ainsi qui a encaissé quoi : si quelqu’un ne clôture pas et qu’un autre se connecte, les encaissements restent attribués à chacun, par son nom, jusqu’à la clôture. Aucun comptage d’espèces n’est demandé.</p>
+    <div id="cloBody"></div>
+  </div>
+</section>
+
+<section id="dep" hidden>
+  <div class="grid two">
+    <div class="card">
+      <h2>Enregistrer une dépense</h2>
+      <div class="row">
+        <div><label for="dDate">Date</label><input type="date" id="dDate"></div>
+        <div><label for="dType">Type d’opération</label><input type="text" id="dType" list="types" placeholder="ex. Achat"></div>
+      </div>
+      <datalist id="types"><option>Achat</option><option>Transport</option><option>Entretien</option><option>Paiement</option></datalist>
+      <label for="dDesc">Description</label><input type="text" id="dDesc">
+      <label for="dDest">Destinataire</label><input type="text" id="dDest">
+      <div class="row">
+        <div><label for="dMont">Montant (F)</label><input type="number" id="dMont" min="0" step="50" inputmode="numeric"></div>
+        <div><label for="dPiece">Pièce justificative</label><input type="text" id="dPiece" placeholder="N° facture ou reçu"></div>
+      </div>
+      <div class="err" id="dErr" role="alert"></div>
+      <button class="btn" id="dAdd">Ajouter la dépense</button>
+    </div>
+    <div class="card">
+      <h2>Total par mois</h2>
+      <div id="dTot"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h2>Journal des dépenses</h2>
+    <div class="scroll"><table id="depTable"></table></div>
+  </div>
+</section>
+
+<!-- SYNTHESE -->
+<section id="syn" hidden>
+  <div class="card">
+    <h2>Synthèse mensuelle</h2>
+    <label for="synYear" style="margin-top:0">Année</label>
+    <select id="synYear" style="max-width:160px"></select>
+    <p class="muted" style="font-size:.85rem">Remplie automatiquement à partir des registres et du journal. On distingue ce qui vient des PVVIH et de la consultation externe.</p>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:6px"><button class="btn" id="synPrint" style="width:auto;margin:0;padding:10px 16px">Imprimer la synthèse</button></div>
+    <div class="scroll"><table id="synTable"></table></div>
+    <p class="muted" style="font-size:.85rem" id="synNote"></p>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="sta" hidden>
+  <div class="card">
+    <h2>Entrées journalières : comparer deux périodes</h2>
+    <div class="row" style="grid-template-columns:1.5fr 1fr">
+      <div><label for="cmpPre" style="margin-top:0">Comparaison</label><select id="cmpPre">
+        <option value="day">Aujourd’hui et hier</option><option value="week" selected>Cette semaine et la semaine passée</option><option value="month">Ce mois et le mois passé</option><option value="custom">Deux périodes au calendrier</option></select></div>
+      <div><label style="margin-top:0">Compartiment</label><div class="seg" id="cmpF"><button data-v="all" aria-pressed="true">Tous</button><button data-v="pvvih" aria-pressed="false">PVVIH</button><button data-v="ext" aria-pressed="false">Externe</button></div></div>
+    </div>
+    <div id="cmpCustom" hidden>
+      <div class="row"><div><label for="a1">Période A : du</label><input type="date" id="a1"></div><div><label for="a2">au</label><input type="date" id="a2"></div></div>
+      <div class="row"><div><label for="b1">Période B : du</label><input type="date" id="b1"></div><div><label for="b2">au</label><input type="date" id="b2"></div></div>
+    </div>
+    <div id="cmpOut"></div>
+  </div>
+  <div class="card">
+    <h2>Statistiques</h2>
+    <div class="row">
+      <div><label for="per" style="margin-top:0">Période</label>
+        <select id="per">
+          <option value="today">Aujourd’hui</option>
+          <option value="week">Cette semaine</option>
+          <option value="month" selected>Ce mois</option>
+          <option value="quarter">Ce trimestre</option>
+          <option value="semester">Ce semestre</option>
+          <option value="year">Cette année</option>
+          <option value="custom">Choisir dans le calendrier</option>
+        </select></div>
+      <div><label style="margin-top:0">&nbsp;</label><label class="acte" style="border:1px solid var(--line);border-radius:8px;margin:0"><input type="checkbox" id="cmp"><span>Comparer avec la période précédente</span></label></div>
+    </div>
+    <div class="row" id="customRange" hidden>
+      <div><label for="from">Du</label><input type="date" id="from"></div>
+      <div><label for="to">Au</label><input type="date" id="to"></div>
+    </div>
+  </div>
+  <div id="stOut"></div>
+</section>
+</main>
+
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">
+  <h3 id="mt">Confirmer l’enregistrement</h3><dl id="mdl"></dl>
+  <div class="acts"><button class="btn ghost" id="mNo" style="flex:1;padding:14px">Corriger</button><button class="btn" id="mYes" style="flex:1">Confirmer</button></div>
+</div></div>
+<div class="modal" id="recuModal" hidden><div class="sheet"><div id="recu"></div><div class="acts"><button class="btn ghost" id="rcClose" style="flex:1;padding:14px">Fermer</button><button class="btn" id="rcPrint" style="flex:1">Imprimer le reçu</button></div></div></div>
+<div class="modal" id="exModal" hidden><div class="sheet"><h3 id="exT">Examens demandés</h3><div id="exBody"></div>
+  <div class="rl b"><span>Total à payer</span><b id="exTot">0 F</b></div><div class="err" id="exErr" role="alert"></div>
+  <div class="acts"><button class="btn ghost" id="exNo" style="flex:1;padding:14px">Fermer</button><button class="btn" id="exOk" style="flex:1">Encaisser les examens</button></div></div></div>
+<div class="modal" id="anModal" hidden><div class="sheet"><h3>Annuler cette ligne ?</h3>
+  <p class="muted" style="margin-top:0;font-size:.9rem">La ligne reste visible dans le registre, barrée, avec son motif. Elle ne compte plus dans les totaux.</p>
+  <label for="anMotif" style="margin-top:0">Motif de l’annulation</label><input type="text" id="anMotif" autocomplete="off">
+  <div class="err" id="anErr" role="alert"></div>
+  <div class="acts"><button class="btn ghost" id="anNo" style="flex:1;padding:14px">Retour</button><button class="btn" id="anOk" style="flex:1">Annuler la ligne</button></div></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// ---------- Tarification (affiche du CTA) : [assuré, non assuré] ; null = absent du package
+const ITEMS=[
+ {k:'od',g:'Ouverture et consultation',n:'Ouverture de dossier',na:5000,as:5000,newOnly:true},
+ {k:'consult',g:'Ouverture et consultation',n:'Consultation médicale',na:1500,as:1000},
+ {k:'hiv',g:'Sérologies',n:'HIV 1/2',na:0,as:0},
+ {k:'hbs',g:'Sérologies',n:'Hépatite B',na:3000,as:300},
+ {k:'hcv',g:'Sérologies',n:'Hépatite C',na:3000,as:3000},
+ {k:'tpha',g:'Sérologies',n:'TPHA/VDRL',na:3000,as:3000},
+ {k:'glyc',g:'Biochimie',n:'Glycémie',na:1000,as:1000},
+ {k:'creat',g:'Biochimie',n:'Créatinine',na:2500,as:250},
+ {k:'uricq',g:'Biochimie',n:'Acide urique',na:2000,as:2000},
+ {k:'uree',g:'Biochimie',n:'Urée',na:2000,as:2000},
+ {k:'chol',g:'Biochimie',n:'Cholestérol',na:2000,as:2000},
+ {k:'albsu',g:'Biochimie',n:'Albumine + sucre (urine)',na:1000,as:1000},
+ {k:'trans',g:'Biochimie',n:'Transaminases',na:3000,as:300},
+ {k:'trig',g:'Biochimie',n:'Triglycérides',na:2000,as:2000},
+ {k:'amyl',g:'Biochimie',n:'Amylase',na:2500,as:2500},
+ {k:'lip',g:'Biochimie',n:'Lipase',na:2500,as:2500},
+ {k:'nfs',g:'Hématologie',n:'Hémogramme (NFS)',na:1500,as:150},
+ {k:'vs',g:'Hématologie',n:'VS',na:1500,as:1500},
+ {k:'gsrh',g:'Hématologie',n:'GS-RH',na:1500,as:1500},
+ {k:'cd4',g:'Hématologie',n:'CD4 – CD8 (hors bilan)',na:8000,as:8000},
+ {k:'ge',g:'Parasitologie',n:'GE',na:500,as:500},
+ {k:'rx',g:'Radiologie',n:'Radio du thorax',na:4000,as:4000},
+ {k:'bpta',g:'Bilans',n:'Bilan pré-thérapeutique adulte',na:10000,as:10000},
+ {k:'bpte',g:'Bilans',n:'Bilan pré-thérapeutique enfant',na:5000,as:5000},
+ {k:'bsuivi',g:'Bilans',n:'Bilan de suivi (CD4 – CD8)',na:5000,as:5000},
+ {k:'cv',g:'Bilans',n:'Charge virale',na:10000,as:10000}
+];
+const groups=()=>[...new Set(ITEMS.map(i=>i.g))];
+const price=(it,assure)=>assure?it.as:it.na;
+const itemsFor=profil=>ITEMS.filter(i=>!i.newOnly||profil==='nouveau');
+const hhmm=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+let _tm=0;const seedTime=()=>{_tm=(_tm+97)%480;const m=450+_tm;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')};
+const agentName=()=>{try{const P=window.parent.PARAMS,u=P.users.find(x=>x.id===P.current);if(u&&u.nom)return u.nom}catch(e){}return(($('agent')&&$('agent').value.trim())||'Agent de caisse')};
+const MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const $=id=>document.getElementById(id);
+const fmt=n=>new Intl.NumberFormat('fr-FR').format(Math.round(n))+' F';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,10)};
+const today=iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const fdate=s=>s.split('-').reverse().join('/');
+const nonRec=r=>r.nonRec||0;
+const regl=r=>r.reglement||0;
+const B=(()=>{try{if(window.parent&&window.parent!==window&&window.parent.BASE)return window.parent.BASE}catch(e){}
+  return{list:[],find(d){return this.list.find(p=>p.dossier===d)},upsert(x){let p=this.find(x.dossier);if(!p){p={dossier:x.dossier,nom:'',sexe:'',assure:null,statut:'',contact:'',proto:'',premiere:x.premiere||today,obs:''};this.list.push(p)}for(const k in x){if(x[k]!==undefined&&x[k]!==''&&x[k]!==null&&k!=='premiere')p[k]=x[k]}return p}}})();
+
+
+// ---------- Nomenclature des externes et protocoles
+const CONSULTS=[{k:'gen',n:'Médecin généraliste',p:2000},{k:'idep',n:'IDEP',p:1500},{k:'psy',n:'Psychologique',p:2000}];
+const CONS=()=>isIdep()?CONSULTS.filter(c=>c.k==='idep'):CONSULTS;
+const EXAMS=[
+ {g:'Hématologie',items:[['NFS',1500],['Groupe sanguin-Rhésus',3000],['TP',1500],['TCA',2000]]},
+ {g:'Parasitologie',items:[['RMF',3000],['Goutte épaisse',2500],['TDR palu',1500],['Sérologie toxoplasmique',3000],['Bandelettes urinaires',2000],['Culot urinaire',1500]]},
+ {g:'Bactériologie',items:[['ECBU',5000]]},
+ {g:'Sérologie',items:[['Hépatite B',3500],['Hépatite C',5000],['Syphilis TPHA/VDRL',5000],['SRV',0],['Sérologie chlamydienne',6000]]},
+ {g:'Biochimie',items:[['Glycémie',1000],['Urée',1000],['Créatinine',1000],['ASAT',1500],['ALAT',1500],['GGT',3000],['Cholestérol total',2000],['Cholestérol HDL',1500],['Cholestérol LDL',1500],['Triglycérides',2500],['Hémoglobine glyquée (HbA1c)',6000],['Bilirubine totale',1000],['Bilirubine conjuguée',1000],['Calcium',1500],['Magnésium',1500],['Acide urique',1500],['CRP',5500]]}];
+const EXLIST=[];EXAMS.forEach(g=>g.items.forEach(([n,p])=>EXLIST.push({k:'x'+EXLIST.length,g:g.g,n,p})));
+// Réactif nécessaire à chaque examen (à ajuster au besoin). Si la pharmacie n'en a plus en stock, la caisse est avertie et n'encaisse pas l'examen.
+const R_BIO=n=>['Réactif '+n];
+const EXAM_REACT={'HIV 1/2':['Determine'],'SRV':['Determine'],'Hépatite B':['Immunocomb HBs Ag'],'Hépatite C':['Immunocomb HCV'],'Sérologie toxoplasmique':['Immunocomb Toxo'],'CD4 – CD8 (hors bilan)':['Facsreagent','Facsflow'],'Bilan de suivi (CD4 – CD8)':['Facsreagent','Facsflow'],
+ 'GE':['Giemsa'],'Goutte épaisse':['Giemsa'],'RMF':['Giemsa'],
+ 'NFS':['Diluant hématologie','Lyse hématologie'],'Hémogramme (NFS)':['Diluant hématologie','Lyse hématologie'],
+ 'Groupe sanguin-Rhésus':['Sérum-test anti-A','Sérum-test anti-B','Sérum-test anti-D'],'GS-RH':['Sérum-test anti-A','Sérum-test anti-B','Sérum-test anti-D'],
+ 'TP':['Thromboplastine (TP)'],'TCA':['Céphaline (TCA)','Chlorure de calcium 0,025 M'],'VS':['Citrate de sodium (VS)'],
+ 'TDR palu':['TDR paludisme'],'Bandelettes urinaires':['Bandelettes urinaires'],'Albumine + sucre (urine)':['Bandelettes urinaires'],
+ 'ECBU':['Gélose CLED','Gélose Mueller-Hinton','Kit coloration de Gram'],
+ 'Syphilis TPHA/VDRL':['TPHA','VDRL'],'TPHA/VDRL':['TPHA','VDRL'],'Sérologie chlamydienne':['Kit sérologie chlamydienne'],
+ 'Glycémie':R_BIO('glycémie'),'Urée':R_BIO('urée'),'Créatinine':R_BIO('créatinine'),'ASAT':R_BIO('ASAT'),'ALAT':R_BIO('ALAT'),'Transaminases':['Réactif ASAT','Réactif ALAT'],'GGT':R_BIO('GGT'),
+ 'Cholestérol total':R_BIO('cholestérol total'),'Cholestérol':R_BIO('cholestérol total'),'Cholestérol HDL':R_BIO('cholestérol HDL'),'Cholestérol LDL':R_BIO('cholestérol LDL'),'Triglycérides':R_BIO('triglycérides'),
+ 'Hémoglobine glyquée (HbA1c)':['Kit HbA1c'],'Bilirubine totale':R_BIO('bilirubine totale'),'Bilirubine conjuguée':R_BIO('bilirubine conjuguée'),'Calcium':R_BIO('calcium'),'Magnésium':R_BIO('magnésium'),'Acide urique':R_BIO('acide urique'),
+ 'CRP':['Kit CRP'],'Amylase':R_BIO('amylase'),'Lipase':R_BIO('lipase')};
+function manque(nom){
+  const need=EXAM_REACT[nom];if(!need)return[];
+  try{const P=window.parent.PHARMA_API;if(!P||!P.reagent)return[];return need.filter(n=>{const s=P.reagent(n);return s.known&&!s.ok})}catch(e){return[]}
+}
+function ruptures(){
+  const reag=new Set(),ex=new Set();
+  [...ITEMS.map(i=>i.n),...EXLIST.map(e=>e.n)].forEach(n=>{const m=manque(n);if(m.length){m.forEach(x=>reag.add(x));ex.add(n)}});
+  return{reag:[...reag],ex:[...ex]};
+}
+function consumeFor(names){try{const P=window.parent.PHARMA_API;if(!P||!P.consume)return;names.forEach(n=>(EXAM_REACT[n]||[]).forEach(re=>P.consume(re,1)))}catch(e){}}
+const alertHtml=(ex,reag)=>`<div class="banner debt" style="margin:0 0 8px"><b>Alerte stock.</b> Réactif en rupture à la pharmacie (${reag.map(esc).join(', ')}). Examens à ne pas encaisser : ${ex.map(esc).join(', ')}.</div>`;
+const curUser=()=>{try{const P=window.parent.PARAMS;return P.users.find(u=>u.id===P.current)||P.users[0]}catch(e){return null}};
+const isIdep=()=>{const u=curUser();return !!u&&u.role==='IDEP'};
+const isChef=()=>{const u=curUser();return !u||u.role==='Médecin-chef'};
+const chefName=()=>{const u=curUser();return u?u.nom:'Médecin-chef'};
+const PROTOS=['DTG 10 mg','DTG 50 mg','NVP 50 ml/5 ml','LP/R 100 mg/25 mg','LP/R 40 mg/10 mg','ATR/RTV 300 mg/100 mg','TDF+3TC 300 mg/300 mg','ABAC+3TC 120 mg/60 mg','ABAC+3TC 600 mg/300 mg','TDF+3TC+DTG 300/300/50 mg','ABAC+3TC+DTG 600/50/50 mg','TDF+3TC+EFZ 300/300/400 mg','ATZ/R 300 mg/100 mg'];
+const AGES={'0231':41,'0118':52,'0342':9,'0087':36,'0560':29,'0561':15,'0559':33};
+
+// ---------- Données de démonstration (dates relatives à aujourd'hui)
+let data={prest:[],ext:[],extEx:[],cert:[],dep:[],cl:[],clSeq:0,cloHist:[],rseq:0};
+let _seed=false;function nextRseq(){if(_seed)return ++data.rseq;const n=window.parent.CTA_SEQ('recu');data.rseq=n;return n}
+const alive=a=>a.filter(r=>!r.annule);
+const detteOf=d=>alive(data.prest).filter(r=>r.dossier===d).reduce((s,r)=>s+nonRec(r)-regl(r),0);
+function settle(statut,P,D,E){if(statut==='exo')return{R:0,nr:0};const R=Math.min(E,D);return{R,nr:Math.max(0,P-(E-R))}}
+function addPrest(x){
+  const P=x.lignes.reduce((s,l)=>s+l.p,0),D=detteOf(x.dossier);
+  const E=x.statut==='exo'?0:(x.encaisse===null?P+D:x.encaisse);
+  const {R,nr}=settle(x.statut,P,D,E);
+  const r={id:data.prest.length+1,recu:'R-'+String(nextRseq()).padStart(4,'0'),date:x.date,profil:x.profil,dossier:x.dossier,nom:x.nom,sexe:x.sexe,assure:x.assure,statut:x.assure?x.statut:(x.statut==='exo'?'exo':''),lignes:x.lignes,prestation:P,detteReprise:D,encaisse:E,reglement:R,nonRec:nr,detteApres:D-R+nr,obs:x.obs||'',heure:x.heure||hhmm(),agent:x.agent||agentName()};
+  data.prest.push(r);
+  B.upsert({dossier:x.dossier,nom:x.nom,sexe:x.sexe,assure:x.assure,statut:x.statut,age:x.age,contact:x.tel,premiere:x.date});
+  return r;
+}
+const specs=[];
+function addExt(x){
+  const c=CONSULTS.find(z=>z.k===x.consult);
+  const r={id:data.ext.length+1,recu:'R-'+String(nextRseq()).padStart(4,'0'),date:x.date,nom:x.nom,age:x.age,sexe:x.sexe,tel:x.tel||'',consult:x.consult,consultN:c.n,consultP:c.p,prestation:c.p,encaisse:c.p,st:'consult',heure:x.heure||hhmm(),agent:x.agent||agentName()};
+  data.ext.push(r);return r;
+}
+function addExtEx(visit,keys,date){
+  const exams=keys.map(k=>{const e=EXLIST.find(z=>z.k===k);return{k,n:e.n,p:e.p}}),P=exams.reduce((s,e)=>s+e.p,0);
+  const r={id:data.extEx.length+1,recu:'R-'+String(nextRseq()).padStart(4,'0'),date:date||today,visitId:visit.id,nom:visit.nom,exams,prestation:P,encaisse:P,heure:hhmm(),agent:agentName()};
+  visit.st='paye';delete visit.deverr;delete visit.req;data.extEx.push(r);return r;
+}
+function mk(off,profil,dossier,nom,sexe,assure,statut,keys,enc,obs,extra){specs.push({off,profil,dossier,nom,sexe,assure,statut,keys,enc,obs,extra:extra||{}})}
+const ALLOD=['od','consult','bpta'];
+const ALLSU=['consult','bsuivi'];
+const SUNOCD4=['consult','glyc','creat','trans'];
+function seed(){_seed=true;try{seed0()}finally{_seed=false}}
+function seed0(){
+  data={prest:[],ext:[],extEx:[],cert:[],dep:[],cl:[],clSeq:0,cloHist:[],rseq:0};specs.length=0;return;
+  mk(0,'ancien','0231','Nzamba Pierre','M',true,'ald',ALLSU,null);
+  mk(0,'nouveau','0560','Mba Estelle','F',false,'plein',ALLOD,10000,'Reste à payer au prochain passage');
+  mk(1,'ancien','0118','Obiang Jean','M',false,'plein',ALLSU,null,'A soldé son ancienne dette');
+  mk(2,'ancien','0342','Moussavou Léa','F',true,'exo',ALLSU,0);
+  mk(3,'ancien','0087','Ndong Sylvie','F',true,'ald',SUNOCD4,2000);
+  mk(5,'nouveau','0561','Essono Karl','M',true,'exo',ALLOD,0,'Adolescent');
+  mk(9,'ancien','0118','Obiang Jean','M',false,'plein',SUNOCD4,5000);
+  mk(14,'ancien','0342','Moussavou Léa','F',true,'exo',SUNOCD4,0);
+  mk(20,'nouveau','0559','Ella Nadège','F',true,'ald',ALLOD,null);
+  mk(33,'ancien','0231','Nzamba Pierre','M',true,'ald',ALLSU,null);
+  mk(40,'ancien','0087','Ndong Sylvie','F',true,'ald',ALLSU,4000);
+  // patients PVVIH supplémentaires (base qui se constitue) et consultations externes
+  let _s=20261030;const rnd=()=>{_s=(_s*1103515245+12345)&0x7fffffff;return _s/0x7fffffff};
+  const pick=a=>a[Math.floor(rnd()*a.length)];
+  const NOMS=['Bivigou Anita','Mouketou Serge','Nzigou Prisca','Moundounga Paul','Koumba Estelle','Mavoungou Ruth','Ndzime Gaël','Ogoula Mireille','Biyoghe Cédric','Mombo Sidonie','Ikapi Arnaud','Mabika Josiane','Ntoutoume Hervé','Ovono Pamela'],SX='FMFMFFMFMFFMMF';
+  NOMS.forEach((nom,i)=>{
+    const dos='06'+String(i+1).padStart(2,'0'),r=rnd(),st0=r<.12?'exo':r<.5?'plein':'ald',assure=rnd()>.45,statut=assure?st0:'';
+    const extra={age:18+Math.floor(rnd()*45),tel:'06 6'+Math.floor(rnd()*10)+' '+(10+Math.floor(rnd()*89))+' '+(10+Math.floor(rnd()*89))+' '+(10+Math.floor(rnd()*89))};
+    const first=6+Math.floor(rnd()*52);
+    [first,first-28,first-56].filter(o=>o>=0).forEach((o,k)=>mk(o,k===0?'nouveau':'ancien',dos,nom,SX[i],assure,statut,k===0?ALLOD:(rnd()<.5?ALLSU:SUNOCD4),null,'',extra));
+  });
+  const LN=['Mba','Nzé','Obame','Ndong','Moussavou','Mintsa','Bongo','Ekomi'],FN=['Marie','Pierre','Josée','Alain','Carine','Rodrigue','Flore','Hervé'];
+  for(let off=0;off<60;off++){
+    const dw=new Date(addDays(today,-off)+'T12:00:00').getDay();
+    const n=dw===0?0:(off<=1?2+Math.floor(rnd()*2):Math.floor(rnd()*4));
+    for(let j=0;j<n;j++){
+      const r=rnd(),ex=new Set(),ne=Math.floor(rnd()*4);for(let q=0;q<ne;q++)ex.add(pick(EXLIST).k);
+      const v=addExt({heure:seedTime(),date:addDays(today,-off),nom:pick(LN)+' '+pick(FN),age:2+Math.floor(rnd()*70),sexe:rnd()<.5?'F':'M',tel:rnd()<.5?'06 '+(10+Math.floor(rnd()*89))+' '+(10+Math.floor(rnd()*89))+' '+(10+Math.floor(rnd()*89)):'',consult:r<.5?'gen':r<.8?'idep':'psy'});if(ne>0&&off<=1&&rnd()<.5)v.st='demande';else if(ne>0)addExtEx(v,[...ex],addDays(today,-off));else v.st=(off<=0&&rnd()<.5)?'consult':'aucun';
+    }
+  }
+  for(let i=0;i<16;i++){
+    const off=Math.floor(rnd()*70),nb=1960+Math.floor(rnd()*45);
+    addCert({date:addDays(today,-off),heure:seedTime(),nom:pick(LN)+' '+pick(FN),obs:pick(['Coups et blessures','Accident de la route','Accident de travail','Violences']),naiss:nb+'-'+String(1+Math.floor(rnd()*12)).padStart(2,'0')+'-'+String(1+Math.floor(rnd()*28)).padStart(2,'0'),piece:(rnd()<.7?'CNI-':'PP-')+(100000+Math.floor(rnd()*899999)),montant:5000,agent:'Agent de caisse'});
+  }
+  specs.sort((a,b)=>b.off-a.off).forEach(s=>{
+    const lignes=s.keys.map(k=>{const a=ITEMS.find(x=>x.k===k);return{k,n:a.n,p:price(a,s.assure)}});
+    addPrest({date:addDays(today,-s.off),profil:s.profil,dossier:s.dossier,nom:s.nom,sexe:s.sexe,assure:s.assure,statut:s.statut,lignes,encaisse:s.enc,obs:s.obs,age:s.extra.age||AGES[s.dossier],tel:s.extra.tel,heure:seedTime(),agent:'Agent de caisse'});
+  });
+  const dep=(off,type,desc,dest,m,piece)=>data.dep.push({id:data.dep.length+1,date:addDays(today,-off),type,desc,dest,montant:m,piece});
+  dep(2,'Achat','Papier et cartouches d’encre','Papeterie du Centre',12500,'Facture 118');
+  dep(6,'Transport','Transport des échantillons','Chauffeur',15000,'Reçu 07');
+  dep(12,'Entretien','Réparation du climatiseur','Technicien',30000,'Facture 121');
+  dep(38,'Achat','Gants et masques','Pharmacie',20000,'Facture 109');
+}
+// ---------- Persistance (démonstration : stockage du navigateur), journal d'audit, activité
+const SK='cta.caisse.v1';
+let AUD=false,lastSaved='';
+const audit=(a,d)=>{if(!AUD)return;try{window.parent.AUDIT('Caisse',a,d)}catch(e){}};
+function persistLoad(){try{const s=localStorage.getItem(SK);if(!s)return false;const o=JSON.parse(s);if(!o||!o.data)return false;data=o.data;data.cloHist=data.cloHist||[];migrateClo();if(o.items){ITEMS.length=0;o.items.forEach(i=>ITEMS.push(i))}lastSaved=s;return true}catch(e){return false}}
+function persistSave(){if(window.parent.NOSAVE)return;try{const s=JSON.stringify({data,items:ITEMS});if(s===lastSaved)return;localStorage.setItem(SK,s);lastSaved=s;window.parent.SAVED&&window.parent.SAVED('caisse')}catch(e){try{window.parent.STORAGE_FAIL&&window.parent.STORAGE_FAIL(e)}catch(x){}}}
+setInterval(persistSave,3000);addEventListener('pagehide',persistSave);
+['click','keydown','input','touchstart'].forEach(e=>addEventListener(e,()=>{try{window.parent.ACTIVITY()}catch(x){}clearTimeout(window._sv);window._sv=setTimeout(persistSave,500);},true));
+// ---------- Clôture de caisse : une clôture par caissier (relève). Chaque encaissement porte le nom du caissier connecté.
+const CLO_LISTS=()=>[['prest',data.prest],['ext',data.ext],['extEx',data.extEx],['cert',data.cert],['dep',data.dep]];
+function migrateClo(){
+  data.cl=data.cl||[];data.clSeq=data.clSeq||0;
+  data.dep.forEach(x=>{if(!x.agent)x.agent='Agent de caisse'});
+  if(data.clotures){ // ancien modèle : une clôture par journée avec comptage
+    Object.values(data.clotures).sort((a,b)=>a.date.localeCompare(b.date)).forEach(c=>{
+      const id=++data.clSeq;
+      CLO_LISTS().forEach(([k,a])=>a.forEach(r=>{if(r.date===c.date&&!r.cloId)r.cloId=id}));
+      data.cl.push({id,agent:c.agent||'—',heure:c.heure||'',date:c.date,du:c.date,au:c.date,n:c.n,nan:c.nan||0,pvvih:c.pvvih,ext:c.ext,cert:c.cert,rec:c.rec,dep:c.dep,attendu:c.attendu,obs:c.motif||''});
+    });
+    delete data.clotures;
+  }
+}
+const cloMsg=r=>{const c=data.cl.find(x=>x.id===r.cloId);return `Ce reçu est dans la clôture n° ${r.cloId}${c?' de '+c.agent:''} : plus d’annulation sans réouverture par le médecin-chef (onglet Clôture).`};
+function cloFig(items){ // items : {prest,ext,extEx,cert,dep} (listes d'enregistrements)
+  const A=a=>a.filter(r=>!r.annule),P=A(items.prest),X=A(items.ext),XE=A(items.extEx),C=A(items.cert),D=items.dep;
+  const pvvih=P.filter(r=>r.statut!=='exo').reduce((s,r)=>s+r.encaisse,0),ext=X.reduce((s,r)=>s+r.encaisse,0)+XE.reduce((s,r)=>s+r.encaisse,0),cert=C.reduce((s,r)=>s+r.montant,0),dep=D.reduce((s,r)=>s+r.montant,0);
+  const n=P.length+X.length+XE.length+C.length,nan=['prest','ext','extEx','cert'].reduce((s,k)=>s+items[k].filter(r=>r.annule).length,0);
+  const dates=[...items.prest,...items.ext,...items.extEx,...items.cert,...items.dep].map(r=>r.date).sort();
+  return{pvvih,ext,cert,dep,rec:pvvih+ext+cert,attendu:pvvih+ext+cert-dep,n,nan,du:dates[0]||'',au:dates[dates.length-1]||''};
+}
+const shiftItems=agent=>{const o={};CLO_LISTS().forEach(([k,a])=>o[k]=a.filter(r=>!r.cloId&&(r.agent||'Agent de caisse')===agent));return o};
+function openAgents(){
+  const m={};CLO_LISTS().forEach(([k,a])=>a.forEach(r=>{if(!r.cloId){const g=r.agent||'Agent de caisse';m[g]=1}}));
+  return Object.keys(m).map(ag=>({agent:ag,F:cloFig(shiftItems(ag))})).filter(x=>x.F.n+x.F.nan>0||x.F.dep>0).sort((a,b)=>a.F.du.localeCompare(b.F.du));
+}
+function autoCloturePast(){ // démonstration : les journées passées de l'historique sont déjà clôturées
+  const ids=new Set();
+  const old={};CLO_LISTS().forEach(([k,a])=>old[k]=a.filter(r=>!r.cloId&&r.date<today));
+  const F=cloFig(old);if(F.n+F.nan+F.dep===0)return;
+  const id=++data.clSeq;CLO_LISTS().forEach(([k,a])=>a.forEach(r=>{if(!r.cloId&&r.date<today)r.cloId=id}));
+  data.cl.push({id,agent:'Clôture automatique (démo)',heure:'18:00',date:F.au,...F,obs:''});
+}
+function doClose(agent,byName,obs){
+  const it=shiftItems(agent),F=cloFig(it);
+  const id=++data.clSeq;CLO_LISTS().forEach(([k])=>it[k].forEach(r=>r.cloId=id));
+  const c={id,agent,heure:hhmm(),date:today,...F,obs:obs||'',par:byName!==agent?byName:''};data.cl.push(c);
+  audit('Clôture de caisse',`n° ${id} · ${agent}${c.par?' (clôturée par '+c.par+')':''} · encaissé ${fmt(F.rec)} · dépenses ${fmt(F.dep)} · à remettre ${fmt(F.attendu)}`);
+  return c;
+}
+const cloNote=()=>{
+  const oa=openAgents(),me=agentName(),last=data.cl.filter(c=>!/automatique/.test(c.agent)).slice(-1)[0];
+  let h='';
+  const others=oa.filter(x=>x.agent!==me);
+  if(others.length)h+=`<div class="banner debt" style="margin:0 0 8px"><b>Caisse non clôturée par :</b> ${others.map(x=>`${esc(x.agent)} (${x.F.n} reçu(s), ${fmt(x.F.attendu)} à remettre${x.F.du<today?', depuis le '+fdate(x.F.du):''})`).join(' · ')}. Ces encaissements restent à son nom jusqu’à sa clôture (onglet Clôture).</div>`;
+  const mine=oa.find(x=>x.agent===me);
+  if(mine)h+=`<div class="banner" style="margin:0 0 8px">Vos encaissements non clôturés : <b>${mine.F.n}</b> reçu(s), <b>${fmt(mine.F.attendu)}</b> à remettre. Pensez à clôturer en fin de service.</div>`;
+  if(last)h+=`<div class="banner" style="margin:0 0 8px;opacity:.9">Dernière clôture : ${esc(last.agent)} · ${fdate(last.date)} à ${esc(last.heure)} · n° ${last.id}.</div>`;
+  return h;
+};
+function printClo(id){
+  const cl=data.cl.find(c=>c.id===id);if(!cl)return;
+  const row=(l,v,b)=>`<tr><td>${l}</td><td class="r">${b?'<b>'+fmt(v)+'</b>':fmt(v)}</td></tr>`;
+  const html=`<h1>Bordereau de clôture de caisse n° ${cl.id}</h1><p>Caissier : <b>${esc(cl.agent)}</b>${cl.par?' (clôturée par '+esc(cl.par)+')':''}<br>Période : ${cl.du?fdate(cl.du):'—'}${cl.au&&cl.au!==cl.du?' au '+fdate(cl.au):''} · ${cl.n} reçu(s) valide(s)${cl.nan?' · '+cl.nan+' annulé(s)':''}</p>
+  <table class="t"><tbody>${row('Encaissements PVVIH',cl.pvvih)}${row('Consultations et examens externes',cl.ext)}${row('Certificats médicaux',cl.cert)}${row('Total encaissé',cl.rec,1)}${row('Dépenses',-cl.dep)}${row('Montant à remettre',cl.attendu,1)}</tbody></table>
+  ${cl.obs?`<p>Observation : ${esc(cl.obs)}</p>`:''}
+  <p class="m">Clôturé le ${fdate(cl.date)} à ${esc(cl.heure)}</p>
+  <div class="sign"><div>Caissier sortant</div><div>Caissier entrant / contrôle</div></div>`;
+  try{window.parent.printDoc('Clôture de caisse n° '+cl.id,html)}catch(e){window.print()}
+}
+function renderClo(){
+  const me=agentName(),oa=openAgents(),line=(l,v,b)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;${b?'border-top:1px solid var(--line);font-weight:700':''}"><span>${l}</span><span class="num">${fmt(v)}</span></div>`;
+  const mine=oa.find(x=>x.agent===me),F=mine?mine.F:cloFig({prest:[],ext:[],extEx:[],cert:[],dep:[]});
+  let h=`<div class="banner"><b>Caissier connecté : ${esc(me)}</b>. Les encaissements, annulations et dépenses sont enregistrés à son nom.</div>`;
+  h+=`<h3 style="margin:14px 0 6px;font-size:1rem">Votre caisse (non clôturée)</h3><div class="kpis"><div class="kpi"><div class="k">Reçus valides</div><div class="n">${F.n}</div><div class="d">${F.nan} annulé(s)</div></div><div class="kpi"><div class="k">Encaissé</div><div class="n">${fmt(F.rec)}</div></div><div class="kpi"><div class="k">Dépenses</div><div class="n">${fmt(F.dep)}</div></div><div class="kpi"><div class="k">À remettre</div><div class="n">${fmt(F.attendu)}</div></div></div>
+  ${line('Encaissements PVVIH',F.pvvih)}${line('Consultations et examens externes',F.ext)}${line('Certificats médicaux',F.cert)}${line('Dépenses',-F.dep)}${line('Montant à remettre',F.attendu,1)}
+  <label for="cloObs">Observation (facultative)</label><input type="text" id="cloObs" autocomplete="off">
+  <div class="err" id="cloErr" role="alert"></div>
+  <button class="btn" id="cloOk"${mine?'':' disabled'}>Clôturer ma caisse</button>${mine?'':'<p class="muted" style="font-size:.85rem">Rien à clôturer : aucun encaissement ni dépense non clôturé à votre nom.</p>'}`;
+  const others=oa.filter(x=>x.agent!==me);
+  h+=`<h3 style="margin:20px 0 6px;font-size:1rem">Caisses non clôturées des autres caissiers</h3><div class="scroll"><table id="cloOpen"><thead><tr><th>Caissier</th><th class="r">Reçus</th><th class="r">Encaissé</th><th class="r">Dépenses</th><th class="r">À remettre</th><th>Depuis</th><th></th></tr></thead><tbody>${others.length?others.map(x=>`<tr><td><b>${esc(x.agent)}</b></td><td class="r">${x.F.n}</td><td class="r">${fmt(x.F.rec)}</td><td class="r">${fmt(x.F.dep)}</td><td class="r">${fmt(x.F.attendu)}</td><td>${x.F.du?fdate(x.F.du):'—'}</td><td>${isChef()?`<button class="link" data-cf="${esc(x.agent)}">Clôturer pour lui (médecin-chef)</button>`:'<span class="muted" style="font-size:.8rem">Clôture par lui-même ou le médecin-chef</span>'}</td></tr>`).join(''):'<tr><td colspan="7" class="muted">Aucune : toutes les autres caisses sont clôturées.</td></tr>'}</tbody></table></div>`;
+  const H=data.cl.slice().sort((a,b)=>b.id-a.id).slice(0,40);
+  h+=`<h3 style="margin:20px 0 6px;font-size:1rem">Historique des clôtures</h3><div class="scroll"><table id="cloHist"><thead><tr><th>N°</th><th>Date</th><th>Heure</th><th>Caissier</th><th>Période</th><th class="r">Reçus</th><th class="r">Encaissé</th><th class="r">Dépenses</th><th class="r">Remis</th><th>Clôturée par</th><th></th></tr></thead><tbody>${H.length?H.map(x=>`<tr><td>${x.id}</td><td>${fdate(x.date)}</td><td>${esc(x.heure)}</td><td>${esc(x.agent)}</td><td>${x.du?fdate(x.du):''}${x.au&&x.au!==x.du?' → '+fdate(x.au):''}</td><td class="r">${x.n}</td><td class="r">${fmt(x.rec)}</td><td class="r">${fmt(x.dep)}</td><td class="r">${fmt(x.attendu)}</td><td>${x.par?esc(x.par):'lui-même'}</td><td><button class="link" data-pr="${x.id}">Imprimer</button> ${isChef()?`<button class="link" data-ro="${x.id}">Rouvrir</button>`:''}</td></tr>`).join(''):'<tr><td colspan="11" class="muted">Aucune clôture.</td></tr>'}</tbody></table></div>
+  <div class="err" id="cloErr2" role="alert"></div>`;
+  $('cloBody').innerHTML=h;
+  const ask=(agent,byName)=>{
+    const ff=cloFig(shiftItems(agent));
+    $('mt').textContent='Clôturer la caisse de '+agent;
+    $('mdl').innerHTML=`<dt>Caissier</dt><dd>${esc(agent)}</dd><dt>Reçus</dt><dd>${ff.n}</dd><dt>Encaissé</dt><dd>${fmt(ff.rec)}</dd><dt>Dépenses</dt><dd>${fmt(ff.dep)}</dd><dt>Montant à remettre</dt><dd>${fmt(ff.attendu)}</dd><dt>Effet</dt><dd>Ces reçus ne peuvent plus être annulés</dd>`;
+    const obs=$('cloObs')&&agent===me?$('cloObs').value.trim():'';
+    confirmFn=()=>{doClose(agent,byName,obs);renderClo();toast('Caisse clôturée : '+agent)};
+    $('modal').hidden=false;$('mYes').focus();
+  };
+  $('cloOk').onclick=()=>{if(!mine){$('cloErr').textContent='Aucun encaissement à clôturer.';return}ask(me,me)};
+  $('cloBody').querySelectorAll('[data-cf]').forEach(b=>b.onclick=()=>{if(!isChef()){toast('Réservé au médecin-chef');return}ask(b.dataset.cf,chefName())});
+  $('cloBody').querySelectorAll('[data-pr]').forEach(b=>b.onclick=()=>printClo(+b.dataset.pr));
+  $('cloBody').querySelectorAll('[data-ro]').forEach(b=>b.onclick=()=>{
+    if(!isChef()){$('cloErr2').textContent='Réouverture réservée au médecin-chef.';return}
+    const cl=data.cl.find(c=>c.id===+b.dataset.ro);
+    $('mt').textContent='Rouvrir la clôture n° '+cl.id;
+    $('mdl').innerHTML=`<dt>Caissier</dt><dd>${esc(cl.agent)}</dd><dt>Encaissé</dt><dd>${fmt(cl.rec)}</dd><dt>Effet</dt><dd>Les reçus redeviennent non clôturés à son nom</dd>`;
+    confirmFn=()=>{CLO_LISTS().forEach(([k,a])=>a.forEach(r=>{if(r.cloId===cl.id)delete r.cloId}));data.cloHist.push({...cl,reouvert:{par:chefName(),date:today,heure:hhmm()}});data.cl=data.cl.filter(c=>c.id!==cl.id);audit('Réouverture de caisse','clôture n° '+cl.id+' · '+cl.agent);renderClo();toast('Clôture rouverte')};
+    $('modal').hidden=false;$('mYes').focus();
+  });
+}
+const LOADED=persistLoad();if(!LOADED)seed();
+
+// ---------- Onglets et compartiments
+let cur='acc',comp='pvvih';
+function renderAcc(){
+  const P=alive(data.prest).filter(r=>r.date===today),X=alive(data.ext).filter(r=>r.date===today),e=entryParts(today);
+  $('accT').textContent='Tableau de bord · '+DAYN[new Date(today+'T12:00:00').getDay()]+' '+fdate(today);
+  const K=[['Patients reçus',P.length+X.length,`${P.length} PVVIH · ${X.length} consultation externe`],['Recette encaissée',fmt(e.p+e.x),`${fmt(e.p)} PVVIH · ${fmt(e.x)} externe`],['Examens en attente de paiement',alive(data.ext).filter(r=>r.st==='demande').length,'demandés par le médecin'],['Certificats établis',alive(data.cert).filter(r=>r.date===today).length,'aujourd’hui']];
+  {const rp=ruptures();$('accAlert').innerHTML=(rp.ex.length?alertHtml(rp.ex,rp.reag):'')+cloNote()}
+  $('accK').innerHTML=K.map(k=>`<div class="kpi"><div class="k">${k[0]}</div><div class="n">${k[1]}</div><div class="d">${k[2]}</div></div>`).join('');
+}
+function applyHolder(){$('agent').value=agentName()}
+function go(tab){
+  if(isIdep()){if(tab!=='rg')tab='reg';comp='ext';xCons='idep';xTab='idep';rgMode='ext';rgType='idep';document.querySelectorAll('nav button').forEach(x=>{x.hidden=!['reg','rg'].includes(x.dataset.tab);if(x.dataset.tab==='reg')x.textContent='Patients'})}else document.querySelectorAll('nav button').forEach(x=>{x.hidden=false;if(x.dataset.tab==='reg')x.textContent='Saisie'});
+  applyHolder();
+  cur=tab;
+  document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x.dataset.tab===tab));
+  ['acc','reg','rg','ext','cert','pat','dep','clo','syn','sta'].forEach(id=>$(id).hidden=true);
+  $('compBar').hidden=tab!=='reg'||isIdep();
+  const show=tab==='reg'?({pvvih:'reg',ext:'ext',cert:'cert'})[comp]:tab;
+  $(show).hidden=false;
+  if(show==='acc')renderAcc();
+  if(show==='rg')renderRegistre();
+  if(show==='reg')renderActes();
+  if(show==='ext')renderExt();
+  if(show==='cert')renderCert();
+  if(tab==='pat')renderPat();
+  if(tab==='dep')renderDep();
+  if(tab==='clo')renderClo();
+  if(tab==='syn')renderSyn();
+  if(tab==='sta'){renderCmp();renderStats()}
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+$('comp').querySelectorAll('button').forEach(b=>b.onclick=()=>{comp=b.dataset.v;$('comp').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));go('reg')});
+
+// ---------- Registre
+const f={profil:'ancien',assure:true,statut:'ald',statIns:'ald',exo:false,exoNA:false,checked:new Set()};
+const STL=s=>({plein:'Plein',ald:'Plein ALD',exo:'Exonéré'})[s]||'—';
+function syncStatut(){
+  // assuré : statut (Plein / Plein ALD / Exonéré) ; non assuré : le statut disparaît, seul « Exonéré » Oui/Non apparaît (Non par défaut)
+  const a=f.assure;
+  $('statutBox').hidden=!a;$('exoBox').hidden=a;
+  $('statut').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',a&&b.dataset.v===f.statIns));
+  $('exoNA').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.v==='1')===f.exoNA));
+  f.statut=a?f.statIns:(f.exoNA?'exo':'');
+}
+function seg(id,key,conv){
+  $(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    f[key]=conv?conv(b.dataset.v):b.dataset.v;
+    $(id).querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    if(key==='profil'){const keep=new Set(itemsFor(f.profil).map(i=>i.k));f.checked=new Set([...f.checked].filter(k=>keep.has(k)));if(f.profil==='nouveau')f.checked.add('od')}
+    renderActes();
+  });
+}
+seg('profil','profil');seg('assure','assure',v=>{const a=v==='1';if(!a)f.exoNA=false;return a});seg('statut','statIns');seg('exoNA','exoNA',v=>v==='1');
+$('date').value=today;$('dDate').value=today;
+
+function renderActes(){
+  syncStatut();
+  itemsFor(f.profil).forEach(i=>{if(manque(i.n).length)f.checked.delete(i.k)});
+  const blk=itemsFor(f.profil).filter(i=>manque(i.n).length),blkR=[...new Set(blk.flatMap(i=>manque(i.n)))];
+  const open=new Set([...document.querySelectorAll('#actes details[open]')].map(d=>d.dataset.g));
+  $('actes').innerHTML=(blk.length?`<div style="padding:8px">${alertHtml(blk.map(i=>i.n),blkR)}</div>`:'')+groups().map(g=>{
+    const its=itemsFor(f.profil).filter(i=>i.g===g);if(!its.length)return '';
+    const n=its.filter(i=>f.checked.has(i.k)).length;
+    return `<details class="grp" data-g="${g}" ${open.has(g)||n>0||g==='Ouverture et consultation'?'open':''}><summary><span>${g}</span><span class="muted">${n?n+' coché(s)':''}</span></summary>${its.map(i=>{const pr=price(i,f.assure),mq=manque(i.n);return `<label class="acte${mq.length?' off':f.checked.has(i.k)?' on':''}" style="margin:0"><input type="checkbox" data-k="${i.k}" ${f.checked.has(i.k)?'checked':''} ${mq.length?'disabled':''}><span>${esc(i.n)}${mq.length?'<span class="rupt">Réactif en rupture : ne pas encaisser</span>':''}</span><span class="p">${pr?fmt(pr):'Gratuit'}</span></label>`}).join('')}</details>`}).join('');
+  $('actes').querySelectorAll('input').forEach(i=>i.onchange=()=>{i.checked?f.checked.add(i.dataset.k):f.checked.delete(i.dataset.k);renderActes()});
+  renderTicket();
+}
+function curPrest(){return itemsFor(f.profil).filter(i=>f.checked.has(i.k)).reduce((s,i)=>s+price(i,f.assure),0)}
+let curDebt=0;
+function renderTicket(){
+  const p=curPrest(),exo=f.statut==='exo',D=exo?0:curDebt,total=p+D;
+  $('tPrest').textContent=fmt(p);
+  $('debtRow').hidden=!(curDebt>0);$('totRow').hidden=!(curDebt>0);
+  $('tDebt').textContent=fmt(curDebt);$('tTot').textContent=fmt(exo?p:total);
+  $('enc').disabled=exo;$('full').disabled=exo;
+  if(exo)$('enc').value='';
+  const enc=exo?0:Math.max(0,Number($('enc').value)||0);
+  const {R,nr}=settle(f.statut,p,D,enc);
+  $('regRow').hidden=!(curDebt>0&&!exo);$('tReg').textContent=fmt(R);
+  $('tRest').textContent=fmt(nr);
+  $('restRow').classList.toggle('owe',nr>0);
+  $('exoNote').innerHTML=exo?'<div class="exo-note">Exonéré : rien à payer. Cette prestation est suivie en statistique à part et ne compte pas dans la synthèse.</div>':'';
+  $('err').textContent=(!exo&&enc>total)?'L’encaissé ne peut pas dépasser le total à payer.':'';
+}
+$('enc').oninput=renderTicket;
+$('full').onclick=()=>{$('enc').value=curPrest()+(f.statut==='exo'?0:curDebt);renderTicket()};
+$('none').onclick=()=>{f.checked.clear();renderActes()};
+
+// Recherche par n° de dossier (base patients commune)
+$('dossier').oninput=()=>{
+  const d=$('dossier').value.trim(),b=d&&B.find(d);
+  curDebt=d?detteOf(d):0;
+  if(!b){$('found').innerHTML='';renderTicket();return}
+  if(b.nom)$('nom').value=b.nom;
+  if(b.sexe)$('sexe').value=b.sexe;
+  if(b.age)$('age').value=b.age;if(b.contact)$('tel').value=b.contact;
+  if(b.assure!==null&&b.assure!==undefined){f.assure=b.assure;$('assure').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',(x.dataset.v==='1')===f.assure))}
+  if(b.statut&&f.assure)f.statIns=b.statut;
+  const hint=b.nom?'':' Fiche créée à la pharmacie : complétez le nom.';
+  $('found').innerHTML=curDebt>0?`<div class="banner debt"><b>Dossier retrouvé.</b> Dette de <b>${fmt(curDebt)}</b> : elle est reprise dans le total à payer.${hint}</div>`:`<div class="banner"><b>Dossier retrouvé.</b> Aucune dette.${hint}</div>`+extCard(a,b)+certCard(a,b);
+  renderActes();
+};
+
+// Validation
+let pending=null;
+$('valider').onclick=()=>{
+  let dossier=$('dossier').value.trim();const nom=$('nom').value.trim();
+  const exo=f.statut==='exo',p=curPrest(),D=exo?0:curDebt,total=p+D,enc=exo?0:Math.max(0,Number($('enc').value)||0);
+  if(!nom||f.checked.size===0||(!dossier&&f.profil!=='nouveau')){$('err').textContent=f.profil==='nouveau'?'Renseignez le nom et au moins un examen (le n° de dossier est facultatif pour un nouveau patient).':'Renseignez le n° de dossier, le nom et au moins un examen.';return}
+  if(!dossier){let n=0;B.list.forEach(b=>{if(/^SN-\d+$/.test(b.dossier))n=Math.max(n,+b.dossier.slice(3))});dossier='SN-'+String(n+1).padStart(4,'0')}
+  {const dn=B.sameName&&B.sameName(nom,dossier);if(dn){$('err').textContent='Ce nom existe déjà sous le n° '+dn.dossier+' : saisissez ce n° pour éviter un doublon.';return}}
+  {const bq=itemsFor(f.profil).filter(i=>f.checked.has(i.k)&&manque(i.n).length);if(bq.length){$('err').textContent='Réactif en rupture à la pharmacie : '+bq.map(i=>i.n).join(', ')+'. Ne pas encaisser.';return}}
+  if(!exo&&enc>total){$('err').textContent='L’encaissé ne peut pas dépasser le total à payer.';return}
+  $('err').textContent='';
+  const lignes=itemsFor(f.profil).filter(i=>f.checked.has(i.k)).map(i=>({k:i.k,n:i.n,p:price(i,f.assure)}));
+  pending={date:$('date').value||today,profil:f.profil,dossier,nom,sexe:$('sexe').value,assure:f.assure,statut:f.statut,lignes,encaisse:enc,obs:$('obs').value.trim(),age:Number($('age').value)||'',tel:$('tel').value.trim()};
+  const {R,nr}=settle(f.statut,p,D,enc);
+  const st=STL(f.statut);
+  $('mdl').innerHTML=`<dt>Patient</dt><dd>${esc(nom)} (${/^SN-\d+$/.test(dossier)?'n° de dossier à attribuer':'n° '+esc(dossier)})</dd><dt>Profil</dt><dd>${f.profil==='nouveau'?'Nouveau':'Ancien'}</dd><dt>Statut</dt><dd>${f.assure?st+' · assuré':(f.statut==='exo'?'non assuré · exonéré':'non assuré')}</dd><dt>Examens</dt><dd>${lignes.length}</dd><dt>Prestation du jour</dt><dd>${fmt(p)}</dd>${D>0?`<dt>Dette reprise</dt><dd>${fmt(D)}</dd><dt>Total à payer</dt><dd>${fmt(total)}</dd>`:''}<dt>Encaissé</dt><dd>${fmt(enc)}</dd>${D>0?`<dt>dont règlement de dette</dt><dd>${fmt(R)}</dd>`:''}<dt>Non recouvré</dt><dd>${fmt(nr)}</dd>`;
+  $('mt').textContent='Confirmer l’enregistrement';
+  confirmFn=()=>{f.exoNA=false;const r=addPrest(pending);audit('Reçu '+r.recu,'PVVIH · dossier '+r.dossier+' · encaissé '+fmt(r.encaisse));consumeFor(r.lignes.map(l=>l.n));['dossier','nom','obs','enc','age','tel'].forEach(i=>$(i).value='');curDebt=0;$('found').innerHTML='';f.checked.clear();renderActes();renderReg();showRecu(r,false)};
+  $('modal').hidden=false;$('mYes').focus();
+};
+let confirmFn=null;
+$('mNo').onclick=()=>$('modal').hidden=true;
+$('mYes').onclick=()=>{$('modal').hidden=true;if(confirmFn)confirmFn()};
+function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;setTimeout(()=>e.hidden=true,2200)}
+
+// Reçu de paiement
+const denseFs=n=>n<=6?10:n<=10?9:n<=14?8:7;
+const cutLine='<div class="cut">✂ - - - - - - - - - - - - - - - - - - - - - -</div>';
+const recuCopies=(fn,fs)=>['PATIENT','CAISSE','LABORATOIRE'].map(w=>`<div class="copy" style="--fs:${fs}pt">${fn(w)}</div>`).join(cutLine);
+function showRecu(r,dup){
+  const exo=r.statut==='exo',st=STL(r.statut);
+  const rows=r.lignes.map(l=>`<tr><td>${esc(l.n||(ITEMS.find(x=>x.k===l.k)||{}).n||l.k)}</td><td class="r">${l.p?fmt(l.p):'Gratuit'}</td></tr>`).join('');
+  const one=who=>`<div style="text-align:center"><b>Centre de Traitement Ambulatoire de Lambaréné</b><div class="muted" style="font-size:.8em">Reçu de paiement · PVVIH${dup?' · DUPLICATA':''} · exemplaire <b>${who}</b></div></div>
+  <div class="rl"><span>N° <b>${r.recu}</b></span><span>${fdate(r.date)} · ${r.heure||''}</span></div>
+  <div style="font-size:.9em">Patient : <b>${esc(r.nom)}</b> · ${/^SN-\d+$/.test(r.dossier)?'n° de dossier à attribuer':'dossier '+esc(r.dossier)} · ${r.profil==='nouveau'?'Nouveau':'Ancien'} · ${r.assure?st+' · assuré CNAMGS':'non assuré'}</div>
+  <table class="mini"><tbody>${rows}</tbody></table>
+  <div class="rl"><span>Prestation du jour</span><b>${fmt(r.prestation)}</b></div>
+  ${r.detteReprise>0&&!exo?`<div class="rl"><span>Dette reprise</span><b>${fmt(r.detteReprise)}</b></div><div class="rl"><span>Total à payer</span><b>${fmt(r.prestation+r.detteReprise)}</b></div>`:''}
+  ${exo?'<div class="rl b"><span>Exonéré : aucun paiement</span><b>0 F</b></div>':`<div class="rl"><span>Encaissé${r.detteReprise>0?' (dont dette '+fmt(r.reglement)+')':''}</span><b>${fmt(r.encaisse)}</b></div><div class="rl b"><span>Reste à payer</span><b>${fmt(r.nonRec)}</b></div>`}
+  <div class="rl" style="color:var(--mute);font-size:.8em"><span>Agent de caisse : ${esc(r.agent||'—')}</span><span>Dette restante : ${fmt(r.detteApres)}</span></div>`;
+  $('recu').innerHTML=recuCopies(one,denseFs(r.lignes.length+(r.detteReprise>0?4:2)));
+  $('recuModal').hidden=false;
+}
+function showRecuCert(r,dup){
+  $('recu').innerHTML=`<div style="text-align:center"><b>Centre de Traitement Ambulatoire de Lambaréné</b><div class="muted" style="font-size:.85rem">Reçu de paiement · Certificat médical${dup?' · DUPLICATA':''}</div></div>
+  <div class="rl" style="margin-top:8px"><span>N° <b>${r.recu}</b></span><span>${fdate(r.date)} · ${r.heure||''}</span></div>
+  <div style="font-size:.9rem;line-height:1.6">Nom et prénom : <b>${esc(r.nom)}</b><br>Date de naissance : ${fdate(r.naiss)}<br>Pièce d’identité n° : ${esc(r.piece)}<br>Motif : ${esc(r.obs||'—')}</div>
+  <div class="rl b"><span>Montant payé</span><b>${fmt(r.montant)}</b></div>
+  <div class="rl" style="margin-top:18px;color:var(--mute);font-size:.8rem"><span>Agent de caisse : ${esc(r.agent||'—')}</span><span>Signature du demandeur : ________</span></div>`;
+  $('recuModal').hidden=false;
+}
+$('rcClose').onclick=()=>$('recuModal').hidden=true;
+$('rcPrint').onclick=()=>{document.body.classList.add('print-recu');try{window.print()}catch(e){toast('Impression indisponible ici')}document.body.classList.remove('print-recu')};
+
+function renderReg(){if(!$('rg').hidden)renderRegistre()}
+let rgMode='pvvih',rgType='gen';
+const M=n=>({m:n});
+const DAYN=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+function regData(){
+  const q=$('rgQ').value.trim().toLowerCase(),d1=$('rgD1').value,d2=$('rgD2').value,inD=r=>(!d1||r.date>=d1)&&(!d2||r.date<=d2);
+  let head,rows;
+  if(rgMode==='pvvih'){
+    head=['Ordre','Date','Heure','N° dossier','Nom et prénom','Âge','Sexe','Assuré','Statut','Éléments payés','Prestation','Dette reprise','Encaissé','Règlement de dette','Non recouvré','Reçu','Agent'];
+    rows=data.prest.filter(r=>inD(r)&&(!q||r.dossier.toLowerCase().includes(q)||r.nom.toLowerCase().includes(q))).map(r=>{const b=B.find(r.dossier)||{},ex=r.statut==='exo';
+      return{r,kind:'prest',amount:ex?0:r.encaisse,cells:[r.id,fdate(r.date),r.heure||'',r.dossier,r.nom,b.age||'',r.sexe,r.assure?'Oui':'Non',STL(r.statut),r.lignes.map(l=>l.n||l.k).join(', '),M(r.prestation),M(ex?'':(r.detteReprise||'')),M(ex?'':r.encaisse),M(ex?'':(r.reglement||'')),M(ex?'':r.nonRec),{recu:r.recu,id:r.id,kind:'prest'},r.agent||'']}});
+  }else if(rgMode==='ext'){
+    head=['Ordre','Date','Heure','Patient','Âge','Sexe','Téléphone','Consultation','Statut','Prix consultation','Examens payés','Total examens','Total payé','Reçu consultation','Reçus examens','Agent'];
+    rows=data.ext.filter(r=>r.consult===rgType).sort((a,b)=>a.id-b.id).map((r,i)=>({r,o:i+1})).filter(({r})=>inD(r)&&(!q||r.nom.toLowerCase().includes(q))).map(({r,o})=>{
+      const ex=data.extEx.filter(e=>e.visitId===r.id),te=ex.reduce((s,e)=>s+e.encaisse,0);
+      return{r,kind:'ext',amount:r.encaisse+te,cells:[o,fdate(r.date),r.heure||'',r.nom,r.age||'',r.sexe,r.tel||'',r.consultN,ST[r.st||'consult'],M(r.consultP),ex.flatMap(e=>e.exams.map(z=>z.n)).join(', '),M(te),M(r.encaisse+te),{recu:r.recu,id:r.id,kind:'ext'},{recus:ex.map(e=>({recu:e.recu,id:e.id}))},r.agent||'']}});
+  }else{
+    head=['Ordre','Date de réception','Heure','Nom et prénom','Date de naissance','N° pièce d’identité','Observation','Montant','Reçu','Agent'];
+    rows=data.cert.filter(r=>inD(r)&&(!q||r.nom.toLowerCase().includes(q)||r.piece.toLowerCase().includes(q))).map(r=>({r,kind:'cert',amount:r.montant,cells:[r.id,fdate(r.date),r.heure||'',r.nom,fdate(r.naiss),r.piece,r.obs||'',M(r.montant),{recu:r.recu,id:r.id,kind:'cert'},r.agent||'']}));
+  }
+  rows.sort((a,b)=>b.r.date.localeCompare(a.r.date)||b.r.id-a.r.id);
+  return{head,rows};
+}
+const cellTxt=c=>c&&c.m!==undefined?c.m:c&&c.recu?c.recu:c&&c.recus?c.recus.map(x=>x.recu).join(' '):c;
+function renderRegistre(){
+  $('rgSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===rgMode));
+  $('rgSeg').hidden=isIdep();$('rgTypesW').hidden=rgMode!=='ext'||isIdep();
+  $('rgTypes').innerHTML=CONS().map(c=>`<button data-v="${c.k}" aria-pressed="${rgType===c.k}">${c.n}</button>`).join('');
+  $('rgTypes').querySelectorAll('button').forEach(b=>b.onclick=()=>{rgType=b.dataset.v;renderRegistre()});
+  const {head,rows}=regData(),ok=rows.filter(x=>!x.r.annule),tot=ok.reduce((s,x)=>s+x.amount,0),nan=rows.length-ok.length;
+  $('rgSum').innerHTML=`<b>${ok.length}</b> enregistrement(s) valide(s)${nan?` et ${nan} annulé(s)`:''} · ${rgMode==='cert'?'montant':'encaissé'} : <b>${fmt(tot)}</b>`;
+  const shown=rows.slice(0,300),N=head.length+1;
+  let h2='<thead><tr>'+head.map(x=>`<th>${x}</th>`).join('')+'<th class="noprint"></th></tr></thead><tbody>',last='';
+  shown.forEach(x=>{
+    if(x.r.date!==last){last=x.r.date;const g=shown.filter(y=>y.r.date===last&&!y.r.annule);h2+=`<tr class="day"><td colspan="${N}">${DAYN[new Date(last+'T12:00:00').getDay()]} ${fdate(last)} · ${g.length} enregistrement(s) · ${fmt(g.reduce((s,y)=>s+y.amount,0))}</td></tr>`}
+    const a=x.r.annule;
+    h2+=`<tr class="${a?'void':''}">`+x.cells.map(c=>{
+      if(c&&c.m!==undefined)return `<td class="r">${c.m===''?'':fmt(c.m)}</td>`;
+      if(c&&c.recu)return `<td><button class="link" data-rk="${c.kind}" data-ri="${c.id}">${c.recu}</button></td>`;
+      if(c&&c.recus)return `<td>${c.recus.map(z=>`<button class="link" data-rk="exam" data-ri="${z.id}">${z.recu}</button>`).join(' ')||'—'}</td>`;
+      return `<td>${esc(c)}</td>`}).join('')+
+      `<td class="act noprint">${isIdep()?(a?'<span class="neg">Annulé</span>':''):a?`<span class="neg">Annulé : ${esc(a.motif)} (${esc(a.agent)}, ${fdate(a.date)} ${a.heure})</span>`:`<button class="link" data-an="${x.kind}" data-ai="${x.r.id}">Annuler</button>`}</td></tr>`;
+  });
+  $('regTable').innerHTML=h2+(shown.length?'':`<tr><td colspan="${N}" class="muted">Aucun enregistrement trouvé.</td></tr>`)+'</tbody>';
+  $('regTable').querySelectorAll('[data-rk]').forEach(b=>b.onclick=()=>{const k=b.dataset.rk,i=+b.dataset.ri;
+    if(k==='prest')showRecu(data.prest.find(r=>r.id===i),true);else if(k==='ext')showRecuExt(data.ext.find(r=>r.id===i),true);else if(k==='cert')showRecuCert(data.cert.find(r=>r.id===i),true);else showRecuExam(data.extEx.find(r=>r.id===i),true)});
+  $('regTable').querySelectorAll('[data-an]').forEach(b=>b.onclick=()=>{anT={kind:b.dataset.an,id:+b.dataset.ai};$('anMotif').value='';$('anErr').textContent='';$('anModal').hidden=false;$('anMotif').focus()});
+}
+let anT=null;
+['rgQ','rgD1','rgD2'].forEach(i=>$(i).oninput=renderRegistre);
+$('rgSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{rgMode=b.dataset.v;renderRegistre()});
+$('anNo').onclick=()=>$('anModal').hidden=true;
+$('anOk').onclick=()=>{
+  const m=$('anMotif').value.trim();if(!m){$('anErr').textContent='Le motif est obligatoire.';return}
+  {const _r=({prest:data.prest,ext:data.ext,cert:data.cert})[anT.kind].find(r=>r.id===anT.id);if(_r.cloId){$('anErr').textContent=cloMsg(_r);return}}
+  const ann={motif:m,date:today,heure:hhmm(),agent:agentName()};
+  if(anT.kind==='prest')data.prest.find(r=>r.id===anT.id).annule=ann;
+  else if(anT.kind==='ext'){data.ext.find(r=>r.id===anT.id).annule=ann;data.extEx.filter(e=>e.visitId===anT.id).forEach(e=>e.annule=ann)}
+  else data.cert.find(r=>r.id===anT.id).annule=ann;
+  audit('Annulation de reçu',anT.kind+' n°'+anT.id+' · motif : '+m);
+  $('anModal').hidden=true;renderRegistre();toast('Ligne annulée : elle reste visible dans le registre');
+};
+$('rgPrint').onclick=()=>{document.body.classList.add('print-rg');try{window.print()}catch(e){toast('Impression indisponible ici')}document.body.classList.remove('print-rg')};
+$('rgCsv').onclick=()=>{
+  const {head,rows}=regData();
+  const lines=[head.concat(['Statut','Motif d’annulation'])].concat(rows.map(x=>x.cells.map(cellTxt).concat([x.r.annule?'Annulé':'Valide',x.r.annule?x.r.annule.motif:''])));
+  const nm='Registre_'+({pvvih:'PVVIH',ext:'Consultation_externe',cert:'Certificats'})[rgMode]+'_'+today;XLS.save(nm,[{name:'Registre',rows:lines.map(r=>r.map(c=>XLS.cellVal(c??''))),bold:[0]}]);
+};
+
+// ---------- Consultation externe (la consultation d'abord, les examens ensuite)
+let xCons='gen';
+$('xDate').value=today;
+const ST={consult:'En consultation',demande:'Examens demandés',aucun:'Pas d’examen',paye:'Examens payés'};
+const extExOf=v=>alive(data.extEx).filter(e=>e.visitId===v.id);
+const extPaid=v=>v.encaisse+extExOf(v).reduce((s,e)=>s+e.encaisse,0);
+const locked=r=>r.st==='paye'&&!r.deverr;
+const canPrescribe=r=>!locked(r)&&((isIdep()&&r.consult==='idep')||(isChef()&&r.consult==='gen'));
+const reqTxt=r=>r.req&&r.st!=='paye'?`<div class="muted" style="font-size:.78rem;margin-top:3px">Demande de ${esc(r.req.par)} · ${r.req.keys.length} examen(s) · ${fmt(r.req.keys.reduce((s,k)=>s+(EXLIST.find(z=>z.k===k)||{p:0}).p,0))}</div>`:'';
+function actionsExt(r){
+  if(isIdep())return locked(r)?'<span class="pill">Examens payés</span>':canPrescribe(r)?`<button class="link" data-rq="${r.id}"><b>${r.req?'Modifier la demande':'Demander des examens'}</b></button>`:'';
+  if(locked(r))return '<span class="pill">Verrouillé</span> '+(isChef()?`<button class="link" data-unl="${r.id}">Modifier (médecin-chef)</button>`:'<span class="muted" style="font-size:.8rem">Modification : médecin-chef</span>');
+  return (r.deverr?'<span class="pill exo">Déverrouillé par le médecin-chef</span> ':'')+(canPrescribe(r)?`<button class="link" data-rq="${r.id}"><b>${r.req?'Modifier la prescription':'Prescrire des examens'}</b></button> · `:'')+(r.st!=='demande'?`<button class="link" data-st="demande" data-id="${r.id}">Examens demandés</button> · `:'')+(r.st==='consult'?`<button class="link" data-st="aucun" data-id="${r.id}">Pas d’examen</button> · `:'')+`<button class="link" data-ex="${r.id}"><b>${r.req?'Encaisser la demande':'Encaisser des examens'}</b></button>`;
+}
+let xTab='gen';
+function renderExt(){
+  if(isIdep()){xCons='idep';xTab='idep'}
+  $('xForm').hidden=isIdep();$('xListT').textContent=isIdep()?'Mes patients (consultation IDEP)':'Patients en consultation (pour les examens)';
+  $('xCons').innerHTML=CONS().map(c=>`<button data-v="${c.k}" aria-pressed="${xCons===c.k}">${c.n}<br><small>${fmt(c.p)}</small></button>`).join('');
+  $('xCons').querySelectorAll('button').forEach(b=>b.onclick=()=>{xCons=b.dataset.v;renderExt()});
+  $('xTot').textContent=fmt(CONSULTS.find(z=>z.k===xCons).p);
+  $('xTabs').innerHTML=CONS().map(c=>`<button data-v="${c.k}" aria-pressed="${xTab===c.k}">${c.n} (${alive(data.ext).filter(r=>r.consult===c.k).length})</button>`).join('');
+  $('xTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{xTab=b.dataset.v;renderExt()});
+  const q=$('xQ').value.trim().toLowerCase();
+  const rows=alive(data.ext).filter(r=>r.consult===xTab).sort((a,b)=>a.id-b.id).map((r,i)=>({r,o:i+1})).filter(x=>!q||x.r.nom.toLowerCase().includes(q)).reverse().slice(0,100);
+  $('xTable').innerHTML=`<thead><tr><th class="c">Ordre</th><th>Date</th><th>Heure</th><th>Patient</th><th class="r">Âge</th><th>Sexe</th><th>Statut</th><th>Reçu</th><th>Examens payés</th><th class="r">Total payé</th><th></th></tr></thead><tbody>`+
+   (rows.length?rows.map(({r,o})=>{const ex=extExOf(r);return `<tr><td class="c">${o}</td><td>${fdate(r.date)}</td><td>${r.heure||''}</td><td><b>${esc(r.nom)}</b></td><td class="r">${r.age||'—'}</td><td>${r.sexe}</td><td><span class="pill ${r.st==='demande'?'exo':''}">${ST[r.st||'consult']}</span>${reqTxt(r)}</td><td><button class="link" data-xr="${r.id}">${r.recu}</button></td><td>${ex.length?ex.map(e=>`<button class="link" data-xe="${e.id}">${e.recu}</button>`).join(' ')+` · ${ex.reduce((s,e)=>s+e.exams.length,0)} examen(s)`:'<span class="muted">—</span>'}</td><td class="r">${fmt(extPaid(r))}</td><td>${actionsExt(r)}</td></tr>`}).join(''):'<tr><td colspan="11" class="muted">Aucun patient dans cette liste.</td></tr>')+'</tbody>';
+  $('xTable').querySelectorAll('[data-xr]').forEach(b=>b.onclick=()=>showRecuExt(data.ext.find(r=>r.id===+b.dataset.xr),true));
+  $('xTable').querySelectorAll('[data-xe]').forEach(b=>b.onclick=()=>showRecuExam(data.extEx.find(r=>r.id===+b.dataset.xe),true));
+  $('xTable').querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>openExams(+b.dataset.ex));
+  $('xTable').querySelectorAll('[data-rq]').forEach(b=>b.onclick=()=>openExams(+b.dataset.rq,'req'));
+  $('xTable').querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{const r=data.ext.find(x=>x.id===+b.dataset.id);if(locked(r))return;r.st=b.dataset.st;renderExt()});
+  $('xTable').querySelectorAll('[data-unl]').forEach(b=>b.onclick=()=>{
+    if(!isChef()){toast('Modification réservée au médecin-chef');return}
+    const r=data.ext.find(x=>x.id===+b.dataset.unl);
+    $('mt').textContent='Modifier la demande d’examens (médecin-chef)';
+    $('mdl').innerHTML=`<dt>Patient</dt><dd>${esc(r.nom)}</dd><dt>Examens payés</dt><dd>${esc(extExOf(r).flatMap(e=>e.exams.map(z=>z.n)).join(', ')||'—')}</dd><dt>Effet</dt><dd>La demande est déverrouillée : on peut de nouveau demander et encaisser des examens pour ce patient. Elle se verrouille dès le prochain encaissement. Cette modification est tracée.</dd>`;
+    confirmFn=()=>{r.deverr={par:chefName(),date:today,heure:hhmm()};audit('Déverrouillage des examens','visite n°'+r.id);renderExt();toast('Demande déverrouillée par le médecin-chef')};
+    $('modal').hidden=false;$('mYes').focus();
+  });
+}
+$('xQ').oninput=renderExt;
+$('xVal').onclick=()=>{
+  if(isIdep())xCons='idep';
+  const nom=$('xNom').value.trim();
+  if(!nom){$('xErr').textContent='Saisissez le nom du patient.';return}
+  $('xErr').textContent='';
+  const x={date:$('xDate').value||today,nom,age:Number($('xAge').value)||'',sexe:$('xSexe').value,tel:$('xTel').value.trim(),consult:xCons};
+  const c=CONSULTS.find(z=>z.k===x.consult);
+  $('mt').textContent='Confirmer la consultation externe';
+  $('mdl').innerHTML=`<dt>Patient</dt><dd>${esc(nom)}</dd><dt>Consultation</dt><dd>${esc(c.n)}</dd><dt>Total à payer</dt><dd>${fmt(c.p)}</dd>`;
+  confirmFn=()=>{const r=addExt(x);audit('Reçu '+r.recu,'Consultation externe · encaissé '+fmt(r.encaisse));['xNom','xAge','xTel'].forEach(i=>$(i).value='');renderExt();showRecuExt(r,false)};
+  $('modal').hidden=false;$('mYes').focus();
+};
+function showRecuExt(r,dup){
+  $('recu').innerHTML=`<div style="text-align:center"><b>Centre de Traitement Ambulatoire de Lambaréné</b><div class="muted" style="font-size:.85rem">Reçu de paiement · Consultation externe${dup?' · DUPLICATA':''}</div></div>
+  <div class="rl" style="margin-top:8px"><span>N° <b>${r.recu}</b></span><span>${fdate(r.date)} · ${r.heure||''}</span></div>
+  <div style="font-size:.9rem;margin-bottom:6px">Patient : <b>${esc(r.nom)}</b>${r.age?' · '+r.age+' ans':''} · ${r.sexe==='F'?'féminin':'masculin'}</div>
+  <div class="scroll"><table><thead><tr><th>Désignation</th><th class="r">Prix</th></tr></thead><tbody><tr><td>Consultation · ${esc(r.consultN)}</td><td class="r">${fmt(r.consultP)}</td></tr></tbody></table></div>
+  <div style="margin-top:10px"><div class="rl b"><span>Total payé</span><b>${fmt(r.prestation)}</b></div></div>
+  <div class="rl" style="margin-top:18px;color:var(--mute);font-size:.8rem"><span>Agent de caisse : ${esc(r.agent||'—')}</span></div>`;
+  $('recuModal').hidden=false;
+}
+function showRecuExam(r,dup){
+  const one=who=>`<div style="text-align:center"><b>Centre de Traitement Ambulatoire de Lambaréné</b><div class="muted" style="font-size:.8em">Reçu de paiement · Examens${dup?' · DUPLICATA':''} · exemplaire <b>${who}</b></div></div>
+    <div class="rl"><span>N° <b>${r.recu}</b></span><span>${fdate(r.date)} · ${r.heure||''}</span></div>
+    <div style="font-size:.9em">Patient : <b>${esc(r.nom)}</b></div>
+    <table class="mini"><tbody>${r.exams.map(e=>`<tr><td>${esc(e.n)}</td><td class="r">${e.p?fmt(e.p):'Gratuit'}</td></tr>`).join('')}</tbody></table>
+    <div class="rl b"><span>Total payé</span><b>${fmt(r.prestation)}</b></div>
+    <div class="rl" style="color:var(--mute);font-size:.8em"><span>Agent de caisse : ${esc(r.agent||'—')}</span></div>`;
+  $('recu').innerHTML=recuCopies(one,denseFs(r.exams.length+3));
+  $('recuModal').hidden=false;
+}
+const exs={visit:null,set:new Set(),mode:'pay'};
+function openExams(id,mode){exs.mode=mode||'pay';exs.visit=data.ext.find(r=>r.id===id);if(locked(exs.visit)){toast('Examens déjà demandés et encaissés : seul le médecin-chef peut modifier');return}if(exs.mode==='req'&&!canPrescribe(exs.visit))return;exs.set=new Set(exs.visit.req?exs.visit.req.keys:[]);$('exOk').textContent=exs.mode==='req'?'Envoyer la demande à la caisse':'Encaisser les examens';$('exT').textContent=(exs.mode==='req'?'Demande d’examens · ':'Examens demandés · ')+exs.visit.nom;$('exErr').textContent='';renderExamBox();$('exModal').hidden=false}
+function renderExamBox(){
+  EXLIST.forEach(e=>{if(manque(e.n).length)exs.set.delete(e.k)});
+  const blk=EXLIST.filter(e=>manque(e.n).length),blkR=[...new Set(blk.flatMap(e=>manque(e.n)))];
+  const open=new Set([...document.querySelectorAll('#exBody details[open]')].map(d=>d.dataset.g));
+  $('exBody').innerHTML=(blk.length?alertHtml(blk.map(e=>e.n),blkR):'')+EXAMS.map(g=>{
+    const its=EXLIST.filter(e=>e.g===g.g),n=its.filter(e=>exs.set.has(e.k)).length;
+    return `<details class="grp" data-g="${g.g}" ${open.has(g.g)||n>0?'open':''}><summary><span>${g.g}</span><span class="muted">${n?n+' coché(s)':''}</span></summary>${its.map(e=>{const mq=manque(e.n);return `<label class="acte${mq.length?' off':exs.set.has(e.k)?' on':''}" style="margin:0"><input type="checkbox" data-k="${e.k}" ${exs.set.has(e.k)?'checked':''} ${mq.length?'disabled':''}><span>${esc(e.n)}${mq.length?'<span class="rupt">Réactif en rupture : ne pas encaisser</span>':''}</span><span class="p">${e.p?fmt(e.p):'Gratuit'}</span></label>`}).join('')}</details>`}).join('');
+  $('exBody').querySelectorAll('input').forEach(i=>i.onchange=()=>{i.checked?exs.set.add(i.dataset.k):exs.set.delete(i.dataset.k);renderExamBox()});
+  $('exTot').textContent=fmt([...exs.set].reduce((s,k)=>s+EXLIST.find(z=>z.k===k).p,0));
+}
+$('exNo').onclick=()=>$('exModal').hidden=true;
+$('exOk').onclick=()=>{
+  if(!exs.set.size){$('exErr').textContent='Cochez au moins un examen.';return}
+  if(exs.mode==='req'){exs.visit.req={keys:[...exs.set],par:agentName(),date:today,heure:hhmm()};exs.visit.st='demande';audit('Demande d’examens','visite n°'+exs.visit.id+' · '+exs.set.size+' examen(s)');$('exModal').hidden=true;renderExt();toast('Demande envoyée à la caisse');return}
+  {const bq=[...exs.set].map(k=>EXLIST.find(z=>z.k===k)).filter(e=>manque(e.n).length);if(bq.length){$('exErr').textContent='Réactif en rupture à la pharmacie : '+bq.map(e=>e.n).join(', ')+'. Ne pas encaisser.';return}}
+  const r=addExtEx(exs.visit,[...exs.set],today);audit('Reçu '+r.recu,'Examens externes · '+r.exams.length+' examen(s) · encaissé '+fmt(r.encaisse));consumeFor(r.exams.map(e=>e.n));$('exModal').hidden=true;renderExt();showRecuExam(r,false);
+};
+
+// ---------- Certificat médical
+function addCert(x){const r={id:data.cert.length+1,recu:'R-'+String(nextRseq()).padStart(4,'0'),date:x.date,heure:x.heure||hhmm(),nom:x.nom,naiss:x.naiss,piece:x.piece,obs:x.obs||'',montant:x.montant,agent:x.agent||agentName()};data.cert.push(r);return r}
+$('cDate').value=today;$('cMois').value=today.slice(0,7);
+$('cMois').onchange=renderCert;
+$('cOk').onclick=()=>{
+  const x={date:$('cDate').value||today,nom:$('cNom').value.trim(),naiss:$('cNaiss').value,piece:$('cPiece').value.trim(),obs:$('cObs').value.trim(),montant:Math.round(Number($('cMont').value))};
+  if(!x.nom||!x.naiss||!x.piece||!(x.montant>0)){$('cErr').textContent='Renseignez le nom, la date de naissance, le n° de pièce d’identité et un montant supérieur à 0.';return}
+  $('cErr').textContent='';const r=addCert(x);audit('Reçu '+r.recu,'Certificat médical · encaissé '+fmt(r.montant));['cNom','cNaiss','cPiece','cObs','cMont'].forEach(i=>$(i).value='');renderCert();showRecuCert(r,false);
+};
+function renderCert(){
+  const ym=$('cMois').value||today.slice(0,7),mlab=MONTHS[+ym.slice(5)-1]+' '+ym.slice(0,4);
+  const M=alive(data.cert).filter(r=>r.date.startsWith(ym)).sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id),tot=M.reduce((s,r)=>s+r.montant,0);
+  $('cSum').innerHTML=`<b>${mlab}</b> : ${M.length} certificat(s) établi(s), montant total <b>${fmt(tot)}</b>`;
+  $('cMT').textContent='Détail du mois · '+mlab;
+  $('cMT2').innerHTML=`<thead><tr><th class="c">Ordre</th><th>Date de réception</th><th>Nom et prénom</th><th>Date de naissance</th><th>N° pièce d’identité</th><th>Observation</th><th class="r">Montant</th></tr></thead><tbody>`+
+    (M.length?M.map(r=>`<tr><td class="c">${r.id}</td><td>${fdate(r.date)}</td><td>${esc(r.nom)}</td><td>${fdate(r.naiss)}</td><td>${esc(r.piece)}</td><td>${esc(r.obs||'')}</td><td class="r">${fmt(r.montant)}</td></tr>`).join('')+`<tr class="total"><td colspan="6">Total · ${M.length} certificat(s)</td><td class="r">${fmt(tot)}</td></tr>`:'<tr><td colspan="7" class="muted">Aucun certificat ce mois-ci.</td></tr>')+'</tbody>';
+}
+
+// ---------- Listes de patients (PVVIH : base partagée avec la pharmacie)
+let patMode='pvvih';
+$('patSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{patMode=b.dataset.v;$('patSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('patQ').value='';renderPat()});
+$('patQ').oninput=renderPat;
+function renderPat(){
+  const q=$('patQ').value.trim().toLowerCase();
+  if(patMode==='pvvih'){
+    $('patQl').textContent='N° de dossier';
+    $('patHelp').textContent='Cette liste se constitue toute seule à chaque nouveau patient enregistré au registre PVVIH. Elle est partagée avec la pharmacie, qui complète le protocole.';
+    const L=B.list.map((p,i)=>({p,i})).filter(x=>!q||x.p.dossier.toLowerCase().includes(q));
+    $('patT').innerHTML=`<thead><tr><th class="c">Ordre</th><th>N° de dossier</th><th>Date</th><th class="r">Âge</th><th>Sexe</th><th>Téléphone</th><th>RDV</th><th>Protocole</th></tr></thead><tbody>`+
+    (L.length?L.map(({p,i})=>`<tr><td class="c">${i+1}</td><td><b>${esc(p.dossier)}</b></td><td>${fdate(p.premiere)}</td><td class="r">${p.age||'—'}</td><td>${p.sexe||'—'}</td><td>${esc(p.contact)||'—'}</td><td>${p.rdv?(p.rdv<today?`<span class="neg">${fdate(p.rdv)}</span>`:fdate(p.rdv)):'—'}</td><td>${p.proto?esc(p.proto):'<span class="pill exo">À compléter en pharmacie</span>'}</td></tr>`).join(''):'<tr><td colspan="8" class="muted">Aucun patient pour le moment.</td></tr>')+'</tbody>';
+  }else{
+    $('patQl').textContent='Nom du patient';
+    $('patHelp').textContent='Les patients de la consultation externe, dans l’ordre de leur enregistrement.';
+    const L=alive(data.ext).filter(r=>!q||r.nom.toLowerCase().includes(q));
+    $('patT').innerHTML=`<thead><tr><th class="c">Ordre</th><th>Date</th><th>Nom et prénom</th><th class="r">Âge</th><th>Sexe</th><th>Téléphone</th><th>Consultation</th><th class="r">Examens</th></tr></thead><tbody>`+
+    (L.length?L.map(r=>`<tr><td class="c">${r.id}</td><td>${fdate(r.date)}</td><td><b>${esc(r.nom)}</b></td><td class="r">${r.age||'—'}</td><td>${r.sexe==='F'?'F':'M'}</td><td>${esc(r.tel)||'—'}</td><td>${esc(r.consultN)}</td><td class="r">${extExOf(r).reduce((s,e)=>s+e.exams.length,0)}</td></tr>`).join(''):'<tr><td colspan="8" class="muted">Aucun patient pour le moment.</td></tr>')+'</tbody>';
+  }
+}
+
+// ---------- Dépenses
+$('dAdd').onclick=()=>{
+  const m=Number($('dMont').value);
+  if(!$('dType').value.trim()||!$('dDesc').value.trim()||!(m>0)){$('dErr').textContent='Renseignez le type, la description et un montant supérieur à 0.';return}
+  $('dErr').textContent='';
+  data.dep.push({id:data.dep.length+1,date:$('dDate').value||today,type:$('dType').value.trim(),desc:$('dDesc').value.trim(),dest:$('dDest').value.trim(),montant:Math.round(m),piece:$('dPiece').value.trim(),agent:agentName()});
+  ['dType','dDesc','dDest','dMont','dPiece'].forEach(i=>$(i).value='');
+  audit('Dépense','Montant '+fmt(Math.round(m)));
+  renderDep();toast('Dépense ajoutée');
+};
+function renderDep(){
+  const rows=[...data.dep].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  $('depTable').innerHTML=`<thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Destinataire</th><th class="r">Montant</th><th>Pièce</th></tr></thead><tbody>`+
+  (rows.length?rows.map(r=>`<tr><td>${fdate(r.date)}</td><td>${esc(r.type)}</td><td>${esc(r.desc)}</td><td>${esc(r.dest)}</td><td class="r">${fmt(r.montant)}</td><td>${esc(r.piece)}</td></tr>`).join(''):`<tr><td colspan="6" class="muted">Aucune dépense enregistrée.</td></tr>`)+'</tbody>';
+  const by={};data.dep.forEach(d=>{const k=d.date.slice(0,7);by[k]=(by[k]||0)+d.montant});
+  const ks=Object.keys(by).sort().reverse();
+  $('dTot').innerHTML=ks.length?ks.map(k=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>${MONTHS[+k.slice(5)-1]} ${k.slice(0,4)}</span><b class="num">${fmt(by[k])}</b></div>`).join(''):'<p class="muted">Rien à totaliser.</p>';
+}
+
+// ---------- Synthèse
+function renderSyn(){
+  const years=[...new Set([...data.prest,...data.ext,...data.extEx,...data.dep].map(r=>r.date.slice(0,4)).concat([today.slice(0,4)]))].sort().reverse();
+  const cur=$('synYear').value||years[0];
+  $('synYear').innerHTML=years.map(y=>`<option ${y===cur?'selected':''}>${y}</option>`).join('');
+  $('synYear').onchange=renderSyn;
+  const y=$('synYear').value,keys=['n','e','xn','rc','me','xr','so','nr'];
+  const T=Object.fromEntries(keys.map(k=>[k,0]));
+  const rows=MONTHS.map((m,i)=>{
+    const key=y+'-'+String(i+1).padStart(2,'0');
+    const P=alive(data.prest).filter(r=>r.date.startsWith(key)),X=alive(data.ext).filter(r=>r.date.startsWith(key)),XE=alive(data.extEx).filter(r=>r.date.startsWith(key)),D=data.dep.filter(r=>r.date.startsWith(key));
+    const pay=P.filter(r=>r.statut!=='exo'),exo=P.filter(r=>r.statut==='exo');
+    const v={n:P.length,e:exo.length,xn:X.length,rc:pay.reduce((s,r)=>s+r.encaisse,0),me:exo.reduce((s,r)=>s+r.prestation,0),xr:X.reduce((s,r)=>s+r.encaisse,0)+XE.reduce((s,r)=>s+r.encaisse,0),so:D.reduce((s,r)=>s+r.montant,0),nr:pay.reduce((s,r)=>s+nonRec(r),0)};
+    keys.forEach(k=>T[k]+=v[k]);
+    return{m,v,empty:!P.length&&!X.length&&!XE.length&&!D.length};
+  });
+  const defs=[['Patients PVVIH reçus',v=>v.n],['PVVIH exonérés',v=>v.e],['Patients consultation externe',v=>v.xn],['Recettes PVVIH (payants)',v=>fmt(v.rc)],['Recettes PVVIH exonérés (coût, hors total)',v=>fmt(v.me),'info'],['Recettes consultation externe',v=>fmt(v.xr)],['Total recettes',v=>fmt(v.rc+v.xr),'b'],['Total sortie',v=>fmt(v.so)],['Versement',v=>fmt(v.rc+v.xr-v.so),'v'],['Non recouvré (information)',v=>fmt(v.nr),'info']];
+  const cell=(d,v)=>`<td class="r ${d[2]==='info'?'muted':''} ${d[2]==='v'&&(v.rc+v.xr-v.so)<0?'neg':''}" ${d[2]==='b'||d[2]==='v'?'style="font-weight:700"':''}>${d[1](v)}</td>`;
+  $('synTable').innerHTML=`<thead><tr><th>Mois</th>${defs.map(d=>`<th class="r">${d[0]}</th>`).join('')}</tr></thead><tbody>`+
+    rows.map(({m,v,empty})=>`<tr class="${empty?'muted':''}"><td>${m}</td>${defs.map(d=>cell(d,v)).join('')}</tr>`).join('')+
+    `<tr class="total"><td>TOTAL ${y}</td>${defs.map(d=>cell(d,T)).join('')}</tr></tbody>`;
+  $('synNote').textContent='Les recettes ne comptent que l’argent réellement encaissé. Les exonérés (coût) et le non recouvré sont affichés à part, pour information : ils n’entrent ni dans les recettes ni dans le versement. Versement = total recettes − total sortie.';
+}
+
+$('synPrint').onclick=()=>{
+  const y=$('synYear').value,t=$('synTable').cloneNode(true);t.removeAttribute('id');t.className='t';
+  const html=`<style>@page{size:A4 landscape;margin:10mm}.t{font-size:10px}.t td,.t th{padding:3px 5px}</style><h1>Centre de Traitement Ambulatoire de Lambaréné · Synthèse mensuelle de la caisse ${y}</h1><p class="m">Édité le ${fdate(today)} à ${hhmm()} par ${esc(agentName())}</p>${t.outerHTML}<p class="m">${esc($('synNote').textContent)}</p><div class="sign"><div>Le caissier</div><div>Le médecin-chef</div></div>`;
+  try{window.parent.printDoc('Synthèse de la caisse '+y,html);audit('Impression','Synthèse mensuelle '+y)}catch(e){window.print()}
+};
+// ---------- Statistiques
+$('from').value=today.slice(0,8)+'01';$('to').value=today;
+['per','cmp','from','to'].forEach(i=>$(i).onchange=renderStats);
+function range(){
+  const t=new Date(today+'T12:00:00'),y=t.getFullYear(),m=t.getMonth();
+  const p=$('per').value;
+  const last=(yy,mm)=>iso(new Date(yy,mm+1,0,12));
+  const first=(yy,mm)=>iso(new Date(yy,mm,1,12));
+  if(p==='today')return[today,today];
+  if(p==='week'){const dow=(t.getDay()+6)%7;const s=addDays(today,-dow);return[s,addDays(s,6)]}
+  if(p==='month')return[first(y,m),last(y,m)];
+  if(p==='quarter'){const q=Math.floor(m/3)*3;return[first(y,q),last(y,q+2)]}
+  if(p==='semester'){const s=m<6?0:6;return[first(y,s),last(y,s+5)]}
+  if(p==='year')return[y+'-01-01',y+'-12-31'];
+  let a=$('from').value||today,b=$('to').value||today;if(a>b)[a,b]=[b,a];return[a,b];
+}
+function agg(a,b){
+  const P=alive(data.prest).filter(r=>r.date>=a&&r.date<=b),D=data.dep.filter(r=>r.date>=a&&r.date<=b);
+  const pay=P.filter(r=>r.statut!=='exo'),exo=P.filter(r=>r.statut==='exo');
+  const sum=(arr,f)=>arr.reduce((s,r)=>s+f(r),0);
+  return{P,D,pay,exo,n:P.length,presta:sum(pay,r=>r.prestation),rec:sum(pay,r=>r.encaisse),reg:sum(pay,regl),nr:sum(pay,nonRec),exoCost:sum(exo,r=>r.prestation),dep:sum(D,r=>r.montant)};
+}
+// ---------- Entrées journalières : comparaison de deux périodes
+let cmpF='all';
+const WD=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+$('cmpF').querySelectorAll('button').forEach(b=>b.onclick=()=>{cmpF=b.dataset.v;$('cmpF').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));renderCmp()});
+(()=>{const d0=new Date(today+'T12:00:00');$('a1').value=iso(new Date(d0.getFullYear(),d0.getMonth(),1,12));$('a2').value=today;
+  const b1=iso(new Date(d0.getFullYear(),d0.getMonth()-1,1,12));$('b1').value=b1;$('b2').value=addDays(b1,daysBetween($('a1').value,today));})();
+['cmpPre','a1','a2','b1','b2'].forEach(i=>$(i).onchange=renderCmp);
+function daysBetween(a,b){return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5)}
+function daysOf(r){const out=[];let d=r[0];while(d<=r[1]&&out.length<62){out.push(d);d=addDays(d,1)}return out}
+function periods(){
+  const p=$('cmpPre').value,t=new Date(today+'T12:00:00');
+  if(p==='day')return{A:[today,today],B:[addDays(today,-1),addDays(today,-1)],la:'Aujourd’hui',lb:'Hier'};
+  if(p==='week'){const dow=(t.getDay()+6)%7,s=addDays(today,-dow);return{A:[s,addDays(s,6)],B:[addDays(s,-7),addDays(s,-1)],la:'Cette semaine',lb:'Semaine passée'}}
+  if(p==='month'){const y=t.getFullYear(),m=t.getMonth();return{A:[iso(new Date(y,m,1,12)),iso(new Date(y,m+1,0,12))],B:[iso(new Date(y,m-1,1,12)),iso(new Date(y,m,0,12))],la:'Ce mois',lb:'Mois passé'}}
+  let a1=$('a1').value||today,a2=$('a2').value||today,b1=$('b1').value||today,b2=$('b2').value||today;
+  if(a1>a2)[a1,a2]=[a2,a1];if(b1>b2)[b1,b2]=[b2,b1];
+  return{A:[a1,a2],B:[b1,b2],la:fdate(a1)+' → '+fdate(a2),lb:fdate(b1)+' → '+fdate(b2)};
+}
+const entryParts=d=>({p:alive(data.prest).filter(r=>r.date===d&&r.statut!=='exo').reduce((s,r)=>s+r.encaisse,0),x:alive(data.ext).filter(r=>r.date===d).reduce((s,r)=>s+r.encaisse,0)+alive(data.extEx).filter(r=>r.date===d).reduce((s,r)=>s+r.encaisse,0)});
+const entries=(d,f)=>{const e=entryParts(d);return f==='ext'?e.x:f==='pvvih'?e.p:e.p+e.x};
+function bar3(x,y,w,h,color,op,d,t){
+  const dy=d*.7,sd=`${x+w},${y} ${x+w+d},${y-dy} ${x+w+d},${y+h-dy} ${x+w},${y+h}`,tp=`${x},${y} ${x+d},${y-dy} ${x+w+d},${y-dy} ${x+w},${y}`;
+  return `<g style="opacity:${op}"><polygon points="${sd}" style="fill:${color}"/><polygon points="${sd}" style="fill:#000;opacity:.3"/><polygon points="${tp}" style="fill:${color}"/><polygon points="${tp}" style="fill:#fff;opacity:.4"/><rect x="${x}" y="${y}" width="${w}" height="${h}" style="fill:${color}"/><rect x="${x}" y="${y}" width="${w}" height="${h}" style="fill:url(#gl)"/><title>${t}</title></g>`;
+}
+function barChart(cats,A,B,la,lb){
+  const W=640,H=310,ml=56,mr=18,mt=26,mb=34,iw=W-ml-mr-12,ih=H-mt-mb,n=cats.length;
+  const max=Math.max(1,...A.filter(v=>v!==null),...B.filter(v=>v!==null)),rough=max/4,mag=10**Math.floor(Math.log10(rough));
+  const step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=rough),top=step*Math.ceil(max/step);
+  const y=v=>mt+ih-(v/top)*ih,base=mt+ih,band=iw/n,kf=v=>v>=1000?(Math.round(v/100)/10).toString().replace('.',',')+' k':String(v);
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Entrées journalières : ${esc(la)} et ${esc(lb)}"><defs><linearGradient id="gl" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient></defs>`;
+  for(let v=0;v<=top+1;v+=step){s+=`<line x1="${ml}" x2="${W-mr}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--line)"/><text x="${ml-6}" y="${y(v)+4}" text-anchor="end">${kf(v)}</text>`}
+  s+=`<polygon points="${ml},${base} ${ml+12},${base-8} ${W-mr},${base-8} ${W-mr-12},${base}" style="fill:var(--soft);stroke:var(--line)"/>`;
+  cats.forEach((c,i)=>{
+    const cx=ml+band*i+band/2-5,wb=Math.min(band*.66,56),wa=wb*.56,db=Math.min(11,wb*.28),da=Math.min(9,wa*.45);
+    if(B[i]!==null)s+=bar3(cx-wb/2,y(B[i]),wb,Math.max(0,base-y(B[i])),'var(--gold)',.85,db,`${esc(lb)} · ${esc(c)} : ${fmt(B[i])}`);
+    if(A[i]!==null)s+=bar3(cx-wa/2,y(A[i]),wa,Math.max(0,base-y(A[i])),'var(--green)',1,da,`${esc(la)} · ${esc(c)} : ${fmt(A[i])}`);
+    if(n<=8&&A[i]!==null&&A[i]>0)s+=`<text class="val" x="${cx+4}" y="${y(Math.max(A[i],B[i]||0))-12}" text-anchor="middle">${kf(A[i])}</text>`;
+    if(n<=16||i%2===0)s+=`<text x="${cx+4}" y="${H-12}" text-anchor="middle">${esc(c)}</text>`;
+  });
+  return s+'</svg>';
+}
+function renderCmp(){
+  $('cmpCustom').hidden=$('cmpPre').value!=='custom';
+  const P=periods(),dA=daysOf(P.A),dB=daysOf(P.B);
+  let cats,A,B,single=false;
+  if(dA.length===1&&dB.length===1){
+    single=true;const ea=entryParts(dA[0]),eb=entryParts(dB[0]);
+    if(cmpF==='all'){cats=['PVVIH','Consultation externe','Total'];A=[ea.p,ea.x,ea.p+ea.x];B=[eb.p,eb.x,eb.p+eb.x]}
+    else{cats=['Total du jour'];A=[cmpF==='ext'?ea.x:ea.p];B=[cmpF==='ext'?eb.x:eb.p]}
+  }else{
+    const n=Math.max(dA.length,dB.length);
+    cats=Array.from({length:n},(_,i)=>n<=7?WD[new Date((dA[i]||dB[i])+'T12:00:00').getDay()]:String(i+1));
+    A=Array.from({length:n},(_,i)=>dA[i]&&dA[i]<=today?entries(dA[i],cmpF):null);
+    B=Array.from({length:n},(_,i)=>dB[i]&&dB[i]<=today?entries(dB[i],cmpF):null);
+  }
+  const tot=a=>single?a[a.length-1]:a.reduce((s,v)=>s+(v||0),0),tA=tot(A),tB=tot(B);
+  const diff=tB?`${tA>=tB?'+':''}${((tA-tB)/tB*100).toFixed(1).replace('.',',')} %`:'—';
+  $('cmpOut').innerHTML=`<div class="legend"><span><i style="background:var(--green)"></i>${esc(P.la)}</span><span><i style="background:var(--gold);opacity:.7"></i>${esc(P.lb)}</span></div>${barChart(cats,A,B,P.la,P.lb)}
+  <div class="kpis" style="margin-top:10px;margin-bottom:0"><div class="kpi"><div class="k">${esc(P.la)}</div><div class="n">${fmt(tA)}</div></div><div class="kpi"><div class="k">${esc(P.lb)}</div><div class="n">${fmt(tB)}</div></div><div class="kpi"><div class="k">Variation</div><div class="n ${tA<tB?'neg':''}">${diff}</div></div></div>
+  <p class="muted" style="font-size:.8rem;margin-bottom:0">Entrées = argent réellement encaissé (les exonérés ne comptent pas). Les jours à venir n’ont pas de barre.</p>`;
+}
+
+function certCard(a,b){
+  const C=alive(data.cert).filter(r=>r.date>=a&&r.date<=b),tot=C.reduce((s,r)=>s+r.montant,0);
+  const ob={};C.forEach(r=>{const k=r.obs||'Sans motif';ob[k]=(ob[k]||0)+1});
+  return `<div class="card" style="margin-top:16px"><h2>Certificats médicaux · du ${fdate(a)} au ${fdate(b)}</h2>
+   <div class="kpis"><div class="kpi"><div class="k">Certificats établis</div><div class="n">${C.length}</div></div><div class="kpi"><div class="k">Montant</div><div class="n">${fmt(tot)}</div></div></div>
+   ${Object.entries(ob).sort((x,y)=>y[1]-x[1]).map(([k,n])=>`<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${esc(k)}</span><b>${n}</b></div>`).join('')}</div>`;
+}
+function extCard(a,b){
+  const X=alive(data.ext).filter(r=>r.date>=a&&r.date<=b),XE=alive(data.extEx).filter(r=>r.date>=a&&r.date<=b);
+  const cnt=k=>X.filter(r=>r.consult===k).length,rec=X.reduce((s,r)=>s+r.encaisse,0)+XE.reduce((s,r)=>s+r.encaisse,0);
+  const ex={};XE.forEach(r=>r.exams.forEach(e=>ex[e.n]=(ex[e.n]||0)+1));
+  const top=Object.entries(ex).sort((x,y)=>y[1]-x[1]).slice(0,6);
+  return `<div class="card" style="margin-top:16px"><h2>Consultations externes · du ${fdate(a)} au ${fdate(b)}</h2>
+   <div class="kpis"><div class="kpi"><div class="k">Patients</div><div class="n">${X.length}</div></div><div class="kpi"><div class="k">Recette (consultations + examens)</div><div class="n">${fmt(rec)}</div></div><div class="kpi"><div class="k">Généraliste</div><div class="n">${cnt('gen')}</div></div><div class="kpi"><div class="k">IDEP · Psychologique</div><div class="n">${cnt('idep')} · ${cnt('psy')}</div></div></div>
+   <h2 style="margin-top:14px;font-size:.95rem">Examens les plus demandés</h2>${top.length?top.map(([n,c])=>`<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${esc(n)}</span><b>${c}</b></div>`).join(''):'<p class="muted">Aucun examen.</p>'}</div>`;
+}
+function renderStats(){
+  $('customRange').hidden=$('per').value!=='custom';
+  const [a,b]=range(),S=agg(a,b);
+  let prev=null;
+  if($('cmp').checked){const len=Math.round((new Date(b)-new Date(a))/864e5)+1;prev=agg(addDays(a,-len),addDays(a,-1))}
+  const dl=(cur,old,money)=>{if(!prev)return'';const d=cur-old;return `<div class="d">Avant : ${money?fmt(old):old} (${d>=0?'+':''}${money?fmt(d):d})</div>`};
+  const cnt=(arr,f)=>arr.filter(f).length;
+  const taux=S.presta?Math.round((S.rec-S.reg)/S.presta*100):0;
+  // actes
+  const ac={};
+  S.P.forEach(r=>r.lignes.forEach(l=>{const o=ac[l.k]||(ac[l.k]={n:0,ne:0,ce:0});o.n++;if(r.statut==='exo'){o.ne++;o.ce+=l.p}}));
+  const acRows=ITEMS.filter(a=>ac[a.k]).sort((x,y)=>ac[y.k].n-ac[x.k].n);
+  // dettes (tous passages)
+  const dd={};alive(data.prest).forEach(r=>{const o=dd[r.dossier]||(dd[r.dossier]={nom:r.nom,v:0});o.v+=nonRec(r)-regl(r)});
+  const dl2=Object.entries(dd).filter(([k,x])=>x.v>0).sort((x,y)=>y[1].v-x[1].v);
+  const bar=(n,t)=>`<div class="bar"><i style="width:${t?Math.round(n/t*100):0}%"></i></div>`;
+  const line=(l,n,t)=>`<div style="margin-top:10px"><div style="display:flex;justify-content:space-between"><span>${l}</span><b class="num">${n}</b></div>${bar(n,t)}</div>`;
+  $('stOut').innerHTML=`
+  <div class="card" style="margin-top:16px">
+    <h2>PVVIH · du ${fdate(a)} au ${fdate(b)}</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Patients reçus</div><div class="n">${S.n}</div>${dl(S.n,prev&&prev.n,false)}</div>
+      <div class="kpi"><div class="k">Recette encaissée</div><div class="n">${fmt(S.rec)}</div>${dl(S.rec,prev&&prev.rec,true)}</div>
+      <div class="kpi"><div class="k">Taux de recouvrement</div><div class="n">${taux} %</div><div class="d">encaissé ÷ prestations</div></div>
+      <div class="kpi"><div class="k">Non recouvré</div><div class="n">${fmt(S.nr)}</div></div>
+    </div>
+  </div>
+  <div class="split" style="margin-top:16px">
+    <div class="card"><h2>Fréquentation</h2>
+      ${line('Nouveaux',cnt(S.P,r=>r.profil==='nouveau'),S.n)}
+      ${line('Anciens',cnt(S.P,r=>r.profil==='ancien'),S.n)}
+      ${line('Hommes',cnt(S.P,r=>r.sexe==='M'),S.n)}
+      ${line('Femmes',cnt(S.P,r=>r.sexe==='F'),S.n)}
+      ${line('Assurés CNAMGS',cnt(S.P,r=>r.assure),S.n)}
+      ${line('Non assurés',cnt(S.P,r=>!r.assure),S.n)}
+      ${line('Plein',cnt(S.P,r=>r.statut==='plein'),S.n)}
+      ${line('Plein ALD',cnt(S.P,r=>r.statut==='ald'),S.n)}
+      ${line('Exonérés',cnt(S.P,r=>r.statut==='exo'),S.n)}
+    </div>
+    <div class="card"><h2>Argent</h2>
+      <div style="display:flex;justify-content:space-between;padding:6px 0"><span>Prestations (payants)</span><b class="num">${fmt(S.presta)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0"><span>Encaissé</span><b class="num">${fmt(S.rec)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0"><span class="muted">dont règlements de dettes anciennes</span><b class="num">${fmt(S.reg)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0"><span>Dépenses</span><b class="num">${fmt(S.dep)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line)"><span>Versement</span><b class="num ${S.rec-S.dep<0?'neg':''}">${fmt(S.rec-S.dep)}</b></div>
+      <div class="exo-note"><b>Exonérés (à part) :</b> ${S.exo.length} patient(s) ont consommé <b>${fmt(S.exoCost)}</b> d’actes, non comptabilisés.</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px"><h2>Actes consommés</h2>
+    <div class="scroll"><table><thead><tr><th>Acte</th><th class="r">Réalisé</th><th class="r">dont exonérés</th><th class="r">Coût exonérés</th></tr></thead><tbody>
+    ${acRows.length?acRows.map(x=>`<tr><td>${esc(x.n)}</td><td class="r">${ac[x.k].n}</td><td class="r">${ac[x.k].ne}</td><td class="r">${fmt(ac[x.k].ce)}</td></tr>`).join(''):'<tr><td colspan="4" class="muted">Aucun acte sur cette période.</td></tr>'}
+    </tbody></table></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h2>Patients ayant une dette</h2>
+    <p class="muted" style="margin-top:0;font-size:.85rem">Tous passages confondus : ${dl2.length} patient(s), total ${fmt(dl2.reduce((s,x)=>s+x[1].v,0))}.</p>
+    <div class="scroll"><table><thead><tr><th>N° dossier</th><th>Patient</th><th class="r">Dette</th></tr></thead><tbody>
+    ${dl2.length?dl2.map(([k,x])=>`<tr><td>${esc(k)}</td><td>${esc(x.nom)}</td><td class="r neg">${fmt(x.v)}</td></tr>`).join(''):'<tr><td colspan="3" class="muted">Aucune dette.</td></tr>'}
+    </tbody></table></div>
+  </div>`;
+}
+
+($('reset')||{}).onclick=()=>{data={prest:[],ext:[],extEx:[],cert:[],dep:[],cl:[],clSeq:0,cloHist:[],rseq:0};renderReg();renderDep();renderSyn();renderStats();toast('Données vidées : la base démarre vide')};
+
+window.onShow=()=>go(cur);
+try{window.parent.CAISSE_API={items:ITEMS,refresh:()=>{renderActes()},dette:detteOf,renameDossier:(o,n)=>{data.prest.forEach(r=>{if(r.dossier===o)r.dossier=n})},visits:d=>alive(data.prest).filter(r=>r.dossier===d).map(r=>({date:r.date,prestation:r.prestation,encaisse:r.encaisse,reglement:r.reglement,nonRec:r.nonRec,recu:r.recu}))}}catch(e){}
+if(!LOADED){migrateClo();autoCloturePast()}
+AUD=true;renderActes();renderReg();renderDep();go('acc');
+</script>
+<script>window.XLS_MOD='caisse';
+/* Export Excel (.xlsx) sans bibliothèque externe : fonctionne hors ligne */
+(function(){
+if(window.XLS)return;
+const enc=new TextEncoder();
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+const esc=s=>String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const colName=i=>{let s='';i++;while(i>0){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26)}return s};
+function zip(files){
+  const parts=[],cen=[];let off=0;
+  const u16=v=>[v&255,(v>>8)&255],u32=v=>[v&255,(v>>8)&255,(v>>16)&255,(v>>>24)&255];
+  files.forEach(f=>{
+    const name=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+    const lh=new Uint8Array([0x50,0x4b,3,4,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),0,0]);
+    parts.push(lh,name,data);
+    cen.push(new Uint8Array([0x50,0x4b,1,2,20,0,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),0,0,0,0,0,0,0,0,0,0,0,0,...u32(off)]),name);
+    off+=lh.length+name.length+data.length;
+  });
+  const cl=cen.reduce((s,a)=>s+a.length,0);
+  const end=new Uint8Array([0x50,0x4b,5,6,0,0,0,0,...u16(files.length),...u16(files.length),...u32(cl),...u32(off),0,0]);
+  return new Blob([...parts,...cen,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+const safeSheet=(n,used)=>{let s=String(n||'Feuille').replace(/[\[\]:*?\/\\]/g,' ').replace(/\s+/g,' ').trim().slice(0,28)||'Feuille';let r=s,i=2;while(used.has(r.toLowerCase()))r=s.slice(0,26)+' '+i++;used.add(r.toLowerCase());return r};
+function sheetXml(sh){
+  const bold=new Set(sh.bold||[]);let maxc=0;
+  const rows=sh.rows.map((row,ri)=>{
+    maxc=Math.max(maxc,row.length);
+    const cells=row.map((v,ci)=>{
+      if(v===''||v==null)return'';
+      const r=colName(ci)+(ri+1),st=bold.has(ri)?' s="1"':'';
+      if(typeof v==='number'&&isFinite(v))return`<c r="${r}"${st}><v>${v}</v></c>`;
+      return`<c r="${r}"${st} t="inlineStr"><is><t xml:space="preserve">${esc(v)}</t></is></c>`;
+    }).join('');
+    return`<row r="${ri+1}">${cells}</row>`;
+  }).join('');
+  const w=[];for(let c=0;c<maxc;c++){let m=8;sh.rows.forEach(r=>{const v=r[c];if(v!=null&&v!=='')m=Math.max(m,Math.min(60,String(v).length+2))});w.push(`<col min="${c+1}" max="${c+1}" width="${m}" customWidth="1"/>`)}
+  return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/>${w.length?'<cols>'+w.join('')+'</cols>':''}<sheetData>${rows}</sheetData></worksheet>`;
+}
+function build(sheets){
+  const used=new Set(),S=sheets.map(s=>({name:safeSheet(s.name,used),rows:s.rows&&s.rows.length?s.rows:[['(aucune donnée)']],bold:s.bold}));
+  const files=[
+   {name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${S.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}</Types>`},
+   {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+   {name:'xl/workbook.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${S.map((s,i)=>`<sheet name="${esc(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets></workbook>`},
+   {name:'xl/_rels/workbook.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${S.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${S.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+   {name:'xl/styles.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs></styleSheet>'},
+   ...S.map((s,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,data:sheetXml(s)}))
+  ];
+  return zip(files);
+}
+const NUM=/^-?(0|[1-9]\d{0,2}([\s  ]\d{3})+|[1-9]\d{0,5}|0)(,\d+)?$/;
+function cellVal(t){
+  t=String(t).replace(/\s+/g,' ').trim();
+  const m=t.replace(/\s?(F|FCFA)$/,'');
+  if(m!==''&&NUM.test(m)){const n=Number(m.replace(/[\s  ]/g,'').replace(',','.'));if(isFinite(n))return n}
+  return t;
+}
+function fromTable(tb){
+  const rows=[],bold=[];
+  tb.querySelectorAll('tr').forEach(tr=>{
+    if(tr.closest('table')!==tb)return;
+    const row=[];let isHead=false;
+    tr.querySelectorAll(':scope>th,:scope>td').forEach(c=>{
+      if(c.tagName==='TH')isHead=true;
+      let v;const inp=c.querySelector('input,select,textarea');
+      if(inp){v=inp.type==='checkbox'?(inp.checked?'oui':'non'):inp.tagName==='SELECT'?(inp.options[inp.selectedIndex]||{}).text||'':inp.value}
+      else v=c.innerText!==undefined?c.innerText:c.textContent;
+      const cs=Math.max(1,+c.getAttribute('colspan')||1);
+      row.push(isHead?String(v).replace(/\s+/g,' ').trim():cellVal(v));
+      for(let k=1;k<cs;k++)row.push('');
+    });
+    if(row.some(x=>x!==''))rows.push(row);if(isHead&&row.some(x=>x!==''))bold.push(rows.length-1);
+  });
+  return{rows,bold};
+}
+const slug=s=>String(s||'tableau').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,50)||'tableau';
+const stamp=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())};
+function audit(a,d){try{const P=window.parent&&window.parent.AUDIT?window.parent:window;P.AUDIT&&P.AUDIT(window.XLS_MOD||'Application',a,d)}catch(e){}}
+function download(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+function save(name,sheets){
+  const f=name.replace(/\.xlsx$/i,'')+'.xlsx';
+  download(f,build(sheets));audit('Export Excel',f);
+  try{(window.toast||(window.parent&&window.parent.toast))&&(window.toast||window.parent.toast)('Fichier Excel téléchargé : '+f)}catch(e){}
+  return f;
+}
+function titleOf(tb){
+  const t=tb.getAttribute('data-title');if(t)return t;
+  let el=tb.closest('.scroll')||tb;
+  for(let hop=0;hop<6&&el;hop++){
+    let p=el.previousElementSibling;
+    while(p){
+      if(/^H[1-4]$/.test(p.tagName)||p.classList.contains('blk-h')){return(p.querySelector('b')&&p.classList.contains('blk-h')?p.querySelector('b').textContent:p.textContent).trim().slice(0,60)}
+      const h=p.querySelector&&p.querySelector('h2,h3');if(h)return h.textContent.trim().slice(0,60);
+      p=p.previousElementSibling;
+    }
+    el=el.parentElement;
+    if(el&&/^SECTION$|^BODY$/.test(el.tagName)){const h=el.querySelector('h2,h3,.bar b');return h?h.textContent.trim().slice(0,60):'Tableau'}
+  }
+  return'Tableau';
+}
+function enhance(){
+  document.querySelectorAll('table').forEach(tb=>{
+    if(tb.dataset.noxl||tb.closest('#recu')||!tb.querySelector('tr'))return;
+    const w=tb.closest('.scroll')||tb;
+    const prev=w.previousElementSibling;
+    if(prev&&prev.classList&&prev.classList.contains('xlbar'))return;
+    if(tb.closest('.xlbar'))return;
+    const bar=document.createElement('div');bar.className='xlbar';bar.style.cssText='display:flex;justify-content:flex-end;margin:6px 0 2px';
+    const b=document.createElement('button');b.type='button';b.textContent='Exporter ce tableau en Excel';b.title='Télécharger ce tableau au format Excel (.xlsx)';
+    b.style.cssText='font:inherit;font-size:.8rem;padding:5px 10px;border:1px solid #9aa5a1;border-radius:8px;background:#fff;color:#14342b;cursor:pointer';
+    b.onclick=e=>{e.preventDefault();e.stopPropagation();const t=titleOf(tb),d=fromTable(tb);save(`CTA_${slug(window.XLS_MOD||'app')}_${slug(t)}_${stamp()}`,[{name:t,rows:d.rows,bold:d.bold}])};
+    bar.appendChild(b);w.parentNode.insertBefore(bar,w);
+  });
+}
+let tmr;
+function start(){
+  const st=document.createElement('style');st.textContent='@media print{.xlbar{display:none!important}}';document.head.appendChild(st);
+  enhance();
+  new MutationObserver(()=>{clearTimeout(tmr);tmr=setTimeout(enhance,250)}).observe(document.body,{childList:true,subtree:true});
+}
+window.XLS={build,save,fromTable,enhance,cellVal};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+</body>
+</html>
