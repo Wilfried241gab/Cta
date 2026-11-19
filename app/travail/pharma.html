@@ -325,6 +325,7 @@ header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap">
       <div><h2 style="margin:0 0 8px">Registre de suivi des patients sous ARV</h2></div>
+      <div class="btns" style="margin:0"><button class="btn ghost small" id="regWord" title="Exporter le registre de l’année affichée en Word">Exporter en Word</button></div>
     </div>
     <div class="row" style="max-width:420px">
       <div><label for="regY">Année</label><select id="regY"></select></div>
@@ -388,7 +389,7 @@ header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;
   <div class="kpis" id="stK"></div>
   <div class="card">
     <h2 id="stTitle">Stock par médicament</h2>
-    <div class="btns"><button class="btn small" id="bIn">Enregistrer une entrée</button><button class="btn ghost small" id="bLoss">Déclarer une perte</button><button class="btn ghost small" id="bFix">Corriger un stock</button></div>
+    <div class="btns"><button class="btn small" id="bIn">Enregistrer une entrée</button><button class="btn ghost small" id="bLoss">Déclarer une perte</button><button class="btn ghost small" id="bFix">Corriger un stock</button><button class="btn ghost small" id="stWord" title="Exporter le stock du compartiment affiché en Word">Exporter en Word</button></div>
     <div class="scroll"><table id="stT"></table></div>
   </div>
   <div class="card">
@@ -427,6 +428,7 @@ header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;
       <button data-v="inv" aria-pressed="false">Inventaire</button>
       <button data-v="cmd" aria-pressed="false">Commande</button>
     </div>
+    <div class="btns" style="margin:12px 0 0"><button class="btn ghost small" id="docWord" title="Exporter le document affiché (fiche mensuelle, inventaire ou commande) en Word">Exporter en Word</button></div>
     <div id="docBody" style="margin-top:6px"></div>
   </div>
 </section>
@@ -972,6 +974,75 @@ function openPatientSheet(b){try{parent.AUDIT_READ('Pharmacie',b.dossier)}catch(
     fin();
   };
 }
+
+// ---------- Export Word : registre ARV et état du stock (modèles cta/modeles/)
+const expPar=()=>whoName()||'Responsable pharmacie';
+async function exportDocx(modele,fichier,champs,boucles){
+  try{
+    const r=await fetch('api.php?a=docx',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CTA':'1'},body:JSON.stringify({modele,fichier,champs,boucles:boucles||{}})});
+    const ct=r.headers.get('content-type')||'';
+    if(!r.ok||ct.indexOf('application/json')>=0){
+      let m='Export Word impossible ('+(r.status||'réseau')+').';
+      try{const j=await r.json();if(j&&j.err)m=j.err}catch(e){}
+      toast(m);return;
+    }
+    const url=URL.createObjectURL(await r.blob()),a=document.createElement('a');
+    a.href=url;a.download=fichier+'.docx';document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    audit('Export Word',fichier+'.docx');toast('Fichier Word téléchargé : '+fichier+'.docx');
+  }catch(e){toast('Export Word indisponible : '+(e&&e.message?e.message:e))}
+}
+// Registre ARV de l’année affichée, une ligne par patient, 12 colonnes de mois
+function exportRegistreWord(){
+  const Y=$('regY').value||today.slice(0,4),q=$('regQ').value.trim();
+  const L=state.pat.filter(p=>!q||p.dossier.includes(q));
+  const moisTxt=(p,mi)=>{
+    const k=Y+'-'+String(mi+1).padStart(2,'0'),ds=p.disp.filter(d=>d.date.startsWith(k));
+    if(ds.length)return '✓ '+[...new Set(ds.map(d=>d.date.slice(8)+'/'+d.date.slice(5,7)))].join(' ');
+    const cv=covMonth(p,Y,mi);return cv?('couvert'+(cv.full?'':' jusqu’au '+fdate(cv.last))):'';
+  };
+  const lignes=L.map((p,i)=>{
+    const o={n:String(i+1),dossier:p.dossier,protocole:schemaTxt(schemaOf(p)),contact:(B.find(p.dossier)||{}).contact||p.contact||'',obs:p.obs||''};
+    for(let mi=0;mi<12;mi++)o['m'+(mi+1)]=moisTxt(p,mi);
+    const n=nextRenew(p);o.renouvellement=n?fdate(n)+(daysBetween(n,today)>0?` (${daysBetween(n,today)} j de retard)`:''):'—';
+    return o;
+  });
+  exportDocx('registre_pharma',`Registre_ARV_${Y}`,{annee:Y,edite_le:fdate(today),edite_par:expPar(),nb_patients:N(L.length)},{lignes});
+}
+// État du stock du compartiment affiché (médicaments courants, consommables, ARV, réactifs)
+function exportStockWord(){
+  const rows=medsOf().filter(received).sort(byName);
+  if(!rows.length){toast('Aucun article à exporter dans ce compartiment');return}
+  const lignes=rows.map((m,i)=>{const t=stockAt(m.id),c=cmm(m.id),s=statut(m);return{n:String(i+1),designation:mname(m),dosage:m.dos||'—',forme:m.forme||'—',stock:N(t),cmm:N(c),mois_stock:c>0?(t/c).toFixed(1).replace('.',','):'—',peremption:fmonth(nearestPer(m.id))||'—',statut:s[0]}});
+  const nb=k=>N(rows.filter(m=>statut(m)[0]===k).length);
+  exportDocx('stock_pharma',`Stock_${cat}_${today}`,{compartiment:CATS[cat],date:fdate(today),edite_par:expPar(),nb_articles:N(rows.length),nb_ruptures:nb('Rupture'),nb_bas:nb('Stock bas')},{lignes});
+}
+$('regWord').onclick=exportRegistreWord;
+$('stWord').onclick=exportStockWord;
+// Documents : fiche mensuelle, inventaire, commande — le document affiché part en Word
+function exportDocWord(){
+  const par=expPar(),catLbl=CATS[cat];
+  if(docMode==='fiche'){
+    const [y,mo]=docMonth.split('-');
+    const lignes=recMeds().map((m,i)=>{const s=monthStats(m,docMonth);return{n:String(i+1),molecule:m.nom,dosage:m.dos||'—',forme:m.forme||'—',debut:N(s.debut),recu:N(s.recu),utilise:N(s.util),perdu:s.perdu?N(s.perdu):'',correction:s.aj?(s.aj<0?'+':'−')+N(Math.abs(s.aj)):'',fin:N(s.fin),rupture:s.rupt?(s.rupt===1&&s.debut<=0?'dès le 1er':'le '+s.rupt):''}});
+    if(!lignes.length){toast('Aucun article à exporter pour ce compartiment');return}
+    exportDocx('fiche_mensuelle',`Fiche_mensuelle_${cat}_${docMonth}`,{compartiment:catLbl,mois:MFULL[+mo-1]+' '+y,edite_le:fdate(today),edite_par:par},{lignes});
+    return;
+  }
+  if(docMode==='inv'){
+    const lignes=recMeds().map((m,i)=>{const out=state.mov.filter(x=>x.med===m.id&&x.type==='sortie'&&x.date>invFrom&&x.date<=invTo).reduce((s,x)=>s+x.qte,0);
+      return{n:String(i+1),designation:m.nom,dosage:m.dos||'—',forme:m.forme||'—',patients:m.cat==='arv'?String(state.pat.filter(p=>schemaOf(p).includes(m.id)).length):'—',cmm:N(cmm(m.id)),stock_debut:N(stockAt(m.id,invFrom)),peremption:fmonth(nearestPer(m.id))||'—',sorties:N(out),reste:N(stockAt(m.id,invTo))}});
+    if(!lignes.length){toast('Aucun article à exporter pour ce compartiment');return}
+    exportDocx('inventaire_pharma',`Inventaire_${cat}_${invTo}`,{compartiment:catLbl,date_debut:fdate(invFrom),date_fin:fdate(invTo),edite_le:fdate(today),edite_par:par,nb_articles:N(lignes.length)},{lignes});
+    return;
+  }
+  const end=addDays(today,30*cmdMonths),since=addDays(today,-90);
+  const rows=recMeds().map(m=>{const c=cmm(m.id),s0=stockAt(m.id),soon=state.lots.filter(l=>l.med===m.id&&l.per>=today&&l.per<end).reduce((a,l)=>a+remaining(l),0),per=state.mov.filter(x=>x.med===m.id&&x.type==='perte'&&/^Péremption/.test(x.motif||'')&&x.date>since).reduce((a,x)=>a+x.qte,0),need=c*cmdMonths,q=Math.max(0,need-(s0-soon));return{m,c,s0,soon,per,need,q}}).filter(r=>r.c>0||r.per>0);
+  const lignes=rows.map((r,i)=>({n:String(i+1),medicament:mname(r.m),stock:N(r.s0),cmm:N(r.c),perimes:r.per?N(r.per):'—',perimant:r.soon?N(r.soon):'—',besoin:N(r.need),a_commander:r.q>0?N(r.q):'—'}));
+  if(!lignes.length){toast('Aucune ligne de commande à exporter pour ce compartiment');return}
+  exportDocx('commande_pharma',`Commande_${cat}_${today}`,{compartiment:catLbl,mois_vises:String(cmdMonths),date:fdate(today),date_limite:fdate(end),edite_le:fdate(today),edite_par:par,nb_lignes:N(lignes.length)},{lignes});
+}
+$('docWord').onclick=exportDocWord;
 
 // =============== STOCK ===============
 function renderSto(){

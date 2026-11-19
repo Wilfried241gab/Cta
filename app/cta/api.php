@@ -213,9 +213,12 @@ try {
 
     // ---------- export Word : le logiciel remplit le modèle .docx de cta/modeles/
     if ($a === 'docx') {
-        if (!cta_peut($user, 'rh')) cta_json(['ok' => false, 'err' => 'Droits insuffisants.'], 403);
         $in = entree();
         $modele = (string)($in['modele'] ?? '');
+        // facture / récapitulatif / dette : module CNAMGS-RH ; registre et stock : pharmacie
+        $docPharma = in_array($modele, ['registre_pharma', 'stock_pharma', 'fiche_mensuelle', 'inventaire_pharma', 'commande_pharma'], true);
+        $docCaisse = in_array($modele, ['registre_caisse_pvvih', 'registre_caisse_ext', 'registre_caisse_cert', 'journal_depenses', 'synthese_caisse'], true);
+        if (!cta_peut($user, 'rh') && !($docPharma && cta_peut($user, 'pharma')) && !($docCaisse && cta_peut($user, 'caisse'))) cta_json(['ok' => false, 'err' => 'Droits insuffisants.'], 403);
         $champs = [];
         foreach (array_slice((array)($in['champs'] ?? []), 0, 200, true) as $k => $v) {
             if (is_scalar($v)) $champs[(string)$k] = (string)$v;
@@ -237,7 +240,7 @@ try {
         if ($bin === null) cta_json(['ok' => false, 'err' => 'Modèle Word absent ou illisible : placez le fichier ' . basename($modele) . '.docx dans le dossier modeles.'], 404);
         $fichier = preg_replace('/[^A-Za-z0-9._-]/', '_', (string)($in['fichier'] ?? ('export-' . $modele)));
         $fichier = preg_replace('/\.docx$/i', '', $fichier) . '.docx';
-        cta_ajouter_audit($db, $user['nom'], $user['role'], 'CNAMGS', 'Export Word', $modele . ' · ' . $fichier, $ip);
+        cta_ajouter_audit($db, $user['nom'], $user['role'], $docPharma ? 'Pharmacie' : ($docCaisse ? 'Caisse' : 'CNAMGS'), 'Export Word', $modele . ' · ' . $fichier, $ip);
         header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
         header('Content-Disposition: attachment; filename="' . $fichier . '"');
         header('Content-Length: ' . strlen($bin));

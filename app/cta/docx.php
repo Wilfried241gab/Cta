@@ -7,7 +7,10 @@
 // Dans une boucle, chaque ligne reçoit ses propres champs et {{n}} (numéro de ligne, à partir de 1).
 
 function docx_modele($nom) {
-    $noms = ['facture', 'recapitulatif', 'dette'];
+    $noms = ['facture', 'recapitulatif', 'dette', 'registre_pharma', 'stock_pharma',
+        'fiche_mensuelle', 'inventaire_pharma', 'commande_pharma',
+        'registre_caisse_pvvih', 'registre_caisse_ext', 'registre_caisse_cert',
+        'journal_depenses', 'synthese_caisse'];
     if (!in_array($nom, $noms, true)) return null;
     $p = __DIR__ . '/modeles/' . $nom . '.docx';
     return (is_file($p) && filesize($p) > 0) ? $p : null;

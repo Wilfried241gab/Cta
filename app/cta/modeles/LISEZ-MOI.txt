@@ -86,3 +86,90 @@ REMARQUES
   moyen de repérer un champ à compléter.
 - La ligne « N° .../MS/SG/DRSC/CTAL » de la dette est laissée à remplir à la
   main : elle reçoit la balise {{numero}}, vide par défaut.
+
+MODÈLES WORD DE LA PHARMACIE (format paysage)
+---------------------------------------------
+Deux modèles supplémentaires, en A4 PAYSAGE, sont utilisés depuis le module
+Pharmacie (bouton « Exporter en Word (paysage) ») :
+
+    registre_pharma.docx   registre de suivi des patients sous ARV (une ligne
+                           par patient, 12 colonnes de mois)
+    stock_pharma.docx      état du stock du compartiment affiché : médicaments
+                           courants, consommables, ARV ou réactifs
+
+CHAMPS DE registre_pharma.docx
+  {{annee}} {{edite_le}} {{edite_par}} {{nb_patients}}
+  boucle lignes : {{n}} {{dossier}} {{protocole}} {{m1}} ... {{m12}}
+                  {{contact}} {{obs}} {{renouvellement}}
+  (chaque {{m1}} à {{m12}} reçoit « ✓ jour/mois » ou « couvert »)
+
+CHAMPS DE stock_pharma.docx
+  {{compartiment}} {{date}} {{edite_par}} {{nb_articles}} {{nb_ruptures}} {{nb_bas}}
+  boucle lignes : {{n}} {{designation}} {{dosage}} {{forme}} {{stock}}
+                  {{cmm}} {{mois_stock}} {{peremption}} {{statut}}
+
+L'onglet « Docs » de la pharmacie utilise trois autres modèles, également en
+A4 PAYSAGE (bouton « Exporter en Word (paysage) » : c'est le document affiché
+qui est exporté, fiche mensuelle, inventaire ou commande) :
+
+    fiche_mensuelle.docx     stock du mois : début, reçu, utilisé, perdu,
+                             correction d'inventaire, fin, jour de rupture
+    inventaire_pharma.docx   inventaire entre deux dates (patients, CMM,
+                             stock au début, péremption, sorties, reste)
+    commande_pharma.docx     commande proposée à partir de la CMM
+
+CHAMPS DE fiche_mensuelle.docx
+  {{compartiment}} {{mois}} {{edite_le}} {{edite_par}}
+  boucle lignes : {{n}} {{molecule}} {{dosage}} {{forme}} {{debut}} {{recu}}
+                  {{utilise}} {{perdu}} {{correction}} {{fin}} {{rupture}}
+
+CHAMPS DE inventaire_pharma.docx
+  {{compartiment}} {{date_debut}} {{date_fin}} {{edite_le}} {{edite_par}} {{nb_articles}}
+  boucle lignes : {{n}} {{designation}} {{dosage}} {{forme}} {{patients}}
+                  {{cmm}} {{stock_debut}} {{peremption}} {{sorties}} {{reste}}
+
+CHAMPS DE commande_pharma.docx
+  {{compartiment}} {{mois_vises}} {{date}} {{date_limite}} {{edite_le}}
+  {{edite_par}} {{nb_lignes}}
+  boucle lignes : {{n}} {{medicament}} {{stock}} {{cmm}} {{perimes}}
+                  {{perimant}} {{besoin}} {{a_commander}}
+
+MODÈLES DE LA CAISSE
+
+Les exports de la caisse utilisent cinq modèles, tous en A4 paysage :
+
+    registre_caisse_pvvih.docx   registre des prestations PVVIH (bouton
+                                 « Exporter » de la page Registre)
+    registre_caisse_ext.docx     registre de la consultation externe
+    registre_caisse_cert.docx    registre des certificats médicaux
+    journal_depenses.docx        journal des dépenses (page Dépenses)
+    synthese_caisse.docx         synthèse mensuelle, 12 mois + total, une page
+
+CHAMPS COMMUNS AUX REGISTRES
+  {{du}} {{au}} {{nb}} {{total}} {{edite_le}} {{edite_par}}
+
+  registre_caisse_pvvih : boucle lignes — {{n}} {{date}} {{heure}}
+  {{dossier}} {{nom}} {{age}} {{sexe}} {{elements}} {{prestation}}
+  {{encaisse}} {{non_rec}} {{recu}} {{caissier}}
+
+  registre_caisse_ext : boucle lignes — {{n}} {{date}} {{heure}} {{nom}}
+  {{age}} {{sexe}} {{consultation}} {{examens}} {{total}} {{recu}} {{caissier}}
+
+  registre_caisse_cert : boucle lignes — {{n}} {{date}} {{heure}} {{nom}}
+  {{naiss}} {{piece}} {{obs}} {{montant}} {{recu}} {{caissier}}
+
+CHAMPS DE journal_depenses.docx
+  {{periode}} {{nb}} {{total}} {{edite_le}} {{edite_par}}
+  boucle lignes : {{n}} {{date}} {{type}} {{desc}} {{dest}} {{montant}} {{piece}}
+
+CHAMPS DE synthese_caisse.docx
+  {{annee}} {{edite_le}} {{heure}} {{edite_par}}
+  boucle lignes : {{mois}} {{n}} {{e}} {{xn}} {{rc}} {{me}} {{xr}} {{tric}}
+                  {{so}} {{v}} {{nr}}
+  ligne de total : {{t1}} … {{t10}}
+
+Pour changer l'orientation ou les colonnes, modifiez ces fichiers dans Word :
+la mise en page est conservée, seules les balises sont remplacées. Si vous
+préférez le format portrait, changez l'orientation de la page dans Word
+(Disposition > Orientation > Portrait) et réduisez les colonnes (pour le
+registre, les colonnes de mois).

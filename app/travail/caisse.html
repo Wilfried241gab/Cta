@@ -443,7 +443,7 @@ header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;
       <div><label for="rgD2">Au jour</label><input type="date" id="rgD2"></div>
     </div>
     <div class="banner" id="rgSum"></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button class="btn ghost" id="rgPrint">Imprimer</button><button class="btn ghost" id="rgCsv">Exporter (Excel)</button></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button class="btn ghost" id="rgPrint">Imprimer</button><button class="btn ghost" id="rgWord">Exporter</button></div>
     <div class="scroll"><table id="regTable"></table></div>
   </div>
 </section>
@@ -556,6 +556,7 @@ header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;
   </div>
   <div class="card" style="margin-top:16px">
     <h2>Journal des dépenses</h2>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:6px"><button class="btn ghost" id="depWord">Exporter en Word</button></div>
     <div class="scroll"><table id="depTable"></table></div>
   </div>
 </section>
@@ -567,7 +568,7 @@ header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;
     <label for="synYear" style="margin-top:0">Année</label>
     <select id="synYear" style="max-width:160px"></select>
     <p class="muted" style="font-size:.85rem">Remplie automatiquement à partir des registres et du journal. On distingue ce qui vient des PVVIH et de la consultation externe.</p>
-    <div style="display:flex;justify-content:flex-end;margin-bottom:6px"><button class="btn" id="synPrint" style="width:auto;margin:0;padding:10px 16px">Imprimer la synthèse</button></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:6px"><button class="btn ghost" id="synWord">Exporter en Word</button><button class="btn" id="synPrint" style="width:auto;margin:0;padding:10px 16px">Imprimer la synthèse</button></div>
     <div class="scroll"><table id="synTable"></table></div>
     <p class="muted" style="font-size:.85rem" id="synNote"></p>
   </div>
@@ -729,7 +730,7 @@ function addPrest(x){
   const P=x.lignes.reduce((s,l)=>s+l.p,0),D=detteOf(x.dossier);
   const E=x.statut==='exo'?0:(x.encaisse===null?P+D:x.encaisse);
   const {R,nr}=settle(x.statut,P,D,E);
-  const r={id:data.prest.length+1,recu:'R-'+String(nextRseq()).padStart(4,'0'),date:x.date,profil:x.profil,dossier:x.dossier,nom:x.nom,sexe:x.sexe,assure:x.assure,statut:x.assure?x.statut:(x.statut==='exo'?'exo':''),lignes:x.lignes,prestation:P,detteReprise:D,encaisse:E,reglement:R,nonRec:nr,detteApres:D-R+nr,obs:x.obs||'',heure:x.heure||hhmm(),agent:x.agent||agentName()};
+  const r={id:data.prest.length+1,recu:'R-'+String(nextRseq()).padStart(4,'0'),date:x.date,profil:x.profil,dossier:x.dossier,nom:x.nom,sexe:x.sexe,assure:x.assure,statut:x.assure?x.statut:(x.statut==='exo'?'exo':''),lignes:x.lignes,prestation:P,detteReprise:D,encaisse:E,reglement:R,nonRec:nr,detteApres:D-R+nr,obs:x.obs||'',heure:x.heure||hhmm(),agent:x.agent||agentName(),age:x.age||''};
   data.prest.push(r);
   B.upsert({dossier:x.dossier,nom:x.nom,sexe:x.sexe,assure:x.assure,statut:x.statut,age:x.age,contact:x.tel,premiere:x.date});
   return r;
@@ -1034,19 +1035,25 @@ function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;setTimeout((
 // Reçu de paiement
 const denseFs=n=>n<=6?10:n<=10?9:n<=14?8:7;
 const cutLine='<div class="cut">✂ - - - - - - - - - - - - - - - - - - - - - -</div>';
-const recuCopies=(fn,fs)=>['PATIENT','CAISSE','LABORATOIRE'].map(w=>`<div class="copy" style="--fs:${fs}pt">${fn(w)}</div>`).join(cutLine);
+const recuCopies=(fn,fs,copies)=>copies.map(w=>`<div class="copy" style="--fs:${fs}pt">${fn(w)}</div>`).join(cutLine);
+// Examinens de laboratoire : ce sont eux qui déclenchent l'exemplaire laboratoire du reçu.
+const LAB_GROUPS=new Set(['Sérologies','Biochimie','Hématologie','Parasitologie','Bilans']);
+const isLab=k=>{const it=ITEMS.find(x=>x.k===k);return it?LAB_GROUPS.has(it.g):false};
+const recuCopiesPvvih=r=>['PATIENT','CAISSE'].concat(r.lignes.some(l=>isLab(l.k))?['LABORATOIRE']:[]);
 function showRecu(r,dup){
-  const exo=r.statut==='exo',st=STL(r.statut);
+  const exo=r.statut==='exo';
   const rows=r.lignes.map(l=>`<tr><td>${esc(l.n||(ITEMS.find(x=>x.k===l.k)||{}).n||l.k)}</td><td class="r">${l.p?fmt(l.p):'Gratuit'}</td></tr>`).join('');
+  const age=(B.find(r.dossier)||{}).age||r.age||'';
   const one=who=>`<div style="text-align:center"><b>Centre de Traitement Ambulatoire de Lambaréné</b><div class="muted" style="font-size:.8em">Reçu de paiement · PVVIH${dup?' · DUPLICATA':''} · exemplaire <b>${who}</b></div></div>
   <div class="rl"><span>N° <b>${r.recu}</b></span><span>${fdate(r.date)} · ${r.heure||''}</span></div>
-  <div style="font-size:.9em">Patient : <b>${esc(r.nom)}</b> · ${/^SN-\d+$/.test(r.dossier)?'n° de dossier à attribuer':'dossier '+esc(r.dossier)} · ${r.profil==='nouveau'?'Nouveau':'Ancien'} · ${r.assure?st+' · assuré CNAMGS':'non assuré'}</div>
+  <div class="rl"><span>Nom et prénom</span><b>${esc(r.nom)}</b></div>
+  <div class="rl"><span>Sexe</span><b>${r.sexe==='F'?'Féminin':'Masculin'}</b></div>
+  <div class="rl"><span>Âge</span><b>${age?age+' ans':'—'}</b></div>
   <table class="mini"><tbody>${rows}</tbody></table>
-  <div class="rl"><span>Prestation du jour</span><b>${fmt(r.prestation)}</b></div>
-  ${r.detteReprise>0&&!exo?`<div class="rl"><span>Dette reprise</span><b>${fmt(r.detteReprise)}</b></div><div class="rl"><span>Total à payer</span><b>${fmt(r.prestation+r.detteReprise)}</b></div>`:''}
-  ${exo?'<div class="rl b"><span>Exonéré : aucun paiement</span><b>0 F</b></div>':`<div class="rl"><span>Encaissé${r.detteReprise>0?' (dont dette '+fmt(r.reglement)+')':''}</span><b>${fmt(r.encaisse)}</b></div><div class="rl b"><span>Reste à payer</span><b>${fmt(r.nonRec)}</b></div>`}
-  <div class="rl" style="color:var(--mute);font-size:.8em"><span>Agent de caisse : ${esc(r.agent||'—')}</span><span>Dette restante : ${fmt(r.detteApres)}</span></div>`;
-  $('recu').innerHTML=recuCopies(one,denseFs(r.lignes.length+(r.detteReprise>0?4:2)));
+  ${exo?'<div class="rl b"><span>Exonéré : aucun paiement</span><b>0 F</b></div>':`<div class="rl b"><span>Total payé</span><b>${fmt(r.encaisse)}</b></div>`}
+  <div class="rl" style="color:var(--mute);font-size:.8em"><span>Caisse : PVVIH</span><span>Caissier : ${esc(r.agent||'—')}</span></div>`;
+  const copies=recuCopiesPvvih(r);
+  $('recu').innerHTML=recuCopies(one,denseFs(r.lignes.length+copies.length+2),copies);
   $('recuModal').hidden=false;
 }
 function showRecuCert(r,dup){
@@ -1054,7 +1061,7 @@ function showRecuCert(r,dup){
   <div class="rl" style="margin-top:8px"><span>N° <b>${r.recu}</b></span><span>${fdate(r.date)} · ${r.heure||''}</span></div>
   <div style="font-size:.9rem;line-height:1.6">Nom et prénom : <b>${esc(r.nom)}</b><br>Date de naissance : ${fdate(r.naiss)}<br>Pièce d’identité n° : ${esc(r.piece)}<br>Motif : ${esc(r.obs||'—')}</div>
   <div class="rl b"><span>Montant payé</span><b>${fmt(r.montant)}</b></div>
-  <div class="rl" style="margin-top:18px;color:var(--mute);font-size:.8rem"><span>Agent de caisse : ${esc(r.agent||'—')}</span><span>Signature du demandeur : ________</span></div>`;
+  <div class="rl" style="margin-top:18px;color:var(--mute);font-size:.8rem"><span>Caisse : Certificat médical · ${esc(r.agent||'—')}</span><span>Signature du demandeur : ________</span></div>`;
   $('recuModal').hidden=false;
 }
 $('rcClose').onclick=()=>$('recuModal').hidden=true;
@@ -1123,10 +1130,39 @@ $('anOk').onclick=()=>{
   $('anModal').hidden=true;renderRegistre();toast('Ligne annulée : elle reste visible dans le registre');
 };
 $('rgPrint').onclick=()=>{document.body.classList.add('print-rg');try{window.print()}catch(e){toast('Impression indisponible ici')}document.body.classList.remove('print-rg')};
-$('rgCsv').onclick=()=>{
-  const {head,rows}=regData();
-  const lines=[head.concat(['Statut','Motif d’annulation'])].concat(rows.map(x=>x.cells.map(cellTxt).concat([x.r.annule?'Annulé':'Valide',x.r.annule?x.r.annule.motif:''])));
-  const nm='Registre_'+({pvvih:'PVVIH',ext:'Consultation_externe',cert:'Certificats'})[rgMode]+'_'+today;XLS.save(nm,[{name:'Registre',rows:lines.map(r=>r.map(c=>XLS.cellVal(c??''))),bold:[0]}]);
+// Export Word (paysage) : le serveur remplit le modèle .docx de cta/modeles/
+async function exportDocx(modele,fichier,champs,boucles){
+  try{
+    const r=await fetch('api.php?a=docx',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CTA':'1'},body:JSON.stringify({modele,fichier,champs,boucles:boucles||{}})});
+    const ct=r.headers.get('content-type')||'';
+    if(!r.ok||ct.indexOf('application/json')>=0){
+      let m='Export Word impossible ('+(r.status||'réseau')+').';
+      try{const j=await r.json();if(j&&j.err)m=j.err}catch(e){}
+      toast(m);return;
+    }
+    const url=URL.createObjectURL(await r.blob()),a=document.createElement('a');
+    a.href=url;a.download=fichier+'.docx';document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    audit('Export Word',fichier+'.docx');toast('Fichier Word téléchargé : '+fichier+'.docx');
+  }catch(e){toast('Export Word indisponible : '+(e&&e.message?e.message:e))}
+}
+const expVal=v=>{const s=cellTxt(v);return s===''||s===undefined||s===null?'—':String(s)};
+$('rgWord').onclick=()=>{
+  const {rows}=regData(),ok=rows.filter(x=>!x.r.annule);
+  if(!ok.length){toast('Aucun enregistrement à exporter');return}
+  const d1=$('rgD1').value,d2=$('rgD2').value;
+  const champs={du:d1?fdate(d1):'origine',au:d2?fdate(d2):fdate(today),nb:String(ok.length),total:fmt(ok.reduce((s,x)=>s+x.amount,0)),edite_le:fdate(today),edite_par:agentName()};
+  let modele='registre_caisse_pvvih',nom='Registre_caisse_PVVIH',lignes;
+  if(rgMode==='ext'){
+    modele='registre_caisse_ext';nom='Registre_caisse_consultation_externe';
+    lignes=ok.map(x=>{const c=x.cells;return{n:expVal(c[0]),date:expVal(c[1]),heure:expVal(c[2]),nom:expVal(c[3]),age:expVal(c[4]),sexe:expVal(c[5]),consultation:expVal(c[7]),examens:expVal(c[10]),total:expVal(c[12]),recu:expVal(c[13]),caissier:expVal(c[15])}});
+  }else if(rgMode==='cert'){
+    modele='registre_caisse_cert';nom='Registre_caisse_certificats';
+    lignes=ok.map(x=>{const c=x.cells;return{n:expVal(c[0]),date:expVal(c[1]),heure:expVal(c[2]),nom:expVal(c[3]),naiss:expVal(c[4]),piece:expVal(c[5]),obs:expVal(c[6]),montant:expVal(c[7]),recu:expVal(c[8]),caissier:expVal(c[9])}});
+  }else{
+    lignes=ok.map(x=>{const c=x.cells;return{n:expVal(c[0]),date:expVal(c[1]),heure:expVal(c[2]),dossier:expVal(c[3]),nom:expVal(c[4]),age:expVal(c[5]),sexe:c[6]==='F'?'F':c[6]==='M'?'M':expVal(c[6]),elements:expVal(c[9]),prestation:expVal(c[10]),encaisse:expVal(c[12]),non_rec:expVal(c[14]),recu:expVal(c[15]),caissier:expVal(c[16])}});
+  }
+  exportDocx(modele,nom+'_'+today,champs,{lignes});
 };
 
 // ---------- Consultation externe (la consultation d'abord, les examens ensuite)
@@ -1189,7 +1225,7 @@ function showRecuExt(r,dup){
   <div style="font-size:.9rem;margin-bottom:6px">Patient : <b>${esc(r.nom)}</b>${r.age?' · '+r.age+' ans':''} · ${r.sexe==='F'?'féminin':'masculin'}</div>
   <div class="scroll"><table><thead><tr><th>Désignation</th><th class="r">Prix</th></tr></thead><tbody><tr><td>Consultation · ${esc(r.consultN)}</td><td class="r">${fmt(r.consultP)}</td></tr></tbody></table></div>
   <div style="margin-top:10px"><div class="rl b"><span>Total payé</span><b>${fmt(r.prestation)}</b></div></div>
-  <div class="rl" style="margin-top:18px;color:var(--mute);font-size:.8rem"><span>Agent de caisse : ${esc(r.agent||'—')}</span></div>`;
+  <div class="rl" style="margin-top:18px;color:var(--mute);font-size:.8rem"><span>Caisse : Consultation externe</span><span>Caissier : ${esc(r.agent||'—')}</span></div>`;
   $('recuModal').hidden=false;
 }
 function showRecuExam(r,dup){
@@ -1198,8 +1234,8 @@ function showRecuExam(r,dup){
     <div style="font-size:.9em">Patient : <b>${esc(r.nom)}</b></div>
     <table class="mini"><tbody>${r.exams.map(e=>`<tr><td>${esc(e.n)}</td><td class="r">${e.p?fmt(e.p):'Gratuit'}</td></tr>`).join('')}</tbody></table>
     <div class="rl b"><span>Total payé</span><b>${fmt(r.prestation)}</b></div>
-    <div class="rl" style="color:var(--mute);font-size:.8em"><span>Agent de caisse : ${esc(r.agent||'—')}</span></div>`;
-  $('recu').innerHTML=recuCopies(one,denseFs(r.exams.length+3));
+    <div class="rl" style="color:var(--mute);font-size:.8em"><span>Caisse : Consultation externe · examens</span><span>Caissier : ${esc(r.agent||'—')}</span></div>`;
+  $('recu').innerHTML=recuCopies(one,denseFs(r.exams.length+3),['PATIENT','CAISSE','LABORATOIRE']);
   $('recuModal').hidden=false;
 }
 const exs={visit:null,set:new Set(),mode:'pay'};
@@ -1273,29 +1309,41 @@ $('dAdd').onclick=()=>{
 };
 function renderDep(){
   const rows=[...data.dep].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
-  $('depTable').innerHTML=`<thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Destinataire</th><th class="r">Montant</th><th>Pièce</th></tr></thead><tbody>`+
+  $('depTable').innerHTML=`<thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Destinataire</th><th class="r">Montant</th><th>Pièce justificative</th></tr></thead><tbody>`+
   (rows.length?rows.map(r=>`<tr><td>${fdate(r.date)}</td><td>${esc(r.type)}</td><td>${esc(r.desc)}</td><td>${esc(r.dest)}</td><td class="r">${fmt(r.montant)}</td><td>${esc(r.piece)}</td></tr>`).join(''):`<tr><td colspan="6" class="muted">Aucune dépense enregistrée.</td></tr>`)+'</tbody>';
   const by={};data.dep.forEach(d=>{const k=d.date.slice(0,7);by[k]=(by[k]||0)+d.montant});
   const ks=Object.keys(by).sort().reverse();
   $('dTot').innerHTML=ks.length?ks.map(k=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>${MONTHS[+k.slice(5)-1]} ${k.slice(0,4)}</span><b class="num">${fmt(by[k])}</b></div>`).join(''):'<p class="muted">Rien à totaliser.</p>';
 }
+$('depWord').onclick=()=>{
+  const rows=[...data.dep].sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+  if(!rows.length){toast('Aucune dépense à exporter');return}
+  const lignes=rows.map((r,i)=>({n:String(i+1),date:fdate(r.date),type:r.type,desc:r.desc,dest:r.dest||'—',montant:fmt(r.montant),piece:r.piece||'—'}));
+  const tot=rows.reduce((s,r)=>s+r.montant,0);
+  exportDocx('journal_depenses','Journal_depenses_'+today,{periode:'Toutes les dépenses enregistrées',nb:String(rows.length),total:fmt(tot),edite_le:fdate(today),edite_par:agentName()},{lignes});
+};
 
 // ---------- Synthèse
-function renderSyn(){
-  const years=[...new Set([...data.prest,...data.ext,...data.extEx,...data.dep].map(r=>r.date.slice(0,4)).concat([today.slice(0,4)]))].sort().reverse();
-  const cur=$('synYear').value||years[0];
-  $('synYear').innerHTML=years.map(y=>`<option ${y===cur?'selected':''}>${y}</option>`).join('');
-  $('synYear').onchange=renderSyn;
-  const y=$('synYear').value,keys=['n','e','xn','rc','me','xr','so','nr'];
-  const T=Object.fromEntries(keys.map(k=>[k,0]));
+const SYN_KEYS=['n','e','xn','rc','me','xr','so','nr'];
+function synCalc(y){
+  const T=Object.fromEntries(SYN_KEYS.map(k=>[k,0]));
   const rows=MONTHS.map((m,i)=>{
     const key=y+'-'+String(i+1).padStart(2,'0');
     const P=alive(data.prest).filter(r=>r.date.startsWith(key)),X=alive(data.ext).filter(r=>r.date.startsWith(key)),XE=alive(data.extEx).filter(r=>r.date.startsWith(key)),D=data.dep.filter(r=>r.date.startsWith(key));
     const pay=P.filter(r=>r.statut!=='exo'),exo=P.filter(r=>r.statut==='exo');
     const v={n:P.length,e:exo.length,xn:X.length,rc:pay.reduce((s,r)=>s+r.encaisse,0),me:exo.reduce((s,r)=>s+r.prestation,0),xr:X.reduce((s,r)=>s+r.encaisse,0)+XE.reduce((s,r)=>s+r.encaisse,0),so:D.reduce((s,r)=>s+r.montant,0),nr:pay.reduce((s,r)=>s+nonRec(r),0)};
-    keys.forEach(k=>T[k]+=v[k]);
+    SYN_KEYS.forEach(k=>T[k]+=v[k]);
     return{m,v,empty:!P.length&&!X.length&&!XE.length&&!D.length};
   });
+  return{rows,T};
+}
+function renderSyn(){
+  const years=[...new Set([...data.prest,...data.ext,...data.extEx,...data.dep].map(r=>r.date.slice(0,4)).concat([today.slice(0,4)]))].sort().reverse();
+  const cur=$('synYear').value||years[0];
+  $('synYear').innerHTML=years.map(y=>`<option ${y===cur?'selected':''}>${y}</option>`).join('');
+  $('synYear').onchange=renderSyn;
+  const y=$('synYear').value;
+  const {rows,T}=synCalc(y);
   const defs=[['Patients PVVIH reçus',v=>v.n],['PVVIH exonérés',v=>v.e],['Patients consultation externe',v=>v.xn],['Recettes PVVIH (payants)',v=>fmt(v.rc)],['Recettes PVVIH exonérés (coût, hors total)',v=>fmt(v.me),'info'],['Recettes consultation externe',v=>fmt(v.xr)],['Total recettes',v=>fmt(v.rc+v.xr),'b'],['Total sortie',v=>fmt(v.so)],['Versement',v=>fmt(v.rc+v.xr-v.so),'v'],['Non recouvré (information)',v=>fmt(v.nr),'info']];
   const cell=(d,v)=>`<td class="r ${d[2]==='info'?'muted':''} ${d[2]==='v'&&(v.rc+v.xr-v.so)<0?'neg':''}" ${d[2]==='b'||d[2]==='v'?'style="font-weight:700"':''}>${d[1](v)}</td>`;
   $('synTable').innerHTML=`<thead><tr><th>Mois</th>${defs.map(d=>`<th class="r">${d[0]}</th>`).join('')}</tr></thead><tbody>`+
@@ -1304,6 +1352,12 @@ function renderSyn(){
   $('synNote').textContent='Les recettes ne comptent que l’argent réellement encaissé. Les exonérés (coût) et le non recouvré sont affichés à part, pour information : ils n’entrent ni dans les recettes ni dans le versement. Versement = total recettes − total sortie.';
 }
 
+$('synWord').onclick=()=>{
+  const y=$('synYear').value||today.slice(0,4),{rows,T}=synCalc(y);
+  const lignes=rows.map(r=>({mois:r.m,n:String(r.v.n),e:String(r.v.e),xn:String(r.v.xn),rc:fmt(r.v.rc),me:fmt(r.v.me),xr:fmt(r.v.xr),tric:fmt(r.v.rc+r.v.xr),so:fmt(r.v.so),v:fmt(r.v.rc+r.v.xr-r.v.so),nr:fmt(r.v.nr)}));
+  exportDocx('synthese_caisse','Synthese_caisse_'+y,{annee:y,edite_le:fdate(today),heure:hhmm(),edite_par:agentName(),
+    t1:String(T.n),t2:String(T.e),t3:String(T.xn),t4:fmt(T.rc),t5:fmt(T.me),t6:fmt(T.xr),t7:fmt(T.rc+T.xr),t8:fmt(T.so),t9:fmt(T.rc+T.xr-T.so),t10:fmt(T.nr)},{lignes});
+};
 $('synPrint').onclick=()=>{
   const y=$('synYear').value,t=$('synTable').cloneNode(true);t.removeAttribute('id');t.className='t';
   const html=`<style>@page{size:A4 landscape;margin:10mm}.t{font-size:10px}.t td,.t th{padding:3px 5px}</style><h1>Centre de Traitement Ambulatoire de Lambaréné · Synthèse mensuelle de la caisse ${y}</h1><p class="m">Édité le ${fdate(today)} à ${hhmm()} par ${esc(agentName())}</p>${t.outerHTML}<p class="m">${esc($('synNote').textContent)}</p><div class="sign"><div>Le caissier</div><div>Le médecin-chef</div></div>`;
