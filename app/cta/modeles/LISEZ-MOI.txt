@@ -75,6 +75,9 @@ CHAMPS DE dette.docx
 
 REMARQUES
 ---------
+- L'en-tête de dette.docx porte le logo officiel de la République Gabonaise
+  (drapeau + sceau). Pour en changer, remplacez l'image dans Word : le reste
+  du modèle n'est pas affecté.
 - Les montants arrivent déjà mis en forme à la française : 1 500 000.
 - {{somme_lettres}} donne le montant en lettres (QUARANTE-CINQ MILLE...).
 - {{date_lettres}} donne 12 JANVIER 2026 ; {{mois_annee_lettres}} donne

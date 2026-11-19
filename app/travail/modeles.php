@@ -37,6 +37,25 @@ function cellp($paras, $w) {
     return '<w:tc><w:tcPr>' . $tcpr . '</w:tcPr>' . $inner . '</w:tc>';
 }
 function row($cells) { return '<w:tr>' . implode('', $cells) . '</w:tr>'; }
+// Image (logo République Gabonaise) centrée, relation rId9 vers word/media/logo.png
+function logo($cx, $cy) {
+    return '<w:p><w:pPr><w:jc w:val="center"/>'
+        . '<w:spacing w:before="0" w:after="80" w:line="240" w:lineRule="auto"/></w:pPr>'
+        . '<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"'
+        . ' xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">'
+        . '<wp:extent cx="' . $cx . '" cy="' . $cy . '"/><wp:effectExtent l="0" t="0" r="0" b="0"/>'
+        . '<wp:docPr id="1" name="Logo République Gabonaise"/>'
+        . '<wp:cNvGraphicFramePr><a:graphicFrameLocks'
+        . ' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr>'
+        . '<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+        . '<a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">'
+        . '<pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">'
+        . '<pic:nvPicPr><pic:cNvPr id="1" name="logo.png"/><pic:cNvPicPr/></pic:nvPicPr>'
+        . '<pic:blipFill><a:blip r:embed="rId9"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
+        . '<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="' . $cx . '" cy="' . $cy . '"/></a:xfrm>'
+        . '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>'
+        . '</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>';
+}
 function tbl($rows, $widths, $o = []) {
     $couleur = $o['bordure'] ?? '595959';
     $bordures = '<w:tblBorders>';
@@ -89,7 +108,7 @@ function signatures() {
         ['bordure' => 'FFFFFF']
     );
 }
-function docx_ecrire($chemin, $corps) {
+function docx_ecrire($chemin, $corps, $image = null) {
     $document = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         . '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
         . ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>'
@@ -111,6 +130,7 @@ function docx_ecrire($chemin, $corps) {
         . '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
         . '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
         . '<Default Extension="xml" ContentType="application/xml"/>'
+        . ($image ? '<Default Extension="png" ContentType="image/png"/>' : '')
         . '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
         . '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
         . '<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>'
@@ -125,6 +145,7 @@ function docx_ecrire($chemin, $corps) {
     $drels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         . '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
         . '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'
+        . ($image ? '<Relationship Id="rId9" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/logo.png"/>' : '')
         . '</Relationships>';
     $core = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         . '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"'
@@ -146,6 +167,7 @@ function docx_ecrire($chemin, $corps) {
     $zip->addFromString('word/styles.xml', $styles);
     $zip->addFromString('docProps/core.xml', $core);
     $zip->addFromString('docProps/app.xml', $app);
+    if ($image) $zip->addFile($image, 'word/media/logo.png');
     $zip->close();
     return $chemin;
 }
@@ -228,9 +250,11 @@ docx_ecrire($dest . '/recapitulatif.docx', $corps);
 
 // ---------- Feuille 3 : LISTING DE LA PRODUCTION ET SOLDE DE LA DETTE
 $wd = [1450, 1080, 1080, 1080, 1080, 1080, 1080, 854, 854];
-// En-tête du modèle d'origine : colonne de gauche (secrétariat / direction / CTA),
-// colonne de droite (objet du listing). Le logo du fichier d'origine n'a pas pu être transféré.
-$corps = tbl(
+// En-tête du modèle d'origine : logo de la République Gabonaise (drapeau + sceau) centré,
+// puis colonne de gauche (secrétariat / direction / CTA) et colonne de droite (objet du listing).
+$logo = __DIR__ . '/logo_gabon.png';
+$corps = logo(720000, 485623)
+    . tbl(
         row([
             cellp([
                 ['SECRÉTARIAT GÉNÉRAL', ['b' => true, 'sz' => 18, 'after' => 0]],
@@ -315,7 +339,7 @@ $corps = tbl(
     )
     . para('Fait à Lambaréné, le {{date_lettres}}', ['sz' => 20, 'before' => 240])
     . para('Le Médecin Chef', ['align' => 'right', 'b' => true, 'sz' => 20, 'before' => 400]);
-docx_ecrire($dest . '/dette.docx', $corps);
+docx_ecrire($dest . '/dette.docx', $corps, is_file($logo) ? $logo : null);
 
 echo "Modèles écrits :\n";
 foreach (['facture', 'recapitulatif', 'dette'] as $m) {
