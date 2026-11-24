@@ -199,8 +199,8 @@ try {
         cta_json($res);
     }
 
-    if ($a === 'export') { // sauvegarde complète : réservée au médecin-chef et à l'administrateur
-        if (!cta_prive($user)) cta_json(['ok' => false, 'err' => 'Droits insuffisants.'], 403);
+    if ($a === 'export') { // sauvegarde complète : réservée au médecin-chef
+        if (!$user || $user['role'] !== 'Médecin-chef') cta_json(['ok' => false, 'err' => 'Droits insuffisants.'], 403);
         cta_ajouter_audit($db, $user['nom'], $user['role'], 'Sauvegarde', 'Export complet téléchargé', '', $ip);
         $out = ['cta_export' => 1, 'date' => $now, 'schema' => CTA_SCHEMA, 'keys' => [], 'audit' => cta_audit_liste($db), 'users' => $db->query('SELECT id, nom, role, actif FROM cta_user')->fetchAll()];
         foreach ($db->query('SELECT cle, valeur FROM cta_kv')->fetchAll() as $x) $out['keys'][$x['cle']] = $x['cle'] === 'cta.shell.v1' ? cta_shell_sortie($db, $x['valeur']) : $x['valeur'];

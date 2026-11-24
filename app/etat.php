@@ -76,6 +76,6 @@ table{border-collapse:collapse;width:100%}th,td{padding:8px 10px;border-bottom:1
  <table><thead><tr><th>Document</th><th class="r">Jours conservés</th><th>Du</th><th>Au</th></tr></thead><tbody>
  <?php foreach ($histo as $x): ?><tr><td><?= $h($x['cle']) ?></td><td class="r"><?= (int)$x['n'] ?></td><td><?= $h($x['du']) ?></td><td><?= $h($x['au']) ?></td></tr><?php endforeach; ?></tbody></table></div><?php endif; ?>
 <div class="card"><h2>Sauvegarde</h2><p>Dernière sauvegarde chiffrée : <b><?= $dernier ? $h(date('d/m/Y H:i', $dernier)) : 'aucune' ?></b> (<?= count($bk) ?> fichier(s)). Elle est faite par <b>sauvegarde.bat</b> (tâche planifiée) et chiffrée avec une clé conservée hors du site.</p>
- <?php if (isset($u0) && $u0 && cta_prive($u0)): ?><a class="btn" href="api.php?a=export">Télécharger l'export complet (non chiffré)</a><?php endif; ?></div>
+ <?php if (isset($u0) && $u0 && $u0['role'] === 'Médecin-chef'): ?><a class="btn" href="api.php?a=export">Télécharger l'export complet (non chiffré)</a><?php endif; ?></div>
 <p><a href="index.php">← Ouvrir l'application</a></p>
 </main></body></html>
