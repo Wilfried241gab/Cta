@@ -921,10 +921,12 @@ function editDisp(dossier,i){
   openSheet(`<h3>Modifier la dispensation</h3>
   <p class="muted" style="margin-top:0">Dossier <b>${esc(dossier)}</b> · ${esc(mname(med(d.med)))} · ${fdate(d.date)}<br>Lot(s) concerné(s) : ${esc(lotTxt)} · stock disponible pour cette ligne : <b>${N(avail)}</b> boîte(s)</p>
   <div class="row"><div><label for="de_q">Quantité de boîtes</label><input type="number" id="de_q" min="1" inputmode="numeric" value="${d.qte}"></div><div><label for="de_j">Durée de couverture (jours)</label><input type="number" id="de_j" min="1" inputmode="numeric" value="${d.jours||30}"></div></div>
+  <p class="muted" id="de_next" style="font-size:.88rem;margin:8px 0">Prochain renouvellement : <b>${fdate(addDays(d.date,d.jours||30))}</b></p>
   <p class="muted" style="font-size:.82rem">Une baisse remet la différence en stock dans le lot d'origine ; une hausse déduit la différence de ce même lot.</p>
   <div class="err" id="de_err" role="alert"></div>
   <div class="acts"><button class="btn ghost" id="de_no" style="flex:1">Annuler</button><button class="btn" id="de_ok" style="flex:1">Enregistrer</button></div>`);
   $('de_no').onclick=closeSheet;
+  $('de_j').oninput=()=>{const jv=Math.round(Number($('de_j').value));$('de_next').innerHTML='Prochain renouvellement : <b>'+(jv>0?fdate(addDays(d.date,jv)):'—')+'</b>'};
   $('de_ok').onclick=()=>{
     const E=t=>{$('de_err').textContent=t};
     const q=Math.round(Number($('de_q').value)),j=Math.round(Number($('de_j').value));
@@ -939,7 +941,7 @@ function editDisp(dossier,i){
       const miss=q-mvs.reduce((s,mv)=>s+mv.qte,0);if(miss>0){E('Stock insuffisant dans le lot : '+N(avail)+' boîte(s) disponibles.');old.movs.forEach((v,k)=>{if(mvs[k])mvs[k].qte=v});return}}
     d.qte=q;d.jours=j;B.upsert({dossier:p.dossier,rdv:nextRenew(p)});
     audit('Dispensation modifiée','dossier '+p.dossier+' · '+mname(med(d.med))+' · boîtes '+old.q+' → '+q+' · durée '+old.j+' → '+j+' j · lot '+lotTxt+(q>old.q?' · hausse débitée du lot':q<old.q?' · différence remise en stock':''));
-    persistSave();closeSheet();renderReg();toast('Dispensation modifiée : stock et registre mis à jour');
+    persistSave();closeSheet();renderReg();toast('Dispensation modifiée : stock et registre mis à jour · prochain renouvellement le '+fdate(addDays(d.date,j)));
   };
 }
 
