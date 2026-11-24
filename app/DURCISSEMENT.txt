@@ -1,0 +1,53 @@
+CTA — SÉCURISER LE SERVEUR XAMPP (à faire avant la mise en service réelle)
+===========================================================================
+Ordre conseillé. Cochez au fur et à mesure.
+
+[ ] 1. MySQL : utilisateur dédié + mot de passe root
+      - install_database.bat crée déjà l'utilisateur « cta » (droits limités à la base cta). Vérifiez dans config.php
+        que 'utilisateur' n'est PAS « root ».
+      - Définir un mot de passe pour root : double-cliquez durcir_mysql.bat (MySQL démarré), saisissez un mot de passe
+        long, NOTEZ-LE dans un coffre. (Il crée aussi un utilisateur « cta_app » si vous préférez celui-ci.)
+      - Ensuite, phpMyAdmin demandera ce mot de passe : c:\xampp\phpMyAdmin\config.inc.php →
+        $cfg['Servers'][$i]['auth_type'] = 'cookie';  et  $cfg['Servers'][$i]['AllowNoPassword'] = false;
+
+[ ] 2. MySQL non joignable depuis le réseau
+      - Fichier c:\xampp\mysql\bin\my.ini, section [mysqld] : ajoutez   bind-address=127.0.0.1
+        (ou skip-networking si rien d'autre n'utilise MySQL à distance). Redémarrez MySQL.
+
+[ ] 3. phpMyAdmin réservé à l'ordinateur serveur
+      - Fichier c:\xampp\apache\conf\extra\httpd-xampp.conf, bloc <Directory "C:/xampp/phpMyAdmin"> :
+        vérifiez la ligne   Require local   (et pas « Require all granted »). Redémarrez Apache.
+      - Test : depuis un AUTRE ordinateur, http://adresse-du-serveur/phpmyadmin doit afficher « Accès interdit ».
+      - Faites de même pour la page http://adresse-du-serveur/dashboard et /xampp (inutiles) : Require local.
+
+[ ] 4. Pare-feu Windows
+      - Autorisez Apache (ports 80/443) en réseau PRIVÉ uniquement. Ne publiez jamais MySQL (3306).
+
+[ ] 5. HTTPS (obligatoire dès qu'on sort d'un réseau interne de confiance)
+      - XAMPP fournit déjà HTTPS : https://localhost/cta/ (certificat auto-signé : avertissement du navigateur).
+      - Pour des postes en réseau : créez un certificat pour le nom/IP du serveur (mkcert, ou certificat de l'organisme)
+        et placez-le dans c:\xampp\apache\conf\ssl.crt / ssl.key, puis redémarrez Apache.
+      - Quand HTTPS fonctionne sur tous les postes : config.php → 'forcer_https' => true,
+
+[ ] 6. Configuration CTA (config.php)
+      - 'mot_de_passe_initial' : remplacez cta2026 par une valeur que vous seul connaissez.
+      - 'reseaux_autorises' : limitez aux adresses de la clinique, ex. ['127.0.0.1','::1','192.168.1.'].
+      - Ouvrez etat.php : la section « Points à corriger » doit être vide.
+
+[ ] 7. Chiffrement du disque (BitLocker)
+      - Paramètres Windows > Chiffrement de l'appareil / BitLocker : activez-le sur le disque C:. Conservez la clé de
+        récupération hors de l'ordinateur. Sans cela, un vol de l'ordinateur donne accès à toutes les données.
+
+[ ] 8. Sauvegardes
+      - installer_sauvegarde.bat exécuté ; sauvegarde.key copiée sur une clé USB rangée à part ;
+        'copie_externe' renseigné ; un essai de restauration réussi (restaurer.bat sur une copie).
+
+[ ] 9. Mises à jour et compte Windows
+      - Windows Update actif ; compte Windows du serveur protégé par mot de passe ; session verrouillée quand personne n'est là.
+
+[ ] 10. Surveillance
+      - Chaque semaine : consulter le journal d'audit (échecs de connexion, « Écriture refusée », consultations de dossiers)
+        et logs\cta_erreurs.log.
+
+INTERNET : n'exposez pas ce serveur XAMPP sur Internet. Si un accès distant est nécessaire : VPN, ou serveur Linux
+(Apache/Nginx + MariaDB, HTTPS, pare-feu, mises à jour automatiques) avec le même dossier cta.

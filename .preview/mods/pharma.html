@@ -1,0 +1,1782 @@
+<!doctype html>
+<html lang="fr">
+<head><script>try{Object.defineProperty(window,'localStorage',{value:window.parent.CTA_LS,configurable:true})}catch(e){}
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pharmacie – CTA de Lambaréné (démo)</title>
+<style>
+:root{
+  color-scheme: light dark;
+  --bg:#f2f5f2; --surface:#ffffff; --ink:#1b2a24; --mute:#5b6d64; --line:#d3ddd7;
+  --green:#1d6b4d; --green-ink:#ffffff; --soft:#e5eee8; --gold:#e0ac12; --gold-soft:#fdf3cf;
+  --blue:#2a5d8f; --red:#b3261e; --red-soft:#fbe4e1;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1a15; --surface:#17241e; --ink:#e6efe9; --mute:#9bb0a5; --line:#2b3c34;
+    --green:#4cb98a; --green-ink:#08150f; --soft:#1f3128; --gold:#f0c43a; --gold-soft:#2f2a12;
+    --blue:#86b5e4; --red:#ff8f85; --red-soft:#3a1d1a;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Segoe UI","Helvetica Neue",system-ui,sans-serif;padding-bottom:84px}
+header{padding:16px 16px 6px;max-width:1040px;margin:0 auto;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+h1{margin:0;font-size:1.4rem;letter-spacing:-.01em}
+header p{margin:2px 0 0;color:var(--mute);font-size:.9rem}
+.demo{display:flex;gap:8px;align-items:center;font-size:.8rem;color:var(--mute)}
+.demo b{background:var(--gold-soft);color:var(--ink);border:1px solid var(--gold);border-radius:6px;padding:2px 8px;font-weight:600}
+#nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;z-index:5}
+#nav button{flex:1;border:0;background:none;color:var(--mute);padding:11px 1px 13px;font:inherit;font-size:.56rem;font-weight:600;cursor:pointer;border-top:3px solid transparent;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nav button[aria-selected="true"]{color:var(--green);border-top-color:var(--green)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+main{max-width:1040px;margin:0 auto;padding:8px 16px}
+[hidden]{display:none !important}
+@media(min-width:820px){
+  body{padding-bottom:0}
+  #nav{position:static;max-width:1008px;margin:8px auto 0;border:0;border-bottom:1px solid var(--line);background:none}
+  #nav button{flex:none;padding:12px 20px;border-top:0;border-bottom:3px solid transparent;font-size:.95rem}
+  #nav button[aria-selected="true"]{border-bottom-color:var(--green)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.card h2{margin:0 0 12px;font-size:1.05rem}
+label,.lab{display:block;font-size:.85rem;color:var(--mute);margin:12px 0 4px;font-weight:600}
+input[type=text],input[type=number],input[type=date],input[type=month],select{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;border:0;background:var(--bg);color:var(--ink);padding:10px 6px;font:inherit;font-size:.88rem;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--green);color:var(--green-ink);font-weight:700}
+.btn{display:block;width:100%;margin-top:14px;padding:14px;border:0;border-radius:8px;background:var(--green);color:var(--green-ink);font:inherit;font-weight:700;cursor:pointer}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line);font-weight:600}
+.btn.small{width:auto;display:inline-block;margin:0;padding:8px 12px;font-size:.85rem}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.err{color:var(--red);font-size:.88rem;margin-top:8px;min-height:1.2em}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{padding:8px 9px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--soft);font-weight:700;white-space:normal}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+td.c,th.c{text-align:center}
+tr:last-child td{border-bottom:0}
+tr.total td{font-weight:800;background:var(--soft)}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:.75rem;font-weight:700;background:var(--soft)}
+.pill.bad{background:var(--red-soft);color:var(--red);border:1px solid var(--red)}
+.pill.warn{background:var(--gold-soft);border:1px solid var(--gold)}
+.muted{color:var(--mute)}
+.neg{color:var(--red);font-weight:700}
+.banner{padding:8px 10px;border-radius:8px;font-size:.9rem;background:var(--soft);margin:10px 0}
+.banner.warn{background:var(--gold-soft);border:1px solid var(--gold)}
+.banner.bad{background:var(--red-soft);border:1px solid var(--red)}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+@media(min-width:620px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.kpi .k{font-size:.78rem;color:var(--mute)}
+.kpi .n{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums}
+#regT td.m{text-align:center;min-width:64px;font-variant-numeric:tabular-nums}
+#regT td.m b{display:block;line-height:1.1}
+#regT td.m small{color:var(--mute);font-size:.7rem}
+#regT td.m.empty{color:var(--line)}
+#regT td.m.cov{background:var(--soft);color:var(--mute);font-size:.78rem}#regT td.m.cov b{font-weight:600}
+#regT th.c{padding:8px 4px}
+#ctl input{width:90px;text-align:right;padding:6px 8px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.sch-line{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin:6px 0;background:var(--bg)}.sch-line .n{flex:1}.sch-line label{margin:0;font-size:.8rem;color:var(--mute)}.sch-x{border:0;background:none;color:var(--red);font-size:1.2rem;line-height:1;padding:4px 8px;cursor:pointer}.sch-chip{display:inline-block;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:99px;padding:4px 10px;font-size:.8rem;margin:3px 4px 3px 0;cursor:pointer;font:inherit;font-size:.8rem}.sch-ctl{padding:7px 10px;border-radius:8px;margin:5px 0;font-size:.88rem;background:var(--soft)}.sch-ctl.warn{background:var(--gold-soft);border:1px solid var(--gold)}.sch-ctl.bad{background:var(--red-soft);border:1px solid var(--red);color:var(--red)}.sch-prev{border:2px solid var(--green);border-radius:10px;padding:10px;background:var(--soft);font-weight:600}.sch-list{max-height:200px;overflow:auto;border:1px solid var(--line);border-radius:8px;margin-top:6px}.sch-list button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 10px;font:inherit;font-size:.9rem;cursor:pointer}.sch-list button:hover{background:var(--soft)}.sch-list button[disabled]{opacity:.45;cursor:not-allowed}
+.sheet{background:var(--surface);width:100%;max-width:640px;border-radius:14px 14px 0 0;padding:20px;max-height:92vh;overflow:auto}
+@media(min-width:820px){.modal{align-items:center}.sheet{border-radius:14px}}
+.sheet h3{margin:0 0 10px}
+.sheet dl{margin:0 0 14px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.92rem}
+.sheet dt{color:var(--mute)}.sheet dd{margin:0;text-align:right;font-weight:600}
+.acts{display:flex;gap:10px;margin-top:14px}
+.acts .btn{margin-top:0}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;z-index:20;max-width:90vw;text-align:center}
+@media(min-width:820px){.toast{bottom:30px}}
+.sign{display:flex;justify-content:space-between;margin-top:22px;font-size:.85rem;color:var(--mute);gap:10px}
+.sign div{border-top:1px solid var(--line);padding-top:6px;min-width:42%;text-align:center}
+#catBar{margin:0 0 12px}
+#catBar .seg button{font-size:.8rem;line-height:1.2;padding:9px 4px}
+.exsw{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line,#c9d1da);background:transparent;border-radius:999px;padding:3px 12px 3px 4px;cursor:pointer;font:inherit;font-size:.82rem;min-height:34px}
+.exsw i{width:34px;height:20px;border-radius:999px;background:#2e9d5b;position:relative;transition:.15s}
+.exsw i:after{content:"";position:absolute;top:2px;left:16px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}
+.exsw.off i{background:#c0392b}.exsw.off i:after{left:2px}
+.exsw.off{border-color:#c0392b;color:#c0392b;font-weight:600}
+</style>
+<style id="desk">
+@media(min-width:1100px){
+ header,main,#nav,nav,#agentBar,#compBar,#respBar,#home,.wrap,#basepage .wrap{max-width:1600px!important}
+ body{font-size:17px}
+ table{font-size:.95rem}
+ .card{padding:22px}
+ .sheet{max-width:760px}
+ .kpis{gap:14px}
+}
+@media(min-width:1700px){header,main,#nav,nav,#agentBar,#compBar,#respBar,#home,.wrap,#basepage .wrap{max-width:1880px!important}}
+</style>
+<style id="theme">
+/* ===== Thème CTA : sobre, médical, premium ===== */
+:root{
+  --brand-d:#073b2b; --brand:#0f5a41; --brand-l:#1d7a57; --accent:#e0ac12;
+  --grad:linear-gradient(135deg,#06342a 0%,#0f5a41 52%,#1f8a62 100%);
+  --shadow-s:0 1px 2px rgba(10,40,30,.06),0 1px 1px rgba(10,40,30,.04);
+  --shadow-m:0 1px 2px rgba(10,40,30,.06),0 10px 28px -12px rgba(10,40,30,.22);
+  --shadow-l:0 2px 4px rgba(10,40,30,.06),0 24px 48px -20px rgba(10,40,30,.35);
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root{--shadow-m:0 1px 2px rgba(0,0,0,.4),0 10px 28px -12px rgba(0,0,0,.6);--grad:linear-gradient(135deg,#052a21 0%,#0b4733 55%,#17694b 100%)}}
+html{scroll-behavior:smooth}
+body{background:var(--bg);background-image:radial-gradient(1100px 420px at 88% -120px,rgba(31,138,98,.16),transparent 70%),radial-gradient(800px 320px at -10% 0,rgba(224,172,18,.07),transparent 70%);background-attachment:fixed;font-family:"Segoe UI Variable Text","Segoe UI","Inter","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:.005em}
+h1,h2,h3{letter-spacing:-.015em}
+
+/* cartes, boutons, champs */
+.card{border-radius:var(--r)!important;box-shadow:var(--shadow-m);border:1px solid color-mix(in srgb,var(--line) 70%,transparent)!important}
+.card h2{font-size:1.08rem;display:flex;align-items:center;gap:10px}
+.card h2::before{content:"";width:4px;height:1.05em;border-radius:3px;background:var(--grad);flex:none}
+.btn{border-radius:10px!important;background:var(--grad)!important;color:#fff!important;box-shadow:0 6px 14px -6px rgba(15,90,65,.55),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;letter-spacing:.01em}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.06);box-shadow:0 10px 18px -8px rgba(15,90,65,.6),inset 0 1px 0 rgba(255,255,255,.2)}
+.btn:active{transform:translateY(0)}
+.btn.ghost,button.ghost{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:var(--shadow-s)}
+.btn.ghost:hover{border-color:var(--brand-l)!important;color:var(--brand)!important}
+.btn[disabled]{filter:grayscale(.6) opacity(.55);transform:none;box-shadow:none}
+input[type=text],input[type=number],input[type=date],input[type=password],input[type=search],select,textarea{border-radius:10px!important;border:1px solid var(--line);transition:border-color .12s,box-shadow .12s;background:var(--surface)}
+input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--brand-l)!important;box-shadow:0 0 0 4px rgba(31,138,98,.18)}
+label{letter-spacing:.01em}
+
+/* segments et onglets */
+.seg{border-radius:12px!important;padding:3px;background:color-mix(in srgb,var(--soft) 80%,transparent);border:1px solid var(--line)!important;gap:3px}
+.seg button{border-radius:9px!important;border:0!important;background:transparent!important;transition:background .15s,color .15s,box-shadow .15s}
+.seg button:hover{background:color-mix(in srgb,var(--surface) 70%,transparent)!important}
+.seg button[aria-pressed="true"]{background:var(--grad)!important;color:#fff!important;box-shadow:0 4px 10px -4px rgba(15,90,65,.6)}
+nav button[aria-selected="true"],[role=tab][aria-selected="true"]{color:var(--brand)!important}
+.tabs button.on,.tabs button[aria-selected="true"]{color:var(--brand)}
+
+/* indicateurs */
+.kpi{border-radius:14px!important;box-shadow:var(--shadow-s);border:1px solid var(--line)!important;position:relative;overflow:hidden;background:var(--surface)}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad)}
+.kpi .n{letter-spacing:-.02em}
+
+/* tableaux */
+.scroll{border-radius:12px!important;box-shadow:var(--shadow-s);border:1px solid var(--line)!important}
+table thead th{background:color-mix(in srgb,var(--soft) 88%,var(--surface))!important;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:700;position:sticky;top:0;z-index:1}
+table.cnx thead th{text-transform:none;letter-spacing:.01em;font-size:.88rem;color:var(--ink)}
+table tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--soft) 28%,transparent)}
+table tbody tr:hover td{background:color-mix(in srgb,var(--soft) 70%,transparent)}
+table.cnx tbody tr:nth-child(even) td{background:#fff}
+table.cnx tbody tr:hover td{background:#fff}
+table.cnx tr.tot td{background:color-mix(in srgb,var(--soft) 88%,#fff)!important}
+#fTable td.sel{background:#d6e8ff!important}
+.pill{border-radius:99px;letter-spacing:.02em}
+.modal .sheet,.sheet{border-radius:18px!important;box-shadow:var(--shadow-l)}
+.modal{backdrop-filter:blur(3px);background:rgba(6,30,22,.5)!important}
+.toast{border-radius:12px!important;box-shadow:var(--shadow-l);background:var(--brand-d)!important;color:#fff!important}
+.banner{border-radius:12px}
+
+/* barre du module (shell) */
+.bar{background:var(--grad)!important;color:#fff;border-bottom:0!important;box-shadow:0 6px 18px -10px rgba(6,40,28,.7);height:56px!important}
+.bar b{color:#fff;font-size:1.02rem;letter-spacing:.01em}
+.bar button{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.28)!important;color:#fff!important;border-radius:10px!important;backdrop-filter:blur(4px);transition:background .12s}
+.bar button:hover{background:rgba(255,255,255,.26)!important}
+
+/* en-tête dans les modules */
+header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.demo b,span.demo{border-radius:99px!important}
+
+/* ===== accueil ===== */
+#home{max-width:1180px!important;padding:0 20px 40px!important}
+.hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin:18px 0 6px;padding:26px 30px;border-radius:22px;background:var(--grad);color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-l)}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(520px 220px at 92% -30%,rgba(255,255,255,.22),transparent 70%),radial-gradient(420px 240px at 8% 130%,rgba(224,172,18,.28),transparent 70%);pointer-events:none}
+.hero::after{content:"";position:absolute;right:-40px;bottom:-60px;width:260px;height:260px;border-radius:50%;border:34px solid rgba(255,255,255,.06);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.logo{width:68px;height:68px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);display:grid;place-items:center;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 24px -10px rgba(0,0,0,.5);backdrop-filter:blur(6px)}
+.logo svg{width:38px;height:38px}
+.hero-t{flex:1;min-width:260px}
+.hero-t .hi{font-size:.85rem;opacity:.85;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.hero-t h1{color:#fff!important;-webkit-text-fill-color:#fff;background:none!important;margin:2px 0 2px!important;font-size:1.95rem!important;line-height:1.15}
+.hero-t p{color:rgba(255,255,255,.82)!important;margin:0!important;font-size:1rem}
+.hero .demo{background:rgba(255,255,255,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.3)!important;padding:3px 10px;border-radius:99px;font-size:.74rem;font-weight:700;letter-spacing:.04em;display:inline-block;margin-bottom:6px}
+.hero .who{margin:0!important;display:flex;flex-direction:column;align-items:flex-end;gap:8px;color:#fff}
+.hero .who .row-u{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);display:grid;place-items:center;font-weight:800;letter-spacing:.02em}
+.hero .who b{color:#fff}
+.hero .who .pill{background:var(--accent)!important;color:#3a2a00!important;font-weight:800}
+.hero .who .btn.ghost{background:rgba(255,255,255,.14)!important;color:#fff!important;border:1px solid rgba(255,255,255,.35)!important;box-shadow:none;padding:8px 14px;border-radius:10px!important}
+.hero .who .btn.ghost:hover{background:rgba(255,255,255,.28)!important;color:#fff!important}
+#saveSt{display:flex;align-items:center;gap:8px;margin:12px 4px 0!important;font-size:.8rem!important}
+#saveSt::before{content:"";width:8px;height:8px;border-radius:50%;background:#2fbf7f;box-shadow:0 0 0 4px rgba(47,191,127,.2);flex:none}
+.cards{gap:18px!important;margin-top:20px!important}
+@media(min-width:760px){.cards{grid-template-columns:repeat(2,1fr)!important}}
+@media(min-width:1150px){.cards{grid-template-columns:repeat(3,1fr)!important}}
+.mod{position:relative;overflow:hidden;border:1px solid var(--line)!important;border-left:1px solid var(--line)!important;border-radius:18px!important;padding:22px 22px 20px 88px!important;min-height:132px;box-shadow:var(--shadow-m);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;background:var(--surface)!important}
+.mod::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--grad)}
+.mod.base::before{background:linear-gradient(180deg,#f3c53a,#c99207)}
+.mod:hover{transform:translateY(-4px);box-shadow:var(--shadow-l);border-color:var(--brand-l)!important;background:var(--surface)!important}
+.mod .ico{position:absolute;left:22px;top:22px;width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:var(--grad);color:#fff;box-shadow:0 10px 20px -10px rgba(15,90,65,.8)}
+.mod.base .ico{background:linear-gradient(135deg,#f6cf4d,#c99207);color:#3a2a00;box-shadow:0 10px 20px -10px rgba(201,146,7,.8)}
+.mod .ico svg{width:26px;height:26px}
+.mod .n{color:var(--brand-l)!important;font-size:.7rem!important;letter-spacing:.14em!important}
+.mod.base .n{color:#a87800!important}
+.mod b{font-size:1.14rem!important;letter-spacing:-.01em}
+.mod small{line-height:1.4}
+.mod::after{content:"→";position:absolute;right:18px;bottom:14px;color:var(--brand-l);font-weight:700;opacity:0;transform:translateX(-6px);transition:all .18s}
+.mod:hover::after{opacity:1;transform:none}
+.mod[disabled]{opacity:.45!important;filter:grayscale(.7);box-shadow:none}
+.mod[disabled]:hover{transform:none;box-shadow:none;border-color:var(--line)!important}
+.mod[disabled]::after{display:none}
+@media(max-width:560px){.mod{padding-left:84px!important}.hero{padding:20px}.hero .who{align-items:flex-start}}
+
+/* ===== connexion ===== */
+#login[hidden]{display:none!important}
+#login:not([hidden]){display:grid!important}
+#login{grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);padding:0!important}
+#login .brand{background:var(--grad);color:#fff;padding:7vh 56px;display:flex;flex-direction:column;justify-content:center;gap:26px;position:relative;overflow:hidden}
+#login .brand::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 360px at 85% -10%,rgba(255,255,255,.2),transparent 70%),radial-gradient(520px 320px at -5% 105%,rgba(224,172,18,.32),transparent 70%)}
+#login .brand::after{content:"";position:absolute;right:-90px;bottom:-110px;width:420px;height:420px;border-radius:50%;border:56px solid rgba(255,255,255,.06)}
+#login .brand>*{position:relative;z-index:1}
+#login .brand .logo{width:84px;height:84px;border-radius:24px}
+#login .brand .logo svg{width:48px;height:48px}
+#login .brand h2{margin:0;font-size:2.3rem;line-height:1.12;letter-spacing:-.025em;max-width:520px}
+#login .brand h2::before{display:none}
+#login .brand p{margin:0;max-width:480px;opacity:.86;font-size:1.05rem;line-height:1.5}
+#login .brand ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:12px;max-width:480px}
+#login .brand li{display:flex;gap:12px;align-items:center;font-size:.95rem;opacity:.95}
+#login .brand li i{width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.26);display:grid;place-items:center;flex:none;font-style:normal}
+#login .brand li svg{width:16px;height:16px}
+#login>div:not(.brand){width:100%;max-width:470px!important;margin:0 auto!important;padding:8vh 28px!important;align-self:center}
+#login>div:not(.brand)>h1{font-size:1.5rem!important;margin-top:14px!important}
+#login #lgForm{box-shadow:var(--shadow-l);padding:26px!important;border-radius:20px!important}
+#login #lgGo{width:100%;padding:14px;font-size:1.02rem}
+@media(max-width:900px){#login{grid-template-columns:1fr}#login .brand{display:none}#login>div:not(.brand){padding:6vh 18px!important}}
+
+/* impression : on garde le blanc simple */
+@media print{.bar,.hero{display:none!important}body{background:#fff!important}}
+</style>
+<script>
+(function(){
+  var LOGO='<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 7v34M7 24h34"/><circle cx="24" cy="24" r="17" stroke-width="2" opacity=".55"/></svg>';
+  var IC={
+    caisse:'<path d="M3 7h18v10H3z"/><circle cx="12" cy="12" r="2.6"/><path d="M6.5 9.5v.01M17.5 14.5v.01"/>',
+    rh:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c3 .1 5 2 5 5.3"/>',
+    pharma:'<path d="M10.5 3.5l10 10a4.2 4.2 0 01-6 6l-10-10a4.2 4.2 0 016-6z"/><path d="M8.5 8.5l7 7"/>',
+    ptme:'<path d="M12 20s-7-4.4-7-10a4 4 0 017-2.4A4 4 0 0119 10c0 5.6-7 10-7 10z"/>',
+    base:'<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+    audit:'<path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+    backup:'<path d="M7 18a4.5 4.5 0 01-.6-8.9A6 6 0 0118 10a4 4 0 01-.5 8z"/><path d="M12 11v6m-3-3l3 3 3-3"/>',
+    help:'<path d="M4 5.5A2.5 2.5 0 016.5 3H20v16H6.5A2.5 2.5 0 004 21.5z"/><path d="M4 5.5v16M9 8h7"/>',
+    params:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/>'
+  };
+  function svg(p,sz){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>'}
+  function ready(f){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',f):f()}
+  ready(function(){
+    var home=document.getElementById('home');
+    if(home&&!home.querySelector('.hero')){
+      var demo=home.querySelector('.demo'),h1=home.querySelector('h1'),p=h1&&h1.nextElementSibling,who=home.querySelector('.who');
+      if(demo&&h1&&p&&who){
+        var hero=document.createElement('div');hero.className='hero';
+        var logo=document.createElement('div');logo.className='logo';logo.innerHTML=LOGO;
+        var t=document.createElement('div');t.className='hero-t';
+        var hi=document.createElement('div');hi.className='hi';hi.id='heroHi';
+        function hello(){var d=new Date(),h=d.getHours(),g=h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir';var nm=(document.getElementById('whoName')||{}).textContent||'';var ds=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});hi.textContent=g+(nm?', '+nm:'')+' · '+ds}
+        hello();setInterval(hello,30000);
+        h1.removeAttribute('style');
+        t.appendChild(demo);t.appendChild(hi);t.appendChild(h1);t.appendChild(p);
+        hero.appendChild(logo);hero.appendChild(t);hero.appendChild(who);
+        home.insertBefore(hero,home.firstChild);
+        // avatar + ligne utilisateur
+        var nameEl=who.querySelector('#whoName'),ru=document.createElement('div');ru.className='row-u';
+        var av=document.createElement('div');av.className='avatar';av.id='whoAv';
+        function ini(){var n=(nameEl&&nameEl.textContent||'?').trim().split(/\s+/);av.textContent=((n[0]||'?')[0]+(n[1]?n[1][0]:'')).toUpperCase()}
+        ini();
+        if(nameEl){new MutationObserver(function(){ini();hello()}).observe(nameEl,{childList:true,characterData:true,subtree:true})}
+        var first=who.firstElementChild;ru.appendChild(av);
+        while(who.firstChild&&who.firstChild.id!=='myAcc'){ru.appendChild(who.firstChild)}
+        who.insertBefore(ru,who.firstChild);
+        var btns=document.createElement('div');btns.className='row-u';
+        ['myAcc','logout'].forEach(function(id){var b=document.getElementById(id);if(b)btns.appendChild(b)});
+        who.appendChild(btns);
+      }
+      home.querySelectorAll('.mod').forEach(function(m){
+        if(m.querySelector('.ico'))return;var k=m.dataset.m;var i=document.createElement('i');i.className='ico';i.innerHTML=svg(IC[k]||IC.help);m.insertBefore(i,m.firstChild);
+      });
+    }
+    var lg=document.getElementById('login');
+    if(lg&&!lg.querySelector('.brand')){
+      var b=document.createElement('div');b.className='brand';
+      var chk='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+      b.innerHTML='<div class="logo">'+LOGO+'</div><h2>Centre de Traitement Ambulatoire de Lambaréné</h2><p>Caisse, pharmacie, RH et CNAMGS, suivi PTME : une seule application, des données partagées et tracées.</p><ul><li><i>'+chk+'</i>Chaque action est inscrite au journal d’audit</li><li><i>'+chk+'</i>Un compte par poste, accès limité à votre mission</li><li><i>'+chk+'</i>Sauvegardes automatiques et points de restauration</li></ul>';
+      lg.insertBefore(b,lg.firstChild);
+    }
+  });
+})();
+</script>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Gestion de la pharmacie</h1>
+    <p>Centre de Traitement Ambulatoire de Lambaréné</p>
+  </div>
+  
+</header>
+<div id="respBar" class="muted" style="max-width:1040px;margin:0 auto;padding:0 16px;font-size:.85rem"></div>
+<div id="nav" role="tablist"></div>
+
+<main>
+<div id="catBar" hidden><div class="lab" style="margin-top:6px">Compartiment</div>
+  <div class="seg" id="catSeg"><button data-v="courant" aria-pressed="false">Médicaments courants</button><button data-v="consommable" aria-pressed="false">Consommables</button><button data-v="arv" aria-pressed="true">ARV</button><button data-v="reactif" aria-pressed="false">Réactifs</button></div>
+  <input type="text" id="catQ" placeholder="Filtrer la liste (nom ou forme)" autocomplete="off" style="max-width:340px;margin-top:8px"></div>
+<!-- REGISTRE -->
+<section id="p-reg">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap">
+      <div><h2 style="margin:0 0 8px">Registre de suivi des patients sous ARV</h2></div>
+      <div class="btns" style="margin:0"><button class="btn ghost small" id="regWord" title="Exporter le registre de l’année affichée en Word">Exporter en Word</button><button class="btn ghost small" id="regPrint" title="Imprimer du registre de l’année affichée">Imprimer</button></div>
+    </div>
+    <div class="row" style="max-width:420px">
+      <div><label for="regY">Année</label><select id="regY"></select></div>
+      <div><label for="regQ">N° de dossier</label><input type="text" id="regQ" placeholder="Rechercher" autocomplete="off"></div>
+    </div>
+    <p class="muted" style="font-size:.85rem;margin:10px 0 8px">Le registre se remplit tout seul à partir de la dispensation : un nouveau n° de dossier y est ajouté à sa première dispensation d’ARV, et chaque case de mois indique la quantité de boîtes et le jour. La colonne « Prochain renouvellement » est calculée.</p>
+    <div class="scroll"><table id="regT"></table></div>
+  </div>
+</section>
+
+<!-- DISPENSATION -->
+<section id="p-dis" hidden>
+  <div class="two">
+    <div class="card">
+      <h2>Dispenser un traitement</h2>
+      <label for="dDos" style="margin-top:0">N° de dossier du patient</label>
+      <input type="text" id="dDos" placeholder="ex. 0231" inputmode="numeric" autocomplete="off">
+      <div id="dPat"></div>
+      <div id="dNomBox" hidden><label for="dNom">Nom et prénom du patient</label><input type="text" id="dNom" autocomplete="off" placeholder="Obligatoire : ce dossier n’a pas encore de nom dans la base"></div>
+      <div id="dNewBox" hidden><div class="row"><div><label for="dCon">Numéro de contact</label><input type="text" id="dCon" autocomplete="off" inputmode="tel"></div><div><label for="dObs">Observation</label><input type="text" id="dObs" autocomplete="off"></div></div></div>
+      <div id="dSingle">
+      <div class="row"><div><label for="dCat">Type de produit</label><select id="dCat"><option value="arv">ARV</option><option value="courant">Médicaments courants</option></select></div><div><label for="dFilt">Filtrer la liste</label><input type="text" id="dFilt" placeholder="ex. dolutegravir" autocomplete="off"></div></div>
+      <label for="dMed">Médicament</label><select id="dMed"></select>
+      <div class="muted" id="dStock" style="font-size:.85rem;margin-top:4px"></div>
+      <div class="row">
+        <div><label for="dQte">Quantité réellement dispensée (boîtes)</label><input type="number" id="dQte" min="1" value="1" inputmode="numeric"></div>
+        <div><label for="dJours">Durée couverte (jours)</label><input type="number" id="dJours" min="1" value="30" inputmode="numeric"></div>
+      </div>
+      </div>
+      <div id="dSchema" hidden>
+        <div class="banner">Ce patient a un schéma de plusieurs lignes : dispensez toutes les lignes en une seule validation.</div>
+        <label style="display:flex;gap:8px;align-items:center;margin-top:6px"><input type="checkbox" id="dsDiff"> Durées différentes selon les molécules</label>
+        <div id="dsLines"></div>
+        <div class="row" id="dsSame"><div><label for="dsJ">Durée couverte (jours)</label><input type="number" id="dsJ" min="1" value="30" inputmode="numeric"></div></div>
+      </div>
+      <label for="dDate">Date de dispensation</label><input type="date" id="dDate">
+      <div class="banner" id="dNext"></div>
+      <div class="err" id="dErr" role="alert"></div>
+      <button class="btn" id="dOk">Valider la dispensation</button>
+    </div>
+    <div class="card">
+      <h2>Dernières dispensations</h2>
+      <div class="scroll"><table id="dList"></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- PATIENTS -->
+<section id="p-pat" hidden>
+  <div class="card">
+    <h2>Liste des patients</h2>
+    <p class="muted" style="font-size:.85rem;margin-top:0">Même base que celle de la caisse. Les patients passent d’abord par la caisse : leur fiche existe déjà. « Nouvelle fiche » sert seulement pour un patient qui n’est pas passé par la caisse (n° de dossier obligatoire). Un nouveau patient arrive de la caisse sans n° : saisissez-le ici dès qu’il est attribué.</p>
+    <button class="btn" id="pNew" style="width:auto;padding:8px 14px;margin-bottom:12px">+ Nouvelle fiche</button>
+    <label for="pQ" style="margin-top:0">N° de dossier ou nom</label><input type="text" id="pQ" placeholder="Rechercher" autocomplete="off" style="max-width:260px">
+    <div class="scroll" style="margin-top:12px"><table id="pT"></table></div>
+  </div>
+</section>
+
+<!-- STOCK -->
+<section id="p-sto" hidden>
+  <div class="kpis" id="stK"></div>
+  <div class="card">
+    <h2 id="stTitle">Stock par médicament</h2>
+    <div class="btns"><button class="btn small" id="bIn">Enregistrer une entrée</button><button class="btn small" id="bOut">Enregistrer une sortie</button><button class="btn ghost small" id="bLoss">Déclarer une perte</button><button class="btn ghost small" id="bLotCtl">Contrôle par lot</button><span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost small" id="stWord" title="Exporter le stock du compartiment affiché en Word">Exporter en Word</button><button class="btn ghost small" id="stPrint" title="Imprimer de l’état du stock affiché">Imprimer</button></span></div>
+    <div class="scroll"><table id="stT"></table></div>
+  </div>
+  <div class="card">
+    <h2>Lots enregistrés</h2>
+    <p class="muted" style="font-size:.85rem;margin-top:0">Chaque entrée forme son propre lot, même pour un produit déjà en stock. En cas d’erreur de saisie, « Modifier » corrige le produit, le lot, la quantité ou la péremption.</p>
+    <div class="scroll"><table id="lotT"></table></div>
+  </div>
+  <div class="card">
+    <h2>Mouvements de stock</h2>
+    <p class="muted" style="font-size:.85rem;margin-top:0">Tous les mouvements sont conservés : entrées, sorties, pertes, corrections et dépannages. Par défaut, seuls ceux de la journée sont affichés. Choisissez une date ou cochez « Toutes les dates » pour consulter l’historique complet.</p>
+    <div class="row" style="grid-template-columns:200px 1fr;max-width:560px">
+      <div><label for="mvDate" style="margin-top:0">Date des mouvements</label><input type="date" id="mvDate"></div>
+      <div><label for="mvAll" style="margin-top:0;display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px 12px"><input type="checkbox" id="mvAll"> <span>Toutes les dates</span></label></div>
+    </div>
+    <div class="btns" style="margin:8px 0"><button class="btn ghost small" id="mvToday">Aujourd’hui</button><button class="btn ghost small" id="mvSort">Trier : plus récent d’abord</button></div>
+    <div class="muted" id="mvSum" style="font-size:.82rem;margin-bottom:6px"></div>
+    <div class="scroll"><table id="mvT"></table></div>
+  </div>
+</section>
+
+<!-- DEPANNAGE -->
+<section id="p-dep" hidden>
+  <div class="two">
+    <div class="card">
+      <h2>Dépannage</h2>
+      <p class="muted" style="font-size:.85rem;margin-top:0">Sortie exceptionnelle au profit d’un autre service, d’un agent ou d’un patient dépanné. Le dépannage débite le stock et reste enregistré dans les mouvements.</p>
+      <label for="dpDate">Date du dépannage</label><input type="date" id="dpDate">
+      <label for="dpMed">Article</label><select id="dpMed"></select>
+      <div class="row">
+        <div><label for="dpQ">Quantité (boîtes)</label><input type="number" id="dpQ" min="1" inputmode="numeric"></div>
+        <div><label for="dpTo">Bénéficiaire / service</label><input type="text" id="dpTo" autocomplete="off" placeholder="ex. Laboratoire, Dr Moussavou…"></div>
+      </div>
+      <label for="dpM">Motif</label><input type="text" id="dpM" autocomplete="off" placeholder="ex. rupture de réactif au laboratoire">
+      <div class="muted" id="dpStock" style="font-size:.85rem;margin-top:6px"></div>
+      <div class="err" id="dpErr" role="alert"></div>
+      <button class="btn" id="dpOk">Enregistrer le dépannage</button>
+    </div>
+    <div class="card">
+      <h2>Dépannages enregistrés</h2>
+      <p class="muted" style="font-size:.85rem;margin-top:0">Tous les dépannages sont conservés ; les plus récents d’abord.</p>
+      <div class="scroll"><table id="dpT"></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- MEDICAMENTS -->
+<section id="p-med" hidden>
+  <div class="two">
+    <div class="card"><h2 id="medTitle">Liste des médicaments</h2>
+      <p class="muted" style="font-size:.85rem;margin-top:0">Liste prédéfinie, utilisée par le registre, le stock, l’inventaire et les commandes.</p>
+      <div class="scroll"><table id="medT"></table></div></div>
+    <div class="card"><h2 id="addTitle">Ajouter un médicament</h2>
+      <label for="mNom" style="margin-top:0">Désignation</label><input type="text" id="mNom" autocomplete="off">
+      <div class="row"><div><label for="mDos">Dosage</label><input type="text" id="mDos" autocomplete="off"></div>
+      <div><label for="mFor">Forme</label><select id="mFor"><option>Comprimé</option><option>Sirop</option><option>Suspension</option><option>Autre</option></select></div></div>
+      <div id="mForXw" hidden><label for="mForX">Que signifie « Autre » ? Précisez la forme</label><input type="text" id="mForX" autocomplete="off" placeholder="ex. Pommade, Kit, Flacon…"></div>
+      <div class="err" id="mErr" role="alert"></div>
+      <button class="btn" id="mAdd">Ajouter à la liste</button>
+    </div>
+  </div>
+</section>
+
+<!-- DOCUMENTS -->
+<section id="p-doc" hidden>
+  <div class="card">
+    <div class="seg" id="docSeg" style="max-width:520px">
+      <button data-v="fiche" aria-pressed="true">Fiche mensuelle</button>
+      <button data-v="inv" aria-pressed="false">Inventaire</button>
+      <button data-v="cmd" aria-pressed="false">Commande</button>
+    </div>
+    <div class="btns" style="margin:12px 0 0;justify-content:flex-end"><button class="btn ghost small" id="docWord" title="Exporter le document affiché (fiche mensuelle, inventaire ou commande) en Word">Exporter en Word</button><button class="btn ghost small" id="docPrint" title="Imprimer du document affiché">Imprimer</button></div>
+    <div id="docBody" style="margin-top:6px"></div>
+  </div>
+</section>
+
+<!-- CONTROLE -->
+<section id="p-ctl" hidden>
+  <div class="card">
+    <h2>Comparer le stock physique au stock informatique</h2>
+    <p class="muted" style="font-size:.85rem;margin-top:0">Saisissez ce que vous comptez sur les étagères. L’écart apparaît tout de suite.</p>
+    <div class="scroll"><table id="ctl"></table></div>
+    <div class="err" id="cErr" role="alert"></div>
+    <button class="btn" id="cSave">Enregistrer les écarts</button>
+  </div>
+  <div class="card">
+    <h2>Mouvements à vérifier</h2>
+    <div class="scroll"><table id="unT"></table></div>
+  </div>
+</section>
+<section id="p-fin" hidden>
+  <div class="card">
+    <h2>Examens disponibles</h2>
+    <p class="muted" style="font-size:.85rem;margin-top:0">Liste des examens proposés à la caisse (PVVIH et consultation externe). Mettez l'interrupteur sur <b>Indisponible</b> quand le réactif manque : l'examen est <b>bloqué à la caisse</b> (quelques secondes sur les autres postes). Remettez <b>Disponible</b> dès que vous pouvez refaire l'examen. Le stock enregistré n'intervient plus.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px"><input type="search" id="exQ" placeholder="Rechercher un examen" autocomplete="off" aria-label="Rechercher un examen" style="flex:1;min-width:180px"><select id="exF" aria-label="Filtre"><option value="">Tous les examens</option><option value="off">Indisponibles seulement</option></select></div>
+    <div id="exSum" class="muted" style="font-size:.82rem;margin-bottom:6px"></div>
+    <div class="scroll"><table id="exT"></table></div>
+  </div>
+  <div class="card">
+    <h2>Historique des changements</h2>
+    <div class="scroll"><table id="exH"></table></div>
+  </div>
+</section>
+<section id="p-cpt" hidden>
+  <div class="card">
+    <h2>Comptage du stock</h2>
+    <p class="muted" style="font-size:.85rem;margin-top:0">À la fin de la semaine (ou de la quinzaine), comptez vos boîtes et saisissez-les. Le logiciel compare avec ce qu’il pense avoir, calcule ce qui a <b>vraiment</b> été consommé (ratés compris) et corrige le stock. Ce comptage devient le nouveau « début » du prochain.</p>
+    <div class="seg" id="cptSeg" style="margin-bottom:8px"><button data-v="reactif">Réactifs</button><button data-v="consommable">Consommables</button></div>
+    <div class="scroll"><table id="cptT"></table></div>
+    <div id="cptSum" class="muted" style="font-size:.85rem;margin:6px 0"></div>
+    <label for="cptNote">Remarque (facultatif)</label><input type="text" id="cptNote" autocomplete="off" placeholder="Ex. tests ratés, casse, contrôle qualité…">
+    <div class="err" id="cptErr" role="alert"></div>
+    <button class="btn" id="cptSave">Enregistrer le comptage</button>
+  </div>
+  <div class="card">
+    <h2>Comptages précédents</h2>
+    <div class="scroll"><table id="cptH"></table></div>
+  </div>
+</section>
+</main>
+
+<section id="p-labo" hidden>
+  <div class="card">
+    <h2>Patients avec examens</h2>
+    <p class="muted" style="font-size:.85rem;margin-top:0">Cette liste se remplit automatiquement : tout patient dont des examens ont été sélectionnés à la caisse apparaît ici avec ses examens. Cliquez sur un en-tête de colonne pour trier ; la recherche filtre par nom.</p>
+    <input type="search" id="labQ" placeholder="Rechercher un patient" autocomplete="off" aria-label="Rechercher un patient" style="max-width:320px;margin:6px 0 10px">
+    <div class="scroll"><table id="labT"></table></div>
+  </div>
+</section>
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true"><div id="sheetBody"></div></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const N=n=>new Intl.NumberFormat('fr-FR').format(Math.round(n));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,10)};
+const today=iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const daysBetween=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);
+const fdate=s=>s?s.split('-').reverse().join('/'):'';
+const fmonth=s=>s?s.slice(5,7)+'/'+s.slice(0,4):'—';
+const MONTHS=['Jan','Fév','Mars','Avril','Mai','Juin','Juil','Août','Sept','Oct','Nov','Déc'];
+const MFULL=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+const CAT0=[["courant","Acétazolamide","250 mg","Comprimé"],["courant","Acétylcystéine","200 mg/ml","Solution injectable"],["courant","Aciclovir","20 mg/ml","Poudre"],["courant","Aciclovir","200 mg","Comprimé"],["courant","Aciclovir","250 mg","Poudre pour préparations injectables"],["courant","Acide acétylsalicylique","100 mg","Comprimé"],["courant","Acide acétylsalicylique","100 mg","Suppositoire"],["courant","Acide acétylsalicylique","300 mg","Comprimé"],["courant","Acide acétylsalicylique","50 mg","Suppositoire"],["courant","Acide acétylsalicylique","500 mg","Comprimé"],["courant","Acide ascorbique","50 mg","Comprimé"],["courant","Acide benzoïque + acide salicylique","6 + 3 %","Pommade"],["courant","Acide clavulanique","",""],["courant","Acide cromoglicique","20 mg","Solution pour inhalation"],["courant","Acide folique","1 mg","Comprimé"],["courant","Acide folique","5 mg","Comprimé"],["courant","Acide iopanoïque","500 mg","Comprimé"],["courant","Acide nalidixique","250 mg","Comprimé"],["courant","Acide nalidixique","500 mg","Comprimé"],["courant","Acide p-aminosalicylique","500 mg","Comprimé"],["courant","Acide salicylique","5 %","Solution"],["courant","Acide valproïque","200 mg","Comprimé"],["courant","Acide valproïque","500 mg","Comprimé"],["courant","Albendazole","400 mg","Comprimé"],["courant","Alcuronium","5 mg/ml","Solution injectable"],["courant","Allopurinol","100 mg","Comprimé"],["courant","Amidotrizoate","140-420 mg/ml","Solution injectable"],["courant","Amikacine","1 g","Poudre pour préparations injectables"],["courant","Amiloride","5 mg","Comprimé"],["courant","Amitriptyline","25 mg","Comprimé"],["courant","Amodiaquine","200 mg","Comprimé"],["courant","Amoxicilline","125 mg/5 ml","Poudre pour suspension buvable"],["courant","Amoxicilline","250 mg","Comprimé"],["courant","Amoxicilline","500 mg","Comprimé"],["courant","Amoxicilline + acide clavulanique","500 + 125 mg","Comprimé"],["courant","Amphotéricine B","10 mg/ml","Poudre pour préparations injectables"],["courant","Ampicilline","1 g","Poudre pour préparations injectables"],["courant","Ampicilline","500 mg","Poudre pour préparations injectables"],["courant","Antimoniate de méglumine","30 %","Solution injectable"],["courant","Antitoxine diphtérique","10000 UI","Solution injectable"],["courant","Antitoxine diphtérique","20000 UI","Solution injectable"],["courant","Artéméther + luméfantrine","20 + 120 mg","Comprimé"],["courant","Asparaginase","10000 UI","Poudre pour préparations injectables"],["courant","Aténolol","100 mg","Comprimé"],["courant","Aténolol","50 mg","Comprimé"],["courant","Atropine","0.1 %","Collyre"],["courant","Atropine","0.5 %","Collyre"],["courant","Atropine","1 %","Collyre"],["courant","Atropine","1 mg","Comprimé"],["courant","Atropine","1 mg","Solution injectable"],["courant","Azithromycine","200 mg/5 ml","Suspension"],["courant","Azithromycine","250 mg","Gélule"],["courant","Azithromycine","500 mg","Gélule"],["courant","Béclométasone","0.05 mg","Solution pour inhalation"],["courant","Béclométasone","0.25 mg","Solution pour inhalation"],["courant","Benzathine benzylpénicilline","1.44 g","Poudre pour préparations injectables"],["courant","Benznidazole","100 mg","Comprimé"],["courant","Benzoate de benzyle","25 %","Lotion"],["courant","Benzylpénicilline","600 mg","Poudre pour préparations injectables"],["courant","Benzylpénicilline procaïne","1 g","Poudre pour préparations injectables"],["courant","Benzylpénicilline procaïne","3 g","Poudre pour préparations injectables"],["courant","Bétaméthasone","0.10 %","Pommade"],["courant","Bipéridène","2 mg","Comprimé"],["courant","Bipéridène","5 mg","Solution injectable"],["courant","Bléomycine","15 mg","Poudre pour préparations injectables"],["courant","Bromure d'ipratropium","0.02 mg","Solution pour inhalation"],["courant","Bupivacaïne","0.25 %","Solution injectable"],["courant","Bupivacaïne","0.5 %","Solution injectable"],["courant","Capréomycine","1 g","Poudre pour préparations injectables"],["courant","Carbamazépine","100 mg","Comprimé"],["courant","Carbamazépine","200 mg","Comprimé"],["courant","Carbonate de lithium","300 mg","Comprimé"],["courant","Charbon activé","","Poudre"],["courant","Chlorambucil","2 mg","Comprimé"],["courant","Chloramphénicol","0.5 g/ml","Suspension"],["courant","Chloramphénicol","1 g","Poudre pour préparations injectables"],["courant","Chloramphénicol","150 mg/5 ml","Suspension buvable"],["courant","Chloramphénicol","250 mg","Gélule"],["courant","Chlorhexidine","5 %","Solution"],["courant","Chlorméthine","10 mg","Poudre pour préparations injectables"],["courant","Chloroquine","100 mg","Comprimé"],["courant","Chloroquine","150 mg","Comprimé"],["courant","Chloroquine","40 mg/ml","Solution injectable"],["courant","Chloroquine","50 mg/5 ml","Sirop"],["courant","Chloroxylénol","4.8 %","Solution"],["courant","Chlorphénamine","10 mg","Solution injectable"],["courant","Chlorphénamine","4 mg","Comprimé"],["courant","Chlorpromazine","100 mg","Comprimé"],["courant","Chlorpromazine","25 mg/5ml","Sirop"],["courant","Chlorpromazine","25 mg/ml","Solution injectable"],["courant","Chlorure de méthylrosanilinium","0.50 %","Solution"],["courant","Chlorure de méthylthioninium (bleu de méthylène)","10 mg/ml","Solution injectable"],["courant","Chlorure de potassium","","Poudre pour solution"],["courant","Chlorure de potassium","11.2 %","Solution"],["courant","Chlorure de sodium","0.9 %","Solution injectable"],["courant","Ciprofloxacine","250 mg","Comprimé"],["courant","Ciprofloxacine","500 mg","Comprimé"],["courant","Cisplatine","10 mg","Poudre pour préparations injectables"],["courant","Cisplatine","50 mg","Poudre pour préparations injectables"],["courant","Clofazimine","100 mg","Gélule"],["courant","Clofazimine","50 mg","Gélule"],["courant","Clomipramine","10 mg","Gélule"],["courant","Clomipramine","25 mg","Gélule"],["courant","Cloxacilline","","Gélule"],["courant","Cloxacilline","1 g","Gélule"],["courant","Cloxacilline","125 mg/5 ml","Poudre pour solution buvable"],["courant","Cloxacilline","500 mg","Gélule"],["courant","Codéine","30 mg","Comprimé"],["courant","Colchicine","0.5 mg","Comprimé"],["courant","Composé chloré","0.1 %","Poudre pour solution"],["courant","Cyclophosphamide","25 mg","Comprimé"],["courant","Cyclophosphamide","500 mg","Poudre pour préparations injectables"],["courant","Cyclosérine","250 mg","Comprimé"],["courant","Cytarabine","100 mg","Poudre pour préparations injectables"],["courant","Dacarbazine","100 mg","Poudre pour préparations injectables"],["courant","Dactinomycine","0.5 mg","Poudre pour préparations injectables"],["courant","Dapsone","100 mg","Comprimé"],["courant","Dapsone","25 mg","Comprimé"],["courant","Dapsone","50 mg","Comprimé"],["courant","Daunorubicine","50 mg","Poudre pour préparations injectables"],["courant","Déferoxamine","500 mg","Poudre pour préparations injectables"],["courant","Dexaméthasone","4 mg","Solution injectable"],["courant","Dextran 70","6 %","Solution injectable"],["courant","Diacétate d'aluminium","13 %","Solution"],["courant","Diaphragmes","",""],["courant","Diazépam","2 mg","Comprimé"],["courant","Diazépam","5 mg","Comprimé"],["courant","Diazépam","5 mg/ml","Solution injectable"],["courant","Diéthyltoluamide","50 %","Solution pour application locale"],["courant","Diéthyltoluamide","75 %","Solution pour application locale"],["courant","Digoxine","0.05 mg/ml","Solution buvable"],["courant","Digoxine","0.0625 mg","Comprimé"],["courant","Digoxine","0.25 mg","Comprimé"],["courant","Digoxine","0.25 mg/ml","Solution injectable"],["courant","Diloxanide","500 mg","Comprimé"],["courant","Dimercaprol","50 mg/ml","Solution injectable"],["courant","Dinitrate d'isosorbide","5 mg","Comprimé"],["courant","Dithranol","0.1 %","Pommade"],["courant","Dithranol","1 %","Pommade"],["courant","Dithranol","2 %","Pommade"],["courant","DL-méthionine","250 mg","Comprimé"],["courant","Doxorubicine","10 mg","Poudre pour préparations injectables"],["courant","Doxorubicine","50 mg","Poudre pour préparations injectables"],["courant","Doxycycline","100 mg","Comprimé"],["courant","Eau pour préparations injectables","",""],["courant","Édétate de calcium-sodium","200 mg/ml","Solution injectable"],["courant","Énalapril","2.5 mg","Comprimé"],["courant","Énantate de noréthistérone","200 mg/ml","Solution"],["courant","Épinéphrine (adrénaline)","1 mg","Solution injectable"],["courant","Ergocalciférol","0.25 mg/ml","Solution buvable"],["courant","Ergocalciférol","1.25 mg","Comprimé"],["courant","Ergométrine","0.2 mg","Comprimé"],["courant","Ergométrine","0.2 mg","Solution injectable"],["courant","Ergotamine","1 mg","Comprimé"],["courant","Érythromycine","125 mg","Poudre pour suspension buvable"],["courant","Érythromycine","250 mg","Comprimé"],["courant","Érythromycine","500 mg","Poudre pour préparations injectables"],["courant","Éthambutol","100 mg","Comprimé"],["courant","Éthambutol","200 mg","Comprimé"],["courant","Éthambutol","400 mg","Comprimé"],["courant","Éthanol","70 %","Solution"],["courant","Éthinylestradiol","0.01 mg","Comprimé"],["courant","Éthinylestradiol","0.05 mg","Comprimé"],["courant","Éthinylestradiol + lévonorgestrel","0.03 + 0.15 mg","Comprimé"],["courant","Éthinylestradiol + noréthistérone","0.035 + 1 mg","Comprimé"],["courant","Éthionamide","125 mg","Comprimé"],["courant","Éthionamide","250 mg","Comprimé"],["courant","Éthosuximide","250 mg","Gélule"],["courant","Éthosuximide","250 mg/5ml","Sirop"],["courant","Étoposide","100 mg","Gélule"],["courant","Étoposide","20 mg/ml","Solution injectable"],["courant","Fluconazole","2 mg/ml","Solution injectable"],["courant","Fluconazole","50 mg","Gélule"],["courant","Fluconazole","50 mg/5ml","Suspension buvable"],["courant","Fluorescéine","1 %","Collyre"],["courant","Fluorouracil","5 %","Pommade"],["courant","Fluorouracil","50 mg/ml","Solution injectable"],["courant","Fluorure de sodium","",""],["courant","Fluphénazine","25 mg/ml","Solution injectable"],["courant","Folinate de calcium","15 mg","Comprimé"],["courant","Folinate de calcium","3 mg/ml","Solution injectable"],["courant","Furosémide","10 mg/ml","Solution injectable"],["courant","Furosémide","40 mg","Comprimé"],["courant","Gentamicine","0.3 %","Collyre"],["courant","Gentamicine","10 mg/ml","Solution injectable"],["courant","Gentamicine","40 mg/ml","Solution injectable"],["courant","Glibenclamide","2.5 mg","Comprimé"],["courant","Glibenclamide","5 mg","Comprimé"],["courant","Gluconate de calcium","100 mg/ml","Solution injectable"],["courant","Glucose","10 %","Solution injectable"],["courant","Glucose","5 %","Solution injectable"],["courant","Glucose","50 %","Solution injectable"],["courant","Glucose avec chlorure de sodium","4 + 0.18 %","Solution injectable"],["courant","Glutaral","2 %","Solution"],["courant","Goudron de houille","5 %","Solution"],["courant","Griséofulvine","125 mg","Comprimé"],["courant","Griséofulvine","250 mg","Comprimé"],["courant","Halopéridol","2 mg","Comprimé"],["courant","Halopéridol","5 mg","Comprimé"],["courant","Halopéridol","5 mg/ml","Solution injectable"],["courant","Héparine sodique","1000 UI/ml","Solution injectable"],["courant","Héparine sodique","20000 UI/ml","Solution injectable"],["courant","Héparine sodique","5000 UI/ml","Solution injectable"],["courant","Hexacyanoferrate de potassium et de fer dihydraté (bleu de Prusse)","","Poudre"],["courant","Hydralazine","20 mg","Poudre pour préparations injectables"],["courant","Hydralazine","25 mg","Comprimé"],["courant","Hydralazine","50 mg","Comprimé"],["courant","Hydrochlorothiazide","25 mg","Comprimé"],["courant","Hydrocortisone","1 %","Pommade"],["courant","Hydrocortisone","100 mg","Poudre pour préparations injectables"],["courant","Hydrogénocarbonate de sodium","1.4 %","Solution injectable"],["courant","Hydrogénocarbonate de sodium","8.4 %","Solution injectable"],["courant","Hydroxocobalamine","1 mg","Solution injectable"],["courant","Hydroxyde d'aluminium","320 mg/5 ml","Suspension buvable"],["courant","Hydroxyde d'aluminium","500 mg","Comprimé"],["courant","Hydroxyde de magnésium","550 mg/10 ml","Suspension buvable"],["courant","Ibuprofène","200 mg","Comprimé"],["courant","Ibuprofène","400 mg","Comprimé"],["courant","Idoxuridine","0.1 %","Collyre"],["courant","Idoxuridine","0.2 %","Pommade"],["courant","Immunoglobuline antirabique","150 UI/ml","Solution injectable"],["courant","Immunoglobuline humaine anti-D","0.25 mg","Solution injectable"],["courant","Immunoglobuline humaine antitétanique","500 UI","Solution injectable"],["courant","Insuline","100 UI/ml","Solution injectable"],["courant","Insuline","40 UI/ml","Solution injectable"],["courant","Iode","",""],["courant","Iode","200 mg","Gélule"],["courant","Iodure de potassium","60 mg","Comprimé"],["courant","Iohexol","140 mg/ml","Solution injectable"],["courant","Isoniazide","100 mg","Comprimé"],["courant","Isoniazide","300 mg","Comprimé"],["courant","Isoniazide + éthambutol","150 + 400 mg","Comprimé"],["courant","Ivermectine","3 mg","Comprimé"],["courant","Ivermectine","6 mg","Comprimé"],["courant","Kanamycine","1 g","Poudre pour préparations injectables"],["courant","Kétamine","50 mg/ml","Solution injectable"],["courant","Lévamisole","150 mg","Comprimé"],["courant","Lévamisole","50 mg","Comprimé"],["courant","Lévodopa + carbidopa","100 + 10 mg","Comprimé"],["courant","Lévodopa + carbidopa","250 + 25 mg","Comprimé"],["courant","Lévofloxacine","250 mg","Comprimé"],["courant","Lévofloxacine","500 mg","Comprimé"],["courant","Lévonorgestrel","0.03 mg","Comprimé"],["courant","Lévonorgestrel","0.75 mg","Comprimé"],["courant","Lévonorgestrel","1.5 mg","Comprimé"],["courant","Lévothyroxine","0.05 mg","Comprimé"],["courant","Lévothyroxine","0.1 mg","Comprimé"],["courant","Lidocaïne","1 %","Solution injectable"],["courant","Lidocaïne","2 %","Solution injectable"],["courant","Lidocaïne","20 mg/ml","Solution injectable"],["courant","Lidocaïne","5 %","Solution injectable"],["courant","Lidocaïne + épinéphrine (adrénaline)","1 %","Solution injectable"],["courant","Lidocaïne + épinéphrine (adrénaline)","2 %","Solution injectable"],["courant","Lotion à la calamine","","Lotion"],["courant","Mannitol","10 %","Solution injectable"],["courant","Mannitol","20 %","Solution injectable"],["courant","Mébendazole","100 mg","Comprimé"],["courant","Mébendazole","500 mg","Comprimé"],["courant","Méfloquine","250 mg","Comprimé"],["courant","Mélarsoprol","3.60 %","Solution injectable"],["courant","Mercaptopurine","50 mg","Comprimé"],["courant","Metformine","500 mg","Comprimé"],["courant","Méthotrexate","2.5 mg","Comprimé"],["courant","Méthotrexate","50 mg","Poudre pour préparations injectables"],["courant","Méthyldopa","250 mg","Comprimé"],["courant","Métoclopramide","10 mg","Comprimé"],["courant","Métoclopramide","5 mg/ml","Solution injectable"],["courant","Métronidazole","200 mg","Comprimé"],["courant","Métronidazole","200 mg/5 ml","Suspension buvable"],["courant","Métronidazole","500 mg","Comprimé"],["courant","Métronidazole","500 mg","Solution injectable"],["courant","Métronidazole","500 mg","Suppositoire"],["courant","Miconazole","2 %","Pommade"],["courant","Morphine","10 mg","Comprimé"],["courant","Morphine","10 mg","Solution injectable"],["courant","Morphine","10 mg/5 ml","Solution buvable"],["courant","Naloxone","0.4 mg","Solution injectable"],["courant","Néostigmine","0.5 mg","Solution injectable"],["courant","Néostigmine","15 mg","Comprimé"],["courant","Néostigmine","2.5 mg","Solution injectable"],["courant","Niclosamide","500 mg","Comprimé"],["courant","Nicotinamide","50 mg","Comprimé"],["courant","Nifédipine","10 mg","Comprimé"],["courant","Nifurtimox","120 mg","Comprimé"],["courant","Nifurtimox","250 mg","Comprimé"],["courant","Nifurtimox","30 mg","Comprimé"],["courant","Nitrate d'argent","1 %","Collyre"],["courant","Nitrite de sodium","30 mg/ml","Solution injectable"],["courant","Nitrofurantoïne","100 mg","Comprimé"],["courant","Noréthistérone","5 mg","Comprimé"],["courant","Nystatine","100000 UI","Comprimé"],["courant","Nystatine","500000 UI","Comprimé"],["courant","Ofloxacine","200 mg","Comprimé"],["courant","Ofloxacine","400 mg","Comprimé"],["courant","Oxytocine","10 UI","Solution injectable"],["courant","Paracétamol","100 mg","Comprimé"],["courant","Paracétamol","100 mg","Suppositoire"],["courant","Paracétamol","125 mg/5 ml","Sirop"],["courant","Paracétamol","300 mg","Comprimé"],["courant","Paracétamol","500 mg","Comprimé"],["courant","Pénicillamine","250 mg","Comprimé"],["courant","Permanganate de potassium","1:10 000","Solution"],["courant","Perméthrine","1 %","Lotion"],["courant","Perméthrine","5 %","Crème"],["courant","Peroxyde de benzoyle","5 %","Crème"],["courant","Phénobarbital","100 mg","Comprimé"],["courant","Phénobarbital","15 mg","Comprimé"],["courant","Phénobarbital","15 mg/5 ml","Solution buvable"],["courant","Phénoxyméthylpénicilline","250 mg","Comprimé"],["courant","Phénoxyméthylpénicilline","250 mg/5 ml","Poudre pour suspension buvable"],["courant","Phénytoïne","100 mg","Comprimé"],["courant","Phénytoïne","25 mg","Comprimé"],["courant","Phénytoïne","50 mg","Comprimé"],["courant","Phénytoïne","50 mg/ml","Solution injectable"],["courant","Phytoménadione","10 mg","Comprimé"],["courant","Phytoménadione","10 mg/ml","Solution injectable"],["courant","Pilocarpine","2 %","Collyre"],["courant","Pilocarpine","4 %","Collyre"],["courant","Podophylle (résine)","10 %","Solution"],["courant","Polygéline","3.50 %","Solution injectable"],["courant","Polyvidone iodée","10 %","Solution"],["courant","Praziquantel","150 mg","Comprimé"],["courant","Praziquantel","600 mg","Comprimé"],["courant","Prednisolone","0.5 %","Collyre"],["courant","Prednisolone","25 mg","Comprimé"],["courant","Prednisolone","5 mg","Comprimé"],["courant","Préservatifs féminins","",""],["courant","Préservatifs masculins","",""],["courant","Primaquine","15 mg","Comprimé"],["courant","Primaquine","7.5 mg","Comprimé"],["courant","Procaïnamide","100 mg/ml","Solution injectable"],["courant","Procarbazine","50 mg","Gélule"],["courant","Proguanil","100 mg","Comprimé"],["courant","Prométhazine","10 mg","Comprimé"],["courant","Prométhazine","25 mg","Comprimé"],["courant","Prométhazine","25 mg/ml","Solution injectable"],["courant","Prométhazine","5 mg/5 ml","Solution buvable"],["courant","Propranolol","20 mg","Comprimé"],["courant","Propranolol","40 mg","Comprimé"],["courant","Propyliodone","500 mg/ml","Suspension"],["courant","Propylthiouracile","50 mg","Comprimé"],["courant","Pyrantel","250 mg","Comprimé"],["courant","Pyrantel","50 mg/ml","Suspension buvable"],["courant","Pyrazinamide","400 mg","Comprimé"],["courant","Pyridoxine","25 mg","Comprimé"],["courant","Pyriméthamine","25 mg","Comprimé"],["courant","Quinidine","200 mg","Comprimé"],["courant","Quinine","300 mg","Comprimé"],["courant","Quinine","300 mg/ml","Solution injectable"],["courant","Ranitidine","150 mg","Comprimé"],["courant","Ranitidine","25 mg/ml","Solution injectable"],["courant","Ranitidine","75 mg/5 ml","Solution buvable"],["courant","Rétinol","10000 UI","Comprimé"],["courant","Rétinol","100000 UI","Solution injectable"],["courant","Rétinol","100000 UI/ml","Solution buvable"],["courant","Rétinol","200000 UI","Capsule"],["courant","Riboflavine","5 mg","Comprimé"],["courant","Rifampicine","150 mg","Comprimé"],["courant","Rifampicine","300 mg","Comprimé"],["courant","Rifampicine + isoniazide","150 + 150 mg","Comprimé"],["courant","Rifampicine + isoniazide","150 + 75 mg","Comprimé"],["courant","Rifampicine + isoniazide","300 + 150 mg","Comprimé"],["courant","Rifampicine + isoniazide","60 + 30 mg","Comprimé"],["courant","Rifampicine + isoniazide","60 + 60 mg","Comprimé"],["courant","Rifampicine + isoniazide + pyrazinamide","150 + 150 + 500 mg","Comprimé"],["courant","Rifampicine + isoniazide + pyrazinamide","150 + 75 + 400 mg","Comprimé"],["courant","Rifampicine + isoniazide + pyrazinamide","60 + 30 + 150 mg","Comprimé"],["courant","Rifampicine + isoniazide + pyrazinamide + éthambutol","150 + 75 + 400 + 275 mg","Comprimé"],["courant","Salbutamol","0.05 mg/ml","Solution injectable"],["courant","Salbutamol","0.1 mg","Solution pour inhalation"],["courant","Salbutamol","2 mg","Comprimé"],["courant","Salbutamol","2 mg/5 ml","Sirop"],["courant","Salbutamol","4 mg","Comprimé"],["courant","Sel de réhydratation orale chlorure","65 mEq",""],["courant","Sel de réhydratation orale chlorure de potassium","1.5 g/l",""],["courant","Sel de réhydratation orale chlorure de sodium","2.6 g/l",""],["courant","Sel de réhydratation orale citrate","10 mmol/l",""],["courant","Sel de réhydratation orale citrate trisodique dihydraté","2.9 g/l",""],["courant","Sel de réhydratation orale glucose","13.5 g/l",""],["courant","Sel de réhydratation orale glucose","75 mEq",""],["courant","Sel de réhydratation orale osmolarité","245 mOsm/l",""],["courant","Sel de réhydratation orale potassium","20 mEq",""],["courant","Sel de réhydratation orale sodium","75 mEq",""],["courant","Sel ferreux","25 mg/ml","Solution buvable"],["courant","Sel ferreux","60 mg","Comprimé"],["courant","Sel ferreux + acide folique","60 + 0.4 mg","Comprimé"],["courant","Séné","7.5 mg","Comprimé"],["courant","Sérums antivenimeux","","Solution injectable"],["courant","Solution de lactate de sodium composée","","Solution injectable"],["courant","Spectinomycine","2 g","Poudre pour préparations injectables"],["courant","Spironolactone","25 mg","Comprimé"],["courant","Streptomycine","1 g","Poudre pour préparations injectables"],["courant","Sulfadiazine argentique","1 %","Crème"],["courant","Sulfaméthoxazole + triméthoprime","100 + 20 mg","Comprimé"],["courant","Sulfaméthoxazole + triméthoprime","200 + 40 mg/5 ml","Suspension buvable"],["courant","Sulfaméthoxazole + triméthoprime","400 + 80 mg","Comprimé"],["courant","Sulfaméthoxazole + triméthoprime","80 + 16 mg/ml","Solution injectable"],["courant","Sulfaméthoxazole + triméthoprime","800 + 160 mg","Comprimé"],["courant","Sulfasalazine","500 mg","Comprimé"],["courant","Sulfasalazine","500 mg","Suppositoire"],["courant","Sulfate de baryum","","Suspension"],["courant","Sulfate de magnésium","500 mg/ml","Solution injectable"],["courant","Sulfate de néomycine + bacitracine","5 mg + 500 UI/g","Pommade"],["courant","Sulfate de protamine","10 mg/ml","Solution injectable"],["courant","Suramine sodique","1 g","Poudre pour préparations injectables"],["courant","Suxaméthonium","50 mg/ml","Solution injectable"],["courant","Tamoxifène","10 mg","Comprimé"],["courant","Tamoxifène","20 mg","Comprimé"],["courant","Tétracaïne","0.5 %","Collyre"],["courant","Tétracycline","1 %","Pommade"],["courant","Théophylline","100 mg","Comprimé"],["courant","Théophylline","200 mg","Comprimé"],["courant","Théophylline","300 mg","Comprimé"],["courant","Thiamine","50 mg","Comprimé"],["courant","Thiopental","0.5 g","Poudre pour préparations injectables"],["courant","Thiopental","1 g","Poudre pour préparations injectables"],["courant","Thiosulfate de sodium","15 %","Solution"],["courant","Thiosulfate de sodium","250 mg/ml","Solution injectable"],["courant","Timolol","0.25 %","Collyre"],["courant","Timolol","0.5 %","Collyre"],["courant","Triclabendazole","250 mg","Comprimé"],["courant","Triméthoprime","100 mg","Comprimé"],["courant","Triméthoprime","200 mg","Comprimé"],["courant","Trinitrate de glycéryle","0.5 mg","Comprimé"],["courant","Tropicamide","0.5 %","Collyre"],["courant","Tuberculine","","Solution injectable"],["courant","Urée","10 %","Pommade"],["courant","Vaccin antiamaril","",""],["courant","Vaccin anticoquelucheux","",""],["courant","Vaccin antidiphtérique","",""],["courant","Vaccin antigrippal","",""],["courant","Vaccin antihépatite B","",""],["courant","Vaccin antiméningococcique","",""],["courant","Vaccin antiourlien","",""],["courant","Vaccin antipoliomyélitique","",""],["courant","Vaccin antirabique inactivé","",""],["courant","Vaccin antirougeoleux","",""],["courant","Vaccin antirubéolique","",""],["courant","Vaccin antitétanique","",""],["courant","Vaccin antityphoïdique","",""],["courant","Vaccin BCG","",""],["courant","Vérapamil","2.5 mg/ml","Solution injectable"],["courant","Vérapamil","40 mg","Comprimé"],["courant","Vérapamil","80 mg","Comprimé"],["courant","Vinblastine","10 mg","Poudre pour préparations injectables"],["courant","Vincristine","1 mg","Poudre pour préparations injectables"],["courant","Vincristine","5 mg","Poudre pour préparations injectables"],["courant","Vitamine B complexe","100 mg","Comprimé"],["courant","Warfarine","1 mg","Comprimé"],["courant","Warfarine","2 mg","Comprimé"],["courant","Warfarine","5 mg","Comprimé"],["consommable","Abaisse langue adulte","",""],["consommable","Abaisse langue enfant","",""],["consommable","Aiguille à ailettes épicranienne 20 G","",""],["consommable","Aiguille à ailettes épicranienne 21 G","",""],["consommable","Aiguille à ailettes épicranienne 22 G","",""],["consommable","Aiguille à ailettes épicranienne 23 G","",""],["consommable","Aiguille pour vacutainer 21 G","",""],["consommable","Aiguille pour vacutainer 22 G","",""],["consommable","Aiguille spinale 18 G","",""],["consommable","Aiguille spinale 20 G","",""],["consommable","Aiguille spinale 21 G","",""],["consommable","Aiguille spinale 22 G","",""],["consommable","Aiguille uu Luer 19 G","",""],["consommable","Aiguille uu Luer 20 G","",""],["consommable","Aiguille uu Luer 21 G","",""],["consommable","Aiguille uu Luer 22 G","",""],["consommable","Aiguille uu Luer 23 G","",""],["consommable","Bande Elastoplast","",""],["consommable","Bande velpeau 7 cm x 4 m","",""],["consommable","Bandes compressives 6 cm x 7 m","",""],["consommable","Bandes platrées","",""],["consommable","Bassin plat en inox","",""],["consommable","Bistouri + manche","",""],["consommable","Boite à instrument chirurgical vide GM","",""],["consommable","Boite complète de petite chirurgie PM","",""],["consommable","Cathéter 16 G","",""],["consommable","Cathéter 18 G","",""],["consommable","Cathéter 20 G","",""],["consommable","Cathéter 22 G","",""],["consommable","Champ de soin non tissé imperméable et stérile 75 x 75 cm","",""],["consommable","Collecteur urinaire 2 L","",""],["consommable","Compresse de gaze non stérile 10 x 10 cm","",""],["consommable","Compresse de gaze stérile 10 x 10 cm","",""],["consommable","Compresse de gaze stérile 40 x 40 cm","",""],["consommable","Compresse de gaze stérile 7.5 x 7.5 cm","",""],["consommable","Compresse non tissé 40 x 40 cm","",""],["consommable","Container plastique aiguilles et seringues 5-6 L","",""],["consommable","Coton cardé 500 g","",""],["consommable","Coton hydrophile 500 g","",""],["consommable","Doigtier 2d UU stérile","",""],["consommable","Elastopalst 2.5 x 6 m","",""],["consommable","Etiquettes","",""],["consommable","Fil de suture","",""],["consommable","Films radio 35 x 43 cm","",""],["consommable","Flacon 125 ml","",""],["consommable","Flacon 30 ml","",""],["consommable","Gants chirurgicaux uu stériles N° 7.5 paire","",""],["consommable","Gants chirurgicaux uu stériles N° 8 paire","",""],["consommable","Gants d'examen uu non stériles N° 6-7 paire","",""],["consommable","Gants d'examen uu non stériles N° 7-8 paire","",""],["consommable","Gants latex non poudré N° 7-8 paire","",""],["consommable","Garrots en tissus 2.5 x 80 cm","",""],["consommable","Garrots feuilles 80 cm","",""],["consommable","Gel de transmission ultra sons signaux électriques","",""],["consommable","Masques chirurgicaux","",""],["consommable","Mèche de gaze hydrophille 2 cm x 5 m","",""],["consommable","Micropore 2 cm x 5 m","",""],["consommable","Pannier à perfusion métallique 250 ml","",""],["consommable","Pannier à perfusion métallique 500 ml","",""],["consommable","Pansement stérile 5 cm x 4m","",""],["consommable","Perfuseurs","",""],["consommable","Pissettes 250 ml","",""],["consommable","Plateau de soins en plastique","",""],["consommable","Poire a lavement","",""],["consommable","Porte-aiguille a vaccutainer embout à clip","",""],["consommable","Rouleaux d'examen","",""],["consommable","Rouleaux de papier thermique (imprimante écho.)","",""],["consommable","Rouleaux papiers ECG","",""],["consommable","Sachet dose avec fermeture 6 x 8 cm","",""],["consommable","Seringue uu Luer 1 ml","",""],["consommable","Seringue uu Luer 10 ml","",""],["consommable","Seringue uu Luer 2 ml","",""],["consommable","Seringue uu Luer 20 ml","",""],["consommable","Seringue uu Luer 30 ml","",""],["consommable","Seringue uu Luer 5 ml","",""],["consommable","Seringue uu Luer 50 ml","",""],["consommable","Sharpsafe 2L","",""],["consommable","Sonde gastroduodenale A CH16","",""],["consommable","Sonde gastroduodenale E CH16","",""],["consommable","Sparadrap 18 cm x 5 m","",""],["consommable","Sparadrap 2.5 cm x 5 m","",""],["consommable","Suture monofil noir","",""],["consommable","Thermomètre médical","",""],["consommable","Transfuseurs","",""],["consommable","Tulle gras 10x10 cm","",""],["consommable","Verre à pied","",""],["arv","Abacavir","100 mg/5 ml","Solution buvable"],["arv","Abacavir","300 mg","Comprimé"],["arv","Abacavir + dolutegravir + lamivudine","600 + 50 + 300 mg","Comprimé"],["arv","Abacavir + lamivudine","600 + 300 mg","Comprimé"],["arv","Darunavir","300 mg","Comprimé"],["arv","Darunavir","400 mg","Comprimé"],["arv","Didanosine","100 mg","Comprimé"],["arv","Didanosine","125 mg","Gélule"],["arv","Didanosine","200 mg","Comprimé"],["arv","Didanosine","200 mg","Gélule"],["arv","Didanosine","250 mg","Gélule"],["arv","Didanosine","400 mg","Gélule"],["arv","Didanosine","50 mg","Comprimé"],["arv","Dolutegravir","50 mg","Comprimé"],["arv","Dolutegravir + lamivudine + ténofovir","50 + 300 + 300 mg","Comprimé"],["arv","Efavirenz","100 mg","Gélule"],["arv","Efavirenz","150 mg/5 ml","Solution buvable"],["arv","Efavirenz","200 mg","Gélule"],["arv","Efavirenz","600 mg","Gélule"],["arv","Efavirenz + emtricitabine + ténofovir","600 + 200 + 245 mg","Comprimé"],["arv","Efavirenz + emtricitabine + ténofovir","600 + 200 + 300 mg","Comprimé"],["arv","Emtricitabine","200 mg","Comprimé"],["arv","Emtricitabine + ténofovir","200 + 300 mg","Comprimé"],["arv","Etravirine","200 mg","Comprimé"],["arv","Indinavir","200 mg","Gélule"],["arv","Indinavir","400 mg","Gélule"],["arv","Lamivudine","150 mg","Comprimé"],["arv","Lamivudine","50 mg/5ml","Solution buvable"],["arv","Lopinavir + ritonavir","133.3 + 33.3 mg","Gélule"],["arv","Lopinavir + ritonavir","400 + 100 mg/5ml","Solution buvable"],["arv","Nelfinavir","250 mg","Comprimé"],["arv","Nelfinavir","50 mg/g","Poudre pour administration orale"],["arv","Névirapine","200 mg","Comprimé"],["arv","Névirapine","50 mg/5 ml","Suspension buvable"],["arv","Raltegravir","100 mg","Comprimé"],["arv","Raltegravir","400 mg","Comprimé"],["arv","Ritonavir","100 mg","Gélule"],["arv","Ritonavir","400 mg/5 ml","Solution buvable"],["arv","Saquinavir","200 mg","Gélule"],["arv","Stavudine","30 mg","Gélule"],["arv","Stavudine","40 mg","Gélule"],["arv","Stavudine","5 mg/5 ml","Poudre pour solution buvable"],["arv","Stavudine + lamivudine","30 + 150 mg","Comprimé"],["arv","Stavudine + lamivudine","40 + 150 mg","Comprimé"],["arv","Stavudine + lamivudine + névirapine","30 + 150 + 200 mg","Comprimé"],["arv","Stavudine + lamivudine + névirapine","40 + 150 + 200 mg","Comprimé"],["arv","Ténofovir","300 mg","Comprimé"],["arv","Ténofovir + lamivudine","300 + 300 mg","Comprimé"],["arv","Ténofovir + lamivudine + efavirenz","300 + 300 + 600 mg","Comprimé"],["arv","Zidovudine","10 mg/ml","Solution pour perfusion intraveineuse"],["arv","Zidovudine","100 mg","Comprimé"],["arv","Zidovudine","150 mg","Comprimé"],["arv","Zidovudine","300 mg","Comprimé"],["arv","Zidovudine","50 mg/5 ml","Sirop"],["arv","Zidovudine + lamivudine","300 + 150 mg","Comprimé"],["arv","Zidovudine + lamivudine + névirapine","300 + 150 + 200 mg","Comprimé"],["reactif","Capillus","",""],["reactif","Clenz","",""],["reactif","Determine","",""],["reactif","Facscontrol","",""],["reactif","Facsflow","",""],["reactif","Facsreagent","",""],["reactif","Genscreen Plus HIV Ag-Ab","",""],["reactif","Giemsa","",""],["reactif","Giemsa","0.01 mg","Collyre"],["reactif","Immunocomb Bispot HIV 1&2","",""],["reactif","Immunocomb CMV IgG","",""],["reactif","Immunocomb HBs Ag","",""],["reactif","Immunocomb HCV","",""],["reactif","Immunocomb Toxo","",""],["reactif","Minotrol N","",""]];
+let state;
+const med=id=>state.meds.find(m=>m.id===id);
+const mname=m=>m.lbl||`${m.nom} ${m.dos}`.trim();
+function relabel(){const c={},k=m=>m.cat+'|'+m.nom.toLowerCase()+'|'+m.dos.toLowerCase();state.meds.forEach(m=>c[k(m)]=(c[k(m)]||0)+1);state.meds.forEach(m=>{m.lbl=(m.nom+' '+m.dos).trim()+(c[k(m)]>1&&m.forme?' ('+m.forme.toLowerCase()+')':'')})}
+const isARV=m=>m.cat==='arv';
+const CATS={courant:'Médicaments courants',consommable:'Consommables',arv:'ARV',reactif:'Réactifs'};
+let cat='arv';
+let catQv='';
+const live=m=>!m.arch;
+const byName=(a,b)=>mname(a).localeCompare(mname(b),'fr',{sensitivity:'base',numeric:true});
+const medsAll=()=>state.meds.filter(m=>m.cat===cat&&live(m)).sort(byName);
+const medsOf=()=>medsAll().filter(m=>!catQv||(mname(m)+' '+(m.forme||'')).toLowerCase().includes(catQv));
+
+const B=(()=>{try{if(window.parent&&window.parent!==window&&window.parent.BASE)return window.parent.BASE}catch(e){}
+  return{list:[],find(d){return this.list.find(p=>p.dossier===d)},upsert(x){let p=this.find(x.dossier);if(!p){p={dossier:x.dossier,nom:'',sexe:'',assure:null,statut:'',contact:'',proto:'',premiere:x.premiere||today,obs:''};this.list.push(p)}for(const k in x){if(x[k]!==undefined&&x[k]!==''&&x[k]!==null&&k!=='premiere')p[k]=x[k]}return p}}})();
+
+// ---------- Stock (par lots, premier périmé premier sorti)
+const remaining=l=>l.qte-state.mov.filter(m=>m.lot===l.id&&m.type!=='entree').reduce((s,m)=>s+m.qte,0);
+function addIn(medId,qte,date,lotNum,per){
+  audit('Entrée de stock',`${mname(med(medId))} × ${qte} · lot ${lotNum||'—'}`);
+  const l={id:++state.lid,med:medId,num:lotNum,per,qte,date};state.lots.push(l);
+  state.mov.push({id:++state.mid,date,type:'entree',med:medId,qte,lot:l.id,ref:lotNum,motif:''});
+}
+function addOut(type,medId,qte,date,ref,motif,allowExpired){
+  if(type==='perte')audit('Perte / casse',`${mname(med(medId))} × ${qte} · ${motif||''}`);
+  if(type==='depannage')audit('Dépannage de stock',`${mname(med(medId))} × ${qte} · ${ref||'—'}${motif?' · '+motif:''}`);
+  let need=qte;
+  const ls=state.lots.filter(l=>l.med===medId&&l.date<=date&&(allowExpired||type==='perte'||l.per>=date)).sort((a,b)=>(a.per||'9999').localeCompare(b.per||'9999')||a.id-b.id);
+  for(const l of ls){if(need<=0)break;const r=remaining(l);if(r<=0)continue;const t=Math.min(r,need);state.mov.push({id:++state.mid,date,type,med:medId,qte:t,lot:l.id,ref:ref||'',motif:motif||''});need-=t}
+  return qte-need;
+}
+function stockAt(medId,d){return state.mov.filter(m=>m.med===medId&&(!d||m.date<=d)).reduce((s,m)=>s+(m.type==='entree'?m.qte:-m.qte),0)}
+const usable=medId=>state.lots.filter(l=>l.med===medId&&l.per>=today).reduce((s,l)=>s+remaining(l),0);
+const received=m=>state.lots.some(l=>l.med===m.id);
+function autoExpire(){let n=0;state.lots.forEach(l=>{const r=remaining(l);if(r>0&&l.per&&l.per<today){state.mov.push({id:++state.mid,date:l.per,type:'perte',med:l.med,qte:r,lot:l.id,ref:l.num||'',motif:'Péremption (retrait automatique)'});n++}});if(n)audit('Périmés retirés automatiquement du stock',n+' lot(s)');return n}
+const recMeds=()=>medsOf().filter(received);
+function nearestPer(medId){const ls=state.lots.filter(l=>l.med===medId&&remaining(l)>0).sort((a,b)=>a.per.localeCompare(b.per));return ls.length?ls[0].per:''}
+function cmm(medId){
+  const t=new Date(today+'T12:00:00');let s=0;
+  for(let k=1;k<=3;k++){const d=new Date(t.getFullYear(),t.getMonth()-k,1,12);const ym=iso(d).slice(0,7);
+    s+=state.mov.filter(m=>m.med===medId&&m.type==='sortie'&&m.date.startsWith(ym)).reduce((a,m)=>a+m.qte,0)}
+  return Math.round(s/3);
+}
+function statut(m){
+  const st=stockAt(m.id),c=cmm(m.id),per=nearestPer(m.id);
+  if(st<=0)return c>0?['Rupture','bad']:['Non utilisé',''];
+  if(per&&per<today)return['Périmé en stock','bad'];
+  if(c>0&&st/c<1.5)return['Stock bas','warn'];
+  if(per&&daysBetween(today,per)<=90)return['Péremption proche','warn'];
+  return['OK',''];
+}
+
+// ---------- Données d'exemple
+// Réactifs de la nomenclature des examens (caisse PVVIH et consultations externes : un seul stock). [nom, tests par boîte (exemple à confirmer), boîtes en stock au démarrage de la démonstration]
+const REAG_NEW=[['Diluant hématologie',1000,4],['Lyse hématologie',500,4],['Sérum-test anti-A',100,3],['Sérum-test anti-B',100,3],['Sérum-test anti-D',100,3],['Thromboplastine (TP)',100,3],['Céphaline (TCA)',100,3],['Chlorure de calcium 0,025 M',200,3],['Citrate de sodium (VS)',50,4],['TDR paludisme',25,10],['Bandelettes urinaires',100,6],['Gélose CLED',20,5],['Gélose Mueller-Hinton',20,5],['Kit coloration de Gram',100,3],['TPHA',100,3],['VDRL',100,3],['Kit sérologie chlamydienne',96,2],['Réactif glycémie',100,6],['Réactif urée',100,5],['Réactif créatinine',100,5],['Réactif ASAT',100,5],['Réactif ALAT',100,5],['Réactif GGT',100,4],['Réactif cholestérol total',100,4],['Réactif cholestérol HDL',100,4],['Réactif cholestérol LDL',100,4],['Réactif triglycérides',100,4],['Kit HbA1c',50,3],['Réactif bilirubine totale',100,4],['Réactif bilirubine conjuguée',100,4],['Réactif calcium',100,4],['Réactif magnésium',100,4],['Réactif acide urique',100,4],['Kit CRP',50,3],['Réactif amylase',100,3],['Réactif lipase',100,3]];
+// Comparaison de noms sans accents, sans majuscules, sans « réactif / kit / test » : évite les doublons
+const NR=s=>String(s==null?'':s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’]/g,"'").replace(/\b(reactifs?|kits?|tests?)\b/g,' ').replace(/[^a-z0-9+%/.]+/g,' ').trim();
+function ensureReagents(){
+  let n=0;
+  // fusion des doublons existants (même réactif écrit de deux façons) : stock, mouvements et tests ouverts sont regroupés
+  const seen={};
+  state.meds.filter(m=>m.cat==='reactif').forEach(m=>{const k=NR(m.nom),f=seen[k];if(!f){seen[k]=m;return}
+    (state.lots||[]).forEach(l=>{if(l.med===m.id)l.med=f.id});(state.mov||[]).forEach(x=>{if(x.med===m.id)x.med=f.id});
+    if(state.kit){['open','size'].forEach(q=>{const o=state.kit[q]||{};if(o[m.id]!=null){if(q==='open')o[f.id]=(o[f.id]||0)+o[m.id];else if(o[f.id]==null)o[f.id]=o[m.id];delete o[m.id]}})}
+    state.meds=state.meds.filter(x=>x!==m);n++});
+  REAG_NEW.forEach(([nom])=>{if(!state.meds.some(m=>m.cat==='reactif'&&NR(m.nom)===NR(nom))){state.meds.push({id:Math.max(...state.meds.map(x=>x.id))+1,cat:'reactif',nom,dos:'',forme:''});n++}});
+  if(n)relabel();
+  state.kit=state.kit||{open:{},size:{}};
+  return n;
+}
+const OM=[null,
+ ['arv','Dolutegravir','50 mg'],['arv','Abacavir','300 mg'],['arv','Névirapine','50 mg/5 ml'],['arv','Lopinavir + ritonavir','133.3 + 33.3 mg'],['arv','Ritonavir','100 mg'],['arv','Darunavir','400 mg'],['arv','Ténofovir + lamivudine','300 + 300 mg'],['arv','Abacavir + lamivudine','600 + 300 mg'],['arv','Zidovudine + lamivudine','300 + 150 mg'],['arv','Dolutegravir + lamivudine + ténofovir','50 + 300 + 300 mg'],['arv','Abacavir + dolutegravir + lamivudine','600 + 50 + 300 mg'],['arv','Ténofovir + lamivudine + efavirenz','300 + 300 + 600 mg'],
+ ['courant','Sulfaméthoxazole + triméthoprime','200 + 40 mg/5 ml'],['courant','Fluconazole','50 mg'],['arv','Efavirenz','600 mg'],
+ ['courant','Paracétamol','500 mg'],['courant','Amoxicilline','500 mg'],['courant','Métronidazole','500 mg'],['courant','Sel de réhydratation orale glucose','13.5 g/l'],
+ ['consommable',"Gants d'examen uu non stériles N° 7-8 paire",''],['consommable','Seringue uu Luer 5 ml',''],['consommable','Compresse de gaze stérile 10 x 10 cm',''],['consommable','Masques chirurgicaux',''],
+ ['reactif','Determine',''],['reactif','Giemsa',''],['reactif','Genscreen Plus HIV Ag-Ab',''],['reactif','Immunocomb HBs Ag',''],['reactif','Facsreagent',''],['reactif','Facsflow','']];
+function seed(){
+  state={meds:[],pat:[],lots:[],mov:[],mid:0,lid:0,pid:0};
+  CAT0.forEach(([c,n,d,f],i)=>state.meds.push({id:i+1,cat:c,nom:n,dos:d,forme:f}));
+  relabel();ensureReagents();return;
+  const nz=s=>s.toLowerCase().replace(/’/g,"'");
+  const ID=o=>{const a=OM[o],m=state.meds.find(x=>x.cat===a[0]&&nz(x.nom)===nz(a[1])&&nz(x.dos)===nz(a[2]));if(!m)throw new Error('Article introuvable : '+a[1]);return m.id};
+  const ev=[];
+  const init={1:[14,400],2:[49,45],6:[39,160],7:[3,90],8:[18,30],9:[20,200],10:[1196,320],11:[69,500],12:[180,75],15:[200,120],16:[40,300],17:[25,250],18:[30,60],19:[60,400],20:[30,500],21:[20,450],22:[40,380],23:[15,200],24:[12,120],25:[10,100],26:[8,70],27:[20,50],28:[40,200],29:[40,200]};
+  Object.entries(init).forEach(([o,[q,off]])=>ev.push({d:'2025-12-31',o:0,t:'in',med:ID(+o),q,lot:'L-INIT-'+o,per:addDays(today,off)}));
+  REAG_NEW.forEach(([nom,k,q],i)=>{const m=state.meds.find(x=>x.cat==='reactif'&&NR(x.nom)===NR(nom));ev.push({d:'2025-12-31',o:0,t:'in',med:m.id,q,lot:'L-INIT-R'+(i+1),per:addDays(today,300+i*7)})});
+  [['2026-02-03',8,60],['2026-02-03',7,30],['2026-02-03',3,20],['2026-03-10',10,800],['2026-03-10',9,30],['2026-04-14',1,30],['2026-06-08',10,800],['2026-06-08',8,40],['2026-06-08',12,60],['2026-08-20',11,60],['2026-08-20',6,30],['2026-09-15',10,600],['2026-09-15',13,30],['2026-09-15',14,30],['2026-04-02',16,40],['2026-07-10',19,60],['2026-05-06',20,30],['2026-08-12',21,20],['2026-06-03',24,10],['2026-09-09',25,10],['2026-09-09',26,8]]
+   .forEach(([d,o,q],i)=>ev.push({d,o:0,t:'in',med:ID(o),q,lot:'L-'+d.slice(2,7).replace('-','')+'-'+o,per:addDays(today,365+i*20)}));
+  const P=[['0231',ID(10),'07 41 00 00 01','',5,1,10],['0118',ID(10),'07 41 00 00 02','Transfert entrant',12,1,10],['0342',ID(11),'07 41 00 00 03','',20,1,10],['0087',ID(12),'07 41 00 00 04','',3,1,10],['0560',ID(10),'07 41 00 00 05','Nouveau cette année',26,3,10],['0561',ID(1),'07 41 00 00 06','Enfant',27,1,10],['0559',ID(7),'07 41 00 00 07','',9,1,8],['0415',ID(9),'07 41 00 00 08','',14,1,10]];
+  const tot={};
+  P.forEach(([dos,proto,contact,obs,day,from,to])=>{
+    const p={id:++state.pid,dossier:dos,proto,contact,obs,disp:[]};state.pat.push(p);
+    B.upsert({dossier:dos,contact,proto:mname(state.meds.find(m=>m.id===proto)),premiere:`2026-${String(from).padStart(2,'0')}-${String(day).padStart(2,'0')}`});
+    for(let m=from;m<=to;m++){
+      if(dos==='0415'&&m===9)continue;
+      const d=`2026-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      p.disp.push({date:d,med:proto,qte:1,jours:30});
+      ev.push({d,o:1,t:'out',med:proto,q:1,ref:dos});
+      tot[m+'-'+proto]=(tot[m+'-'+proto]||0)+1;
+    }
+    const last=p.disp[p.disp.length-1];if(last)B.upsert({dossier:dos,rdv:addDays(last.date,last.jours)});
+  });
+  const base={1:3,2:2,3:1,4:0,5:0,6:2,7:3,8:12,9:4,10:270,11:8,12:5,13:4,14:2,15:3,16:12,17:8,18:5,19:15,20:3,21:2,22:5,23:1,24:2,25:2,26:1,27:1,28:1,29:1},jan={1:3,2:0,6:0,7:3,8:15,9:3,10:273,11:8,12:5};
+  for(let m=1;m<=10;m++)for(let o=1;o<=29;o++){
+    const mid=ID(o),target=m===1?(jan[o]||0):base[o];
+    const l=Math.max(0,target-(tot[m+'-'+mid]||0));if(!l)continue;
+    const a=Math.floor(l/4),parts=[a,a,a,l-3*a];
+    [6,13,20,27].forEach((day,i)=>{if(parts[i]>0)ev.push({d:`2026-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`,o:1,t:'out',med:mid,q:parts[i],ref:'Autres dispensations'})});
+  }
+  ev.push({d:'2026-10-20',o:1,t:'out',med:ID(11),q:25,ref:'Dotation hors registre'});
+  ev.push({d:'2026-05-12',o:1,t:'loss',med:ID(2),q:1,ref:'',motif:'Boîte endommagée'});
+  ev.push({d:'2026-09-02',o:1,t:'loss',med:ID(12),q:4,ref:'',motif:'Boîtes abîmées'});
+  ev.sort((a,b)=>a.d.localeCompare(b.d)||a.o-b.o);
+  ev.forEach(e=>{
+    if(e.t==='in')addIn(e.med,e.q,e.d,e.lot,e.per);
+    else if(e.t==='out')addOut('sortie',e.med,e.q,e.d,e.ref,'');
+    else addOut('perte',e.med,e.q,e.d,e.ref,e.motif);
+  });
+}
+// ---------- Persistance (démonstration : stockage du navigateur) et audit
+const SK='cta.pharma.v1';let AUD=false,lastSaved='';
+const audit=(a,d)=>{if(!AUD)return;try{window.parent.AUDIT('Pharmacie',a,d)}catch(e){}};
+function persistLoad(){try{const s=localStorage.getItem(SK);if(!s)return false;const o=JSON.parse(s);if(!o||!o.state)return false;state=o.state;lastSaved=s;return true}catch(e){return false}}
+function persistSave(){if(window.parent.NOSAVE)return;try{const s=JSON.stringify({state});if(s===lastSaved)return;localStorage.setItem(SK,s);lastSaved=s;window.parent.SAVED&&window.parent.SAVED('pharma')}catch(e){try{window.parent.STORAGE_FAIL&&window.parent.STORAGE_FAIL(e)}catch(x){}}}
+setInterval(persistSave,3000);addEventListener('pagehide',persistSave);
+['click','keydown','input','touchstart'].forEach(e=>addEventListener(e,()=>{try{window.parent.ACTIVITY()}catch(x){}clearTimeout(window._sv);window._sv=setTimeout(persistSave,500);},true));
+const PRINT_CSS=document.createElement('style');PRINT_CSS.textContent='@media print{header,nav,.demo,.seg,#toast,.btn,button{display:none!important}body{background:#fff!important}}';document.head.appendChild(PRINT_CSS);
+
+const KIT0={'Determine':100,'Immunocomb HBs Ag':12,'Immunocomb HCV':12,'Immunocomb Toxo':12,'Facsreagent':50,'Facsflow':200,'Giemsa':100};REAG_NEW.forEach(([n,k])=>{KIT0[n]=k});
+function kitSize(m){return (state.kit&&state.kit.size&&state.kit.size[m.id])||KIT0[m.nom]||50}
+function consumeReagent(nom,n){
+  const ms=state.meds.filter(m=>m.cat==='reactif'&&live(m)&&NR(m.nom)===NR(nom));if(!ms.length)return;
+  const m=ms.find(x=>usable(x.id)>0||(state.kit.open[x.id]||0)>0)||ms[0];
+  state.kit=state.kit||{open:{},size:{}};state.kit.open=state.kit.open||{};
+  state.kit.open[m.id]=(state.kit.open[m.id]||0)+n;
+  while(state.kit.open[m.id]>=kitSize(m)){
+    if(usable(m.id)<=0)break;
+    addOut('sortie',m.id,1,today,'Tests consommés','',false);state.kit.open[m.id]-=kitSize(m);
+    audit('Réactif : boîte entamée entièrement consommée',mname(m));
+  }
+}
+function perAlert(){
+  const lim=addDays(today,90),L=state.lots.filter(l=>l.per&&remaining(l)>0&&l.per<=lim).sort((a,b)=>a.per.localeCompare(b.per));
+  let b=document.getElementById('perAlert');if(!b){b=document.createElement('div');b.id='perAlert';b.setAttribute('role','status');document.querySelector('header').after(b)}
+  b.innerHTML=L.length?`<div style="margin:8px 12px;padding:10px 12px;border-radius:10px;background:#fff4e5;border:1px solid #f0c27a;color:#7a4a00;font-size:.88rem"><b>Péremptions :</b> ${L.slice(0,5).map(l=>`${esc(mname(med(l.med)))} · lot ${esc(l.num||'—')} · ${l.per<today?'périmé':'expire'} le ${fdate(l.per)} (${N(remaining(l))} boîte(s))`).join(' ; ')}${L.length>5?' … +'+(L.length-5):''}</div>`:'';
+}
+let RA=0;if(!persistLoad())seed();else RA=ensureReagents();
+state.kit=state.kit||{open:{},size:{}};
+
+// ---------- sheet / toast / nav
+function openSheet(h){$('sheetBody').innerHTML=h;$('modal').hidden=false}
+function closeSheet(){$('modal').hidden=true}
+// Fermeture seulement si l'appui ET le relâchement sont sur le fond (sélection de texte protégée)
+let MODAL_DOWN=false;
+$('modal').addEventListener('mousedown',e=>{MODAL_DOWN=e.target===$('modal')});
+$('modal').addEventListener('click',e=>{if(e.target===$('modal')&&MODAL_DOWN)closeSheet();MODAL_DOWN=false});
+function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2800)}
+function confirmSheet(title,rows,onYes,yes='Confirmer'){
+  openSheet(`<h3>${esc(title)}</h3><dl>${rows.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl><div class="acts"><button class="btn ghost" id="cNo" style="flex:1">Corriger</button><button class="btn" id="cYes" style="flex:1">${esc(yes)}</button></div>`);
+  $('cNo').onclick=closeSheet;$('cYes').onclick=()=>{closeSheet();onYes()};$('cYes').focus();
+}
+
+// =============== LABORATOIRE : réactif terminé + comptage du stock ===============
+const LABP=['fin','labo','cpt','sto','med'];
+const nowHM=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+const FH=()=>{state.kit=state.kit||{open:{},size:{}};return state.kit.fhist||(state.kit.fhist=[])};
+const CNT=()=>state.counts||(state.counts=[]);
+const reagentList=()=>state.meds.filter(m=>m.cat==='reactif'&&live(m)).sort(byName);
+// examens de la caisse qui dépendent de ce réactif
+function examsFor(m){try{const A=window.parent.CAISSE_API;if(!A||!A.reactMap)return[];const R=A.reactMap(),k=NR(m.nom);return A.examNames().filter(n=>(R[n]||[]).some(r=>NR(r)===k))}catch(e){return[]}}
+function durTxt(a,b){const d=Math.round((new Date(b.date+'T'+b.heure)-new Date(a.date+'T'+a.heure))/60000);if(!(d>=0))return '—';return d<60?d+' min':Math.floor(d/60)+' h '+String(d%60).padStart(2,'0')}
+const EXO=()=>{state.kit=state.kit||{open:{},size:{}};return state.kit.exoff||(state.kit.exoff={})};
+const EXH=()=>{state.kit=state.kit||{open:{},size:{}};return state.kit.exhist||(state.kit.exhist=[])};
+const exKey=n=>{const k=NR(n);return k==='cholesterol total'?'cholesterol':k};
+const EXG=['Sérologie','Biochimie','Hématologie','Parasitologie','Bactériologie','Bilans'];
+function labExams(){try{const A=window.parent.CAISSE_API;if(!A||!A.examList)return[];const m=new Map();
+  A.examList().forEach(e=>{const k=exKey(e.n);let r=m.get(k);if(!r){r={k,n:e.n,g:e.g,tags:[]};m.set(k,r)}e.tags.forEach(t=>{if(!r.tags.includes(t))r.tags.push(t)})});
+  return[...m.values()]}catch(e){return[]}}
+// ---------- Patients dont les examens ont été sélectionnés à la caisse (transmis par le menu principal)
+let labSort={k:'date',asc:false};
+function labData(){try{const L=window.parent.LAB?window.parent.LAB.list():[];return Array.isArray(L)?L:[]}catch(e){return[]}}
+function renderLabo(){
+  const q=(($('labQ')||{}).value||'').trim().toLowerCase();
+  const L=labData().filter(x=>!q||String(x.nom||'').toLowerCase().includes(q));
+  const val=x=>{
+    if(labSort.k==='nom')return String(x.nom||'').toLowerCase();
+    if(labSort.k==='statut')return String(x.statut||'');
+    if(labSort.k==='exams')return (x.exams||[]).length;
+    if(labSort.k==='age')return Number(x.age)||0;
+    return String(x.date||'')+' '+(x.heure||'');
+  };
+  L.sort((a,b)=>{const ka=val(a),kb=val(b);const c=typeof ka==='number'?ka-kb:String(ka).localeCompare(String(kb),'fr',{numeric:true});return labSort.asc?c:-c});
+  const th=(k,t)=>`<th><button class="link" data-sk="${k}" style="font:inherit">${t}${labSort.k===k?(labSort.asc?' ▲':' ▼'):''}</button></th>`;
+  $('labT').innerHTML=`<thead><tr>${th('date','Date')}${th('nom','Patient')}${th('age','Âge')}<th>Sexe</th>${th('exams','Nombre')}<th>Examens demandés</th>${th('statut','État')}<th>Reçu</th><th>Caissier</th></tr></thead><tbody>`+
+   (L.length?L.map(x=>`<tr><td>${fdate(x.date)}${x.heure?' · '+esc(x.heure):''}</td><td><b>${esc(x.nom||'—')}</b></td><td class="r">${x.age||'—'}</td><td>${x.sexe==='F'?'Féminin':x.sexe==='M'?'Masculin':'—'}</td><td class="r">${(x.exams||[]).length}</td><td style="white-space:normal">${esc((x.exams||[]).join(', '))}</td><td>${x.statut==='paye'?'<span class="pill">Encaissé</span>':'<span class="pill warn">Demandé</span>'}</td><td>${esc(x.recu||'—')}</td><td>${esc(x.agent||'—')}</td></tr>`).join(''):'<tr><td colspan="9" class="muted">Aucun patient pour le moment : la liste se remplit dès que la caisse sélectionne des examens.</td></tr>')+'</tbody>';
+  $('labT').querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{const k=b.dataset.sk;if(labSort.k===k)labSort.asc=!labSort.asc;else labSort={k,asc:k!=='date'};renderLabo()});
+}
+function renderFin(){
+  const q=NR($('exQ').value||''),fo=$('exF').value==='off',L=labExams(),O=EXO();
+  const nOff=L.filter(e=>O[e.k]).length;
+  $('exSum').textContent=L.length?(N(L.length)+' examens · '+(nOff?nOff+' indisponible(s)':'tous disponibles')):'Liste des examens indisponible : rechargez la page.';
+  const rows=[];
+  EXG.concat([...new Set(L.map(e=>e.g))].filter(g=>!EXG.includes(g))).forEach(g=>{
+    const xs=L.filter(e=>e.g===g&&(!q||NR(e.n).includes(q))&&(!fo||O[e.k])).sort((a,b)=>a.n.localeCompare(b.n,'fr'));
+    if(!xs.length)return;
+    rows.push(`<tr><th colspan="3" style="background:var(--bg2,#eef2f6)">${esc(g)}</th></tr>`);
+    xs.forEach(e=>{const o=O[e.k];rows.push(`<tr><td><b>${esc(e.n)}</b>${o?`<div class="muted" style="font-size:.76rem">indisponible depuis ${esc(o.heure)} le ${fdate(o.date)}${o.par?' · '+esc(o.par):''}</div>`:''}</td><td class="muted" style="font-size:.8rem">${esc(e.tags.join(' · '))}</td><td style="text-align:right;white-space:nowrap"><button type="button" role="switch" aria-checked="${o?'false':'true'}" class="exsw ${o?'off':'on'}" data-ek="${esc(e.k)}" aria-label="${esc(e.n)} : ${o?'indisponible':'disponible'}"><i></i><span>${o?'Indisponible':'Disponible'}</span></button></td></tr>`)});
+  });
+  $('exT').innerHTML='<thead><tr><th>Examen</th><th>Caisse</th><th style="text-align:right">État</th></tr></thead><tbody>'+(rows.join('')||'<tr><td colspan="3" class="muted">Aucun examen.</td></tr>')+'</tbody>';
+  $('exT').querySelectorAll('[data-ek]').forEach(b=>b.onclick=()=>exToggle(b.dataset.ek));
+  const H=EXH().slice().reverse().slice(0,30);
+  $('exH').innerHTML='<thead><tr><th>Examen</th><th>Indisponible depuis</th><th>Par</th><th>Remis disponible</th><th>Durée</th></tr></thead><tbody>'+(H.length?H.map(h=>`<tr><td>${esc(h.nom)}</td><td>${fdate(h.debut.date)} à ${esc(h.debut.heure)}</td><td>${esc(h.debut.par||'—')}</td><td>${h.fin?fdate(h.fin.date)+' à '+esc(h.fin.heure)+(h.fin.par?' · '+esc(h.fin.par):''):'<span class="pill bad">en cours</span>'}</td><td>${h.fin?durTxt(h.debut,h.fin):'—'}</td></tr>`).join(''):'<tr><td colspan="5" class="muted">Aucun changement pour le moment.</td></tr>')+'</tbody>';
+}
+$('exQ').oninput=renderFin;$('exF').onchange=renderFin;$('labQ').oninput=renderLabo;
+function exToggle(k){
+  const e=labExams().find(x=>x.k===k);if(!e)return;const O=EXO(),f={date:today,heure:nowHM(),par:whoName()};
+  if(O[k]){delete O[k];const h=EXH().slice().reverse().find(x=>x.k===k&&!x.fin);if(h)h.fin=f;audit('Examen disponible',`${e.n} · ${f.heure}`);toast('« '+e.n+' » : disponible à la caisse.')}
+  else{O[k]=f;EXH().push({id:EXH().reduce((a,x)=>Math.max(a,x.id),0)+1,k,nom:e.n,debut:f,fin:null});audit('Examen indisponible',`${e.n} · ${f.heure} · bloqué à la caisse`);toast('« '+e.n+' » : bloqué à la caisse.')}
+  persistSave();renderFin();
+}
+
+// ----- Comptage
+let cptCat='reactif',cptVals={};
+const cptMeds=()=>state.meds.filter(m=>m.cat===cptCat&&live(m)&&received(m)).sort(byName);
+function lastCount(id){const L=CNT();for(let i=L.length-1;i>=0;i--){const ln=L[i].lines.find(x=>x.m===id);if(ln)return Object.assign({},ln,{date:L[i].date,heure:L[i].heure})}return null}
+const entriesSince=(id,cut)=>state.mov.filter(x=>x.med===id&&x.type==='entree'&&x.id>cut&&!/^CPT-/.test(x.ref||'')).reduce((s,x)=>s+x.qte,0);
+const sgn=n=>(n>0?'+':'')+N(n);
+function cptLine(m,v){const la=lastCount(m.id),th=stockAt(m.id),ent=la?entriesSince(m.id,la.cut):null;return{m:m.id,nom:mname(m),debut:la?la.compte:null,entrees:ent,theo:th,compte:v,ecart:v-th,conso:la?la.compte+ent-v:null,cut:0}}
+function cptUpd(){
+  let n=0,tot=0;
+  cptMeds().forEach(m=>{const v=cptVals[m.id],e=document.getElementById('cge'+m.id),c=document.getElementById('cgc'+m.id);if(!e)return;
+    if(v===undefined||v===''||isNaN(Number(v))){e.textContent='';c.textContent='';return}
+    const l=cptLine(m,Math.round(Number(v)));n++;tot+=l.ecart;
+    e.innerHTML=l.ecart===0?'0':`<span class="${l.ecart<0?'neg':''}" style="font-weight:700">${sgn(l.ecart)}</span>`;
+    c.textContent=l.conso==null?'—':N(l.conso)});
+  $('cptSum').textContent=n?`${n} article(s) saisi(s) · écart total : ${sgn(tot)} boîte(s)`:'Saisissez ce que vous comptez sur les étagères : l’écart apparaît tout de suite.';
+}
+function renderCpt(){
+  $('cptSeg').querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.v===cptCat);b.onclick=()=>{cptCat=b.dataset.v;cptVals={};renderCpt()}});
+  const ms=cptMeds();
+  $('cptT').innerHTML='<thead><tr><th>Article</th><th class="r">Début<br><small>(dernier comptage)</small></th><th class="r">Entrées<br><small>depuis</small></th><th class="r">Stock<br><small>logiciel</small></th><th class="r">Compté</th><th class="r">Écart</th><th class="r">Consommé<br><small>réellement</small></th></tr></thead><tbody>'+(ms.length?ms.map(m=>{
+    const la=lastCount(m.id),ent=la?entriesSince(m.id,la.cut):null;
+    return `<tr><td>${esc(mname(m))}</td><td class="r">${la?N(la.compte)+'<div class="muted" style="font-size:.7rem">'+fdate(la.date)+'</div>':'—'}</td><td class="r">${la?'+'+N(ent):'—'}</td><td class="r">${N(stockAt(m.id))}</td><td class="r"><input type="number" min="0" inputmode="numeric" style="max-width:110px" data-m="${m.id}" value="${cptVals[m.id]??''}" aria-label="Boîtes comptées ${esc(mname(m))}"></td><td class="r" id="cge${m.id}"></td><td class="r" id="cgc${m.id}"></td></tr>`}).join(''):'<tr><td colspan="7" class="muted">Aucun article reçu dans ce compartiment : enregistrez d’abord les entrées en stock.</td></tr>')+'</tbody>';
+  $('cptT').querySelectorAll('input').forEach(i=>i.oninput=()=>{cptVals[i.dataset.m]=i.value;cptUpd()});
+  cptUpd();
+  const H=CNT().slice().reverse().slice(0,15);
+  $('cptH').innerHTML='<thead><tr><th>Date</th><th>Heure</th><th>Par</th><th>Compartiment</th><th class="r">Articles</th><th class="r">Écart total</th><th></th></tr></thead><tbody>'+(H.length?H.map(c=>{const tot=c.lines.reduce((s,l)=>s+l.ecart,0);return `<tr><td>${fdate(c.date)}</td><td>${esc(c.heure)}</td><td>${esc(c.par||'—')}</td><td>${esc(CATS[c.cat]||c.cat)}</td><td class="r">${N(c.lines.length)}</td><td class="r">${sgn(tot)}</td><td><button class="btn ghost small" data-cd="${c.id}">Détail</button></td></tr>`}).join(''):'<tr><td colspan="7" class="muted">Aucun comptage enregistré.</td></tr>')+'</tbody>';
+  $('cptH').querySelectorAll('[data-cd]').forEach(b=>b.onclick=()=>cptDetail(+b.dataset.cd));
+}
+function cptDetail(id){
+  const c=CNT().find(x=>x.id===id);if(!c)return;
+  openSheet(`<h3>Comptage du ${fdate(c.date)} à ${esc(c.heure)}</h3><p class="muted" style="margin:0 0 8px">${esc(CATS[c.cat]||c.cat)} · par ${esc(c.par||'—')}${c.note?' · '+esc(c.note):''}</p>
+  <div class="scroll"><table><thead><tr><th>Article</th><th class="r">Début</th><th class="r">Entrées</th><th class="r">Logiciel</th><th class="r">Compté</th><th class="r">Écart</th><th class="r">Consommé</th></tr></thead><tbody>${c.lines.map(l=>`<tr><td>${esc(l.nom)}</td><td class="r">${l.debut==null?'—':N(l.debut)}</td><td class="r">${l.entrees==null?'—':'+'+N(l.entrees)}</td><td class="r">${N(l.theo)}</td><td class="r">${N(l.compte)}</td><td class="r">${sgn(l.ecart)}</td><td class="r">${l.conso==null?'—':N(l.conso)}</td></tr>`).join('')}</tbody></table></div>
+  <div class="acts"><button class="btn" id="cdX" style="flex:1">Fermer</button></div>`);
+  $('cdX').onclick=closeSheet;
+}
+$('cptSave').onclick=()=>{
+  const E=t=>{$('cptErr').textContent=t};
+  const lines=cptMeds().filter(m=>cptVals[m.id]!==undefined&&cptVals[m.id]!=='').map(m=>({m,v:Number(cptVals[m.id])}));
+  if(!lines.length){E('Saisissez au moins un article compté.');return}
+  if(lines.some(x=>isNaN(x.v)||x.v<0)){E('Les quantités comptées doivent être 0 ou plus.');return}
+  E('');
+  const L=lines.map(x=>cptLine(x.m,Math.round(x.v))),note=$('cptNote').value.trim(),tot=L.reduce((s,l)=>s+l.ecart,0);
+  confirmSheet('Enregistrer le comptage',[['Compartiment',CATS[cptCat]],['Articles comptés',N(L.length)],['Écart total',sgn(tot)+' boîte(s)'],...L.filter(l=>l.ecart!==0).slice(0,12).map(l=>[l.nom,sgn(l.ecart)+' boîte(s)'])],()=>{
+    L.forEach(l=>{
+      if(l.ecart<0)addOut('perte',l.m,-l.ecart,today,'','Écart de comptage (laboratoire)'+(note?' : '+note:''));
+      else if(l.ecart>0)addIn(l.m,l.ecart,today,'CPT-'+today,nearestPer(l.m)||addDays(today,365));
+    });
+    const cut=state.mid;L.forEach(l=>l.cut=cut);
+    CNT().push({id:CNT().reduce((a,x)=>Math.max(a,x.id),0)+1,date:today,heure:nowHM(),par:whoName(),cat:cptCat,note,lines:L});
+    audit('Comptage laboratoire',`${CATS[cptCat]} · ${L.length} article(s) · écart total ${sgn(tot)} boîte(s)`);
+    cptVals={};$('cptNote').value='';persistSave();renderCpt();toast('Comptage enregistré : stock régularisé');
+  },'Enregistrer');
+};
+const PAGES=[['fin','Examens'],['labo','Patients'],['cpt','Comptage'],['dis','Dispenser'],['reg','Registre'],['pat','Patients'],['sto','Stock'],['dep','Dépannage'],['med','Médic.'],['doc','Docs'],['ctl','Contrôle']];
+let cur='dis';
+$('nav').innerHTML=PAGES.map(([k,l])=>`<button role="tab" data-p="${k}"${k==='med'?' aria-label="Médicaments" title="Médicaments"':k==='doc'?' aria-label="Documents" title="Documents"':''}>${l}</button>`).join('');
+$('nav').querySelectorAll('button').forEach(b=>b.onclick=()=>go(b.dataset.p));
+function applyResp(){let t=isLab()?'Laboratoire · réactifs et consommables':'Responsable de la pharmacie en poste';if(isLab()){$('respBar').textContent=t;return}try{const P=window.parent.PARAMS;if(P&&P.holder){const x=P.holder('pharmacie');if(x)t='Pharmacie tenue par : '+x.nom+' ('+x.note.toLowerCase()+')'}}catch(e){}$('respBar').textContent=t}
+function go(p){
+  if(isLab()&&!LABP.includes(p))p='fin';
+  if(!isLab()&&['fin','cpt','labo'].includes(p))p='dis';
+  applyResp();autoExpire();
+  cur=p;
+  $('nav').querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===p));
+  PAGES.forEach(([k])=>$('p-'+k).hidden=k!==p);
+  $('catBar').hidden=!['sto','med','doc','ctl'].includes(p);
+  ({fin:renderFin,labo:renderLabo,cpt:renderCpt,reg:renderReg,dis:renderDis,pat:renderPat,sto:renderSto,dep:renderDep,med:renderMed,doc:renderDoc,ctl:renderCtl})[p]();
+  perAlert();
+  window.scrollTo(0,0);
+}
+$('catQ').oninput=()=>{catQv=$('catQ').value.trim().toLowerCase();({sto:renderSto,med:renderMed,doc:renderDoc,ctl:renderCtl})[cur]()};
+$('catSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{cat=b.dataset.v;$('catSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));go(cur)});
+($('reset')||{}).onclick=()=>{seed();state.kit={open:{},size:{}};docMode='fiche';audit('Réinitialisation','Données de démonstration');go(cur);toast('Démonstration réinitialisée')};
+
+// ---------- Synchronisation base patients -> registre ARV
+const nrm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const CLS={abacavir:'INTI',lamivudine:'INTI',emtricitabine:'INTI',tenofovir:'INTI',zidovudine:'INTI',stavudine:'INTI',didanosine:'INTI',efavirenz:'INNTI',nevirapine:'INNTI',etravirine:'INNTI',dolutegravir:'INSTI',raltegravir:'INSTI',darunavir:'IP',lopinavir:'IP',ritonavir:'Booster',indinavir:'IP',nelfinavir:'IP',saquinavir:'IP'};
+const molsOf=m=>m.nom.split(' + ').map(nrm);
+const schemaOf=p=>p&&p.schema&&p.schema.length?p.schema:(p&&p.proto?[p.proto]:[]);
+const schemaTxt=ids=>ids.map(i=>med(i)?mname(med(i)):'?').join(' + ');
+function whoName(){try{const P=window.parent.PARAMS;return P.users.find(x=>x.id===P.current).nom}catch(e){return ''}}
+function syncFromBase(){
+  B.list.forEach(b=>{
+    let ids=null;
+    if(b.schema&&b.schema.length)ids=b.schema.filter(i=>med(i));
+    else if(b.proto){const m=state.meds.find(x=>x.cat==='arv'&&mname(x)===b.proto);if(m)ids=[m.id]}
+    if(!ids||!ids.length)return;
+    const p=state.pat.find(x=>x.dossier===b.dossier);
+    if(p){p.schema=ids.slice();p.proto=ids[0]}
+  });
+}
+// =============== REGISTRE ===============
+const lastDisp=p=>p.disp.reduce((a,b)=>!a||b.date>=a.date?b:a,null)||undefined;
+function nextRenew(p){
+  const ends=[];
+  schemaOf(p).forEach(id=>{const l=p.disp.filter(x=>x.med===id).reduce((a,b)=>!a||b.date>=a.date?b:a,null);if(l)ends.push(addDays(l.date,l.jours))});
+  if(ends.length)return ends.sort()[0];
+  const l=lastDisp(p);return l?addDays(l.date,l.jours):'';
+}
+function renewHtml(p){
+  const n=nextRenew(p);if(!n)return '<span class="muted">—</span>';
+  const late=daysBetween(n,today);
+  return late>0?`<span class="neg">${fdate(n)}</span> <span class="pill bad">${late} j de retard</span>`:`${fdate(n)}`;
+}
+$('regQ').oninput=renderReg;$('regY').onchange=renderReg;
+// Couverture : une dispensation couvre de sa date jusqu'à la date de renouvellement incluse ; le patient est couvert un jour donné si chaque ligne de son schéma l'est
+function covDay(p,x){
+  let ids=schemaOf(p).slice();if(!ids.length)ids=[...new Set(p.disp.map(d=>d.med))];
+  return ids.length>0&&ids.every(id=>p.disp.some(d=>d.med===id&&d.date<=x&&x<=addDays(d.date,d.jours)));
+}
+function covMonth(p,Y,mi){
+  const k=Y+'-'+String(mi+1).padStart(2,'0'),n=new Date(+Y,mi+1,0).getDate();let last=null,first=null;
+  for(let d=1;d<=n;d++){const x=k+'-'+String(d).padStart(2,'0');if(covDay(p,x)){if(!first)first=x;last=x}}
+  return last?{first,last,full:last===k+'-'+String(n).padStart(2,'0')}:null;
+}
+function renderReg(){
+  syncFromBase();
+  const years=[...new Set(state.pat.flatMap(p=>p.disp.flatMap(d=>[d.date.slice(0,4),addDays(d.date,d.jours).slice(0,4)])).concat([today.slice(0,4),'2027']))].sort();
+  const cy=$('regY').value||today.slice(0,4);
+  $('regY').innerHTML=years.map(y=>`<option${y===cy?' selected':''}>${y}</option>`).join('');
+  const Y=$('regY').value,q=$('regQ').value.trim();
+  const L=state.pat.filter(p=>!q||p.dossier.includes(q));
+  let h=`<thead><tr><th rowspan="2" class="c">Ordre</th><th rowspan="2">N° de dossier</th><th rowspan="2">Protocole ARV</th><th colspan="12" class="c">Mois de l’année ${Y}</th><th rowspan="2">Numéro de contact</th><th rowspan="2">Observation</th><th rowspan="2">Prochain renouvellement</th></tr><tr>${MONTHS.map(m=>`<th class="c">${m}</th>`).join('')}</tr></thead><tbody>`;
+  h+=L.length?L.map((p,i)=>{
+    const cells=MONTHS.map((_,mi)=>{
+      const k=Y+'-'+String(mi+1).padStart(2,'0'),ds=p.disp.filter(d=>d.date.startsWith(k));
+      if(!ds.length){const cv=covMonth(p,Y,mi);return cv?`<td class="m cov" title="Couvert par une dispensation précédente${cv.full?'':' jusqu’au '+fdate(cv.last)}"><b>couvert</b>${cv.full?'':'<small>jusqu’au '+cv.last.slice(8)+'/'+cv.last.slice(5,7)+'</small>'}</td>`:'<td class="m empty">·</td>'}
+      const days=[...new Set(ds.map(d=>d.date.slice(8)+'/'+d.date.slice(5,7)))].join(' · '),tip=ds.map(d=>mname(med(d.med))+' × '+d.qte+' ('+fdate(d.date)+')').join(' ; ');
+      return `<td class="m disp" data-dos="${esc(p.dossier)}" data-k="${k}" title="${esc(tip)}" style="cursor:pointer"><b aria-label="Dispensé">✓</b><small>${days}</small><div class="muted" style="font-size:.62rem;text-decoration:underline">modifier</div></td>`;
+    }).join('');
+    return `<tr><td class="c">${state.pat.indexOf(p)+1}</td><td><b>${esc(p.dossier)}</b></td><td>${esc(schemaTxt(schemaOf(p)))}</td>${cells}<td>${esc((B.find(p.dossier)||{}).contact||p.contact)}</td><td>${esc(p.obs)}</td><td>${renewHtml(p)}</td></tr>`;
+  }).join(''):'<tr><td colspan="18" class="muted">Aucun patient trouvé.</td></tr>';
+  $('regT').innerHTML=h+'</tbody>';
+  $('regT').querySelectorAll('td.disp').forEach(td=>td.onclick=()=>openDispList(td.dataset.dos,td.dataset.k));
+}
+// ---------- Modification d'une dispensation depuis le registre (quantité et durée)
+function openDispList(dossier,k){
+  const p=state.pat.find(x=>x.dossier===dossier);if(!p)return;
+  const L=p.disp.map((d,i)=>({d,i})).filter(x=>x.d.date.startsWith(k));
+  if(!L.length)return;
+  if(L.length===1){editDisp(dossier,L[0].i);return}
+  openSheet(`<h3>Dispensations de ${fdate(k+'-01').slice(3)} · dossier ${esc(dossier)}</h3>
+  <div class="scroll"><table><thead><tr><th>Date</th><th>Médicament</th><th class="r">Boîtes</th><th class="r">Durée</th><th></th></tr></thead><tbody>${L.map(({d,i})=>`<tr><td>${fdate(d.date)}</td><td>${esc(mname(med(d.med)))}</td><td class="r">${N(d.qte)}</td><td class="r">${N(d.jours)} j</td><td><button class="btn ghost" data-di="${i}" style="width:auto;padding:5px 10px">Modifier</button></td></tr>`).join('')}</tbody></table></div>
+  <div class="acts"><button class="btn ghost" id="dlX" style="flex:1">Fermer</button></div>`);
+  $('dlX').onclick=closeSheet;
+  $('modal').querySelectorAll('[data-di]').forEach(b=>b.onclick=()=>editDisp(dossier,+b.dataset.di));
+}
+function dispMovs(p,d){
+  if(Array.isArray(d.movs)&&d.movs.length)return d.movs.map(id=>state.mov.find(m=>m.id===id)).filter(Boolean);
+  return state.mov.filter(x=>x.type==='sortie'&&x.med===d.med&&x.date===d.date&&x.ref===p.dossier);
+}
+function editDisp(dossier,i){
+  const p=state.pat.find(x=>x.dossier===dossier);if(!p)return;const d=p.disp[i];if(!d)return;
+  const mvs=dispMovs(p,d);
+  if(!mvs.length){toast('Dispensation trop ancienne : aucun mouvement de stock associé. Aucune modification possible.');return}
+  const avail=mvs.reduce((s,mv)=>{const l=state.lots.find(l=>l.id===mv.lot);return s+(l?remaining(l)+mv.qte:0)},0);
+  const lotTxt=[...new Set(mvs.map(mv=>{const l=state.lots.find(l=>l.id===mv.lot);return l?(l.num||('lot '+l.id)):'—'}))].join(', ');
+  openSheet(`<h3>Modifier la dispensation</h3>
+  <p class="muted" style="margin-top:0">Dossier <b>${esc(dossier)}</b> · ${esc(mname(med(d.med)))} · ${fdate(d.date)}<br>Lot(s) concerné(s) : ${esc(lotTxt)} · stock disponible pour cette ligne : <b>${N(avail)}</b> boîte(s)</p>
+  <div class="row"><div><label for="de_q">Quantité de boîtes</label><input type="number" id="de_q" min="1" inputmode="numeric" value="${d.qte}"></div><div><label for="de_j">Durée de couverture (jours)</label><input type="number" id="de_j" min="1" inputmode="numeric" value="${d.jours||30}"></div></div>
+  <p class="muted" style="font-size:.82rem">Une baisse remet la différence en stock dans le lot d'origine ; une hausse déduit la différence de ce même lot.</p>
+  <div class="err" id="de_err" role="alert"></div>
+  <div class="acts"><button class="btn ghost" id="de_no" style="flex:1">Annuler</button><button class="btn" id="de_ok" style="flex:1">Enregistrer</button></div>`);
+  $('de_no').onclick=closeSheet;
+  $('de_ok').onclick=()=>{
+    const E=t=>{$('de_err').textContent=t};
+    const q=Math.round(Number($('de_q').value)),j=Math.round(Number($('de_j').value));
+    if(!(q>0)||!(j>0)){E('Renseignez une quantité et une durée supérieures à 0.');return}
+    const old={
+      q:d.qte,j:d.jours,movs:mvs.map(mv=>mv.qte)
+    };
+    if(q>avail){E('Stock insuffisant : '+N(avail)+' boîte(s) disponibles dans le lot pour cette ligne.') ; return}
+    const total=mvs.reduce((s,mv)=>s+mv.qte,0);
+    if(q<total){let rm=total-q;for(let k=mvs.length-1;k>=0&&rm>0;k--){const t=Math.min(mvs[k].qte,rm);mvs[k].qte-=t;rm-=t}}
+    else if(q>total){let add=q-total;for(let k=mvs.length-1;k>=0&&add>0;k--){const l=state.lots.find(l=>l.id===mvs[k].lot);if(!l)continue;const free=remaining(l),t=Math.min(free,add);mvs[k].qte+=t;add-=t}
+      const miss=q-mvs.reduce((s,mv)=>s+mv.qte,0);if(miss>0){E('Stock insuffisant dans le lot : '+N(avail)+' boîte(s) disponibles.');old.movs.forEach((v,k)=>{if(mvs[k])mvs[k].qte=v});return}}
+    d.qte=q;d.jours=j;B.upsert({dossier:p.dossier,rdv:nextRenew(p)});
+    audit('Dispensation modifiée','dossier '+p.dossier+' · '+mname(med(d.med))+' · boîtes '+old.q+' → '+q+' · durée '+old.j+' → '+j+' j · lot '+lotTxt+(q>old.q?' · hausse débitée du lot':q<old.q?' · différence remise en stock':''));
+    persistSave();closeSheet();renderReg();toast('Dispensation modifiée : stock et registre mis à jour');
+  };
+}
+
+// =============== DISPENSATION ===============
+$('dDate').value=today;
+let dPat=null;
+$('dDos').oninput=findPatient;
+['dMed','dQte','dJours','dDate'].forEach(i=>$(i).oninput=updDis);
+$('dCat').onchange=()=>{fillMeds();updDis()};
+$('dFilt').oninput=()=>{fillMeds();updDis()};
+function fillMeds(keep){
+  const c=$('dCat').value,q=$('dFilt').value.trim().toLowerCase(),k=keep||$('dMed').value;
+  const sch=dPat?schemaOf(dPat):[];const L=state.meds.filter(m=>live(m)&&m.cat===c&&usable(m.id)>0&&(!q||(mname(m)+' '+(m.forme||'')).toLowerCase().includes(q))&&(c!=='arv'||!sch.length||sch.includes(m.id))).sort(byName);
+  $('dMed').innerHTML=L.length?L.map(m=>`<option value="${m.id}">${esc(mname(m))}${m.forme?' · '+esc(m.forme):''}</option>`).join(''):'<option value="">Aucun produit en stock</option>';
+  if(k&&L.some(m=>String(m.id)===String(k)))$('dMed').value=k;
+}
+let dNo=false;
+function findPatient(){
+  const raw=$('dDos').value.trim(),d=resolvePat(raw),b=d?B.find(d):null;
+  dPat=d?state.pat.find(p=>p.dossier===d)||null:null;
+  if(dPat&&b&&b.schema&&b.schema.length){dPat.schema=b.schema.filter(i=>med(i));dPat.proto=dPat.schema[0]}
+  const bIds=b&&b.schema?b.schema.filter(i=>med(i)):[];
+  if(!dPat&&bIds.length)dPat={virtual:true,dossier:d,proto:bIds[0],schema:bIds.slice(),disp:[],contact:b.contact||'',obs:''};
+  dNo=!!d&&(isProv(d)||!(dPat&&schemaOf(dPat).length));
+  $('dNewBox').hidden=true;
+  $('dNomBox').hidden=!(d&&!dNo&&!(b&&b.nom));
+  $('dOk').disabled=dNo;
+  ['dSingle','dSchema'].forEach(k=>{if(dNo)$(k).hidden=true});
+  if(!d){$('dPat').innerHTML=''}
+  else if(dNo){
+    $('dPat').innerHTML=b&&isProv(d)?`<div class="banner warn"><b>${b.nom?esc(b.nom)+' : ':''}ce patient n’a pas encore de n° de dossier.</b><br>Saisissez le n° dans l’onglet « Patients », puis revenez dispenser.<br><button class="btn ghost" id="dGoPat" style="margin-top:8px;width:auto;padding:8px 12px">Aller à l’onglet Patients</button></div>`:b?`<div class="banner warn"><b>${b.nom?esc(b.nom)+' : ':''}ce patient n’a pas encore de protocole.</b><br>Allez le définir dans l’onglet « Patients », puis revenez dispenser.<br><button class="btn ghost" id="dGoPat" style="margin-top:8px;width:auto;padding:8px 12px">Aller à l’onglet Patients</button></div>`:`<div class="banner warn"><b>${nameMatches(raw)>1?'Plusieurs patients portent ce nom : saisissez le n° de dossier.':'Patient inconnu de la base.'}</b><br>${nameMatches(raw)>1?'':'Il n’est pas passé par la caisse : créez sa fiche ici avec son n° de dossier, puis définissez son protocole.<br><button class="btn ghost" id="dCreate" style="margin-top:8px;width:auto;padding:8px 12px">Créer la fiche</button>'}</div>`;
+    if($('dCreate'))$('dCreate').onclick=()=>openNewPatient(/^[\d\s\-\/]+$/.test(raw)?{dossier:raw}:{nom:raw},k=>{$('dDos').value=k;findPatient();openPatientSheet(B.find(k))});
+    if($('dGoPat'))$('dGoPat').onclick=()=>{$('pQ').value=isProv(d)?(b.nom||d):d;go('pat')};
+    $('dNext').innerHTML='';
+    return;
+  }else{
+    const l=lastDisp(dPat),n=nextRenew(dPat);
+    $('dPat').innerHTML=`<div class="banner"><b>${dPat.virtual?'Patient de la base, pas encore au registre (ajouté dès la première dispensation).':'Patient retrouvé au registre'}${(b||{}).nom?' : '+esc(b.nom):''}.</b><br>Protocole : <b id="dProto">${esc(schemaTxt(schemaOf(dPat)))}</b><br>Dernière dispensation : ${l?fdate(l.date)+' ('+l.qte+' boîte'+(l.qte>1?'s':'')+')':'aucune'}<br>Prochain renouvellement : ${n?renewHtml(dPat):'—'}</div>`;
+    $('dCat').value='arv';$('dFilt').value='';fillMeds(dPat.proto);$('dMed').value=dPat.proto;
+  }
+  toggleSchema();
+  updDis();
+}
+function realPat(d){
+  let p=dPat;
+  if(p&&p.virtual){p={id:++state.pid,dossier:p.dossier,proto:p.proto,schema:p.schema.slice(),contact:p.contact||'',obs:'',disp:[]};state.pat.push(p);B.upsert({dossier:p.dossier,contact:p.contact,premiere:d})}
+  return p;
+}
+function renderSchemaBox(){
+  const ids=schemaOf(dPat),diff=$('dsDiff').checked;$('dsSame').hidden=diff;
+  const keep={};$('dsLines').querySelectorAll('input').forEach(e=>keep[e.dataset.k]=e.value);
+  $('dsLines').innerHTML=ids.map(id=>`<div class="sch-line"><span class="n"><b>${esc(mname(med(id)))}</b><br><span class="muted" style="font-size:.82rem">Stock utilisable : ${N(usable(id))} boîte(s)</span></span><label>Boîtes <input type="number" min="1" value="${keep['q'+id]||1}" data-k="q${id}" style="width:70px"></label>${diff?`<label>Jours <input type="number" min="1" value="${keep['j'+id]||$('dsJ').value||30}" data-k="j${id}" style="width:70px"></label>`:''}</div>`).join('');
+  $('dsLines').querySelectorAll('input').forEach(e=>e.oninput=updDis);
+}
+const schDur=()=>{const diff=$('dsDiff').checked,g=k=>(($('dsLines').querySelector('[data-k="'+k+'"]')||{}).value);return schemaOf(dPat).map(id=>({id,q:Math.round(Number(g('q'+id))||0),j:Math.round(Number(diff?g('j'+id):$('dsJ').value)||0)}))};
+function toggleSchema(){if(dNo)return;const sch=!!dPat&&schemaOf(dPat).length>1;$('dSingle').hidden=sch;$('dSchema').hidden=!sch;if(sch)renderSchemaBox()}
+$('dsDiff').onchange=()=>{renderSchemaBox();updDis()};$('dsJ').oninput=updDis;
+function dispSchema(){
+  const p=dPat,d=$('dDate').value,L=schDur(),nm=(B.find(p.dossier)||{}).nom||$('dNom').value.trim();
+  if(!nm){$('dErr').textContent='Saisissez le nom et prénom du patient.';return}
+  if(!d){$('dErr').textContent='Renseignez la date de dispensation.';return}
+  for(const x of L){
+    if(!(x.q>0)||!(x.j>0)){$('dErr').textContent='Renseignez la quantité et la durée de chaque ligne.';return}
+    if(x.q>usable(x.id)){$('dErr').textContent=`Stock insuffisant pour ${mname(med(x.id))} : ${N(usable(x.id))} boîte(s) utilisable(s).`;return}
+  }
+  $('dErr').textContent='';
+  const next=addDays(d,Math.min(...L.map(x=>x.j)));
+  confirmSheet('Confirmer la dispensation du schéma',[['Patient',nm+' · dossier '+p.dossier],...L.map(x=>[mname(med(x.id)),x.q+' boîte(s) · '+x.j+' j']),['Date',fdate(d)],['Prochain renouvellement',fdate(next)]],()=>{
+    {const _nm=$('dNom').value.trim();if(_nm)B.upsert({dossier:p.dossier,nom:_nm});$('dNom').value=''}
+    const rp=realPat(d);L.forEach(x=>{const _mb=state.mid;addOut('sortie',x.id,x.q,d,rp.dossier,'');rp.disp.push({date:d,med:x.id,qte:x.q,jours:x.j,movs:state.mov.filter(y=>y.id>_mb).map(y=>y.id)})});
+    B.upsert({dossier:rp.dossier,rdv:nextRenew(rp)});
+    audit('Dispensation du schéma','Dossier '+p.dossier+' · '+L.map(x=>mname(med(x.id))+' × '+x.q).join(', '));
+    persistSave();resetDisp();renderDis();toast('Schéma dispensé : stock et registre mis à jour');
+  });
+}
+function updDis(){
+  if(dPat&&schemaOf(dPat).length>1){
+    const d=$('dDate').value,D=schDur().filter(x=>x.j>0);$('dStock').textContent='';
+    if(d&&D.length){const m=D.reduce((a,b)=>b.j<a.j?b:a,D[0]);$('dNext').innerHTML=`Prochain renouvellement : <b>${fdate(addDays(d,m.j))}</b>`+(D.some(x=>x.j!==m.j)?` (ligne qui s’épuise en premier : ${esc(mname(med(m.id)))})`:'');
+      const n=nextRenew(dPat);if(n&&daysBetween(d,n)>7)$('dNext').innerHTML+=`<br><span class="neg">Renouvellement un peu tôt : il était prévu le ${fdate(n)}.</span>`}
+    else $('dNext').innerHTML='';
+    return;
+  }
+  const m=+$('dMed').value||0;
+  $('dStock').textContent=m?`Stock utilisable : ${N(usable(m))} boîte(s)`:'';
+  const j=Number($('dJours').value)||0,d=$('dDate').value;
+  $('dNext').innerHTML=d&&j?`Prochaine date de renouvellement : <b>${fdate(addDays(d,j))}</b>`:'';
+  if(dPat&&d){const n=nextRenew(dPat);if(n&&daysBetween(d,n)>7)$('dNext').innerHTML+=`<br><span class="neg">Renouvellement un peu tôt : il était prévu le ${fdate(n)}.</span>`}
+  if(!dPat&&resolvePat($('dDos').value)&&m&&med(m))$('dNext').innerHTML+=`<br>Protocole qui sera inscrit au registre : <b>${esc(mname(med(m)))}</b>`;
+}
+function renderDis(){
+  syncFromBase();
+  fillMeds();
+  findPatient();
+  const rows=state.pat.flatMap(p=>p.disp.map(d=>({...d,dos:p.dossier}))).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
+  $('dList').innerHTML=`<thead><tr><th>Date</th><th>Dossier</th><th>Médicament</th><th class="r">Boîtes</th></tr></thead><tbody>`+rows.map(r=>`<tr><td>${fdate(r.date)}</td><td>${esc(r.dos)}</td><td>${esc(mname(med(r.med)))}</td><td class="r">${r.qte}</td></tr>`).join('')+'</tbody>';
+}
+$('dOk').onclick=()=>{
+  if(dNo){$('dErr').textContent='Ce patient n’a pas de protocole : définissez-le dans l’onglet Patients.';return}
+  if(dPat&&schemaOf(dPat).length>1){dispSchema();return}
+  const d0=resolvePat($('dDos').value),q=Math.round(Number($('dQte').value)),m=+$('dMed').value,d=$('dDate').value,j=Math.round(Number($('dJours').value));
+  if(!d0){$('dErr').textContent='Saisissez le n° de dossier du patient.';return}
+  if(!((B.find(d0)||{}).nom)&&!$('dNom').value.trim()){$('dErr').textContent='Saisissez le nom et prénom du patient.';return}
+  if(!m||!med(m)){$('dErr').textContent='Choisissez un médicament.';return}
+  if(!(q>0)||!(j>0)||!d){$('dErr').textContent='Renseignez la quantité, la durée et la date.';return}
+  if(!dPat){$('dErr').textContent='Saisissez le n° de dossier du patient.';return}
+  if(med(m).cat==='arv'&&!schemaOf(dPat).includes(m)){$('dErr').textContent='Cet ARV n’est pas dans le protocole du patient ('+schemaTxt(schemaOf(dPat))+').';return}
+  if(q>usable(m)){$('dErr').textContent=`Stock insuffisant : ${N(usable(m))} boîte(s) utilisable(s).`;return}
+  $('dErr').textContent='';
+  const isNew=!!dPat.virtual;
+  confirmSheet('Confirmer la dispensation',[['Patient',`${(B.find(d0)||{}).nom||$('dNom').value.trim()} · dossier ${d0}${isNew?' (nouveau : ajouté au registre)':''}`],['Médicament',mname(med(m))],['Quantité',q+' boîte(s)'],['Date',fdate(d)],['Prochain renouvellement',fdate(addDays(d,j))]],()=>{
+    {const _nm=$('dNom').value.trim();if(_nm)B.upsert({dossier:d0,nom:_nm});$('dNom').value=''}
+    const p=realPat(d);
+    const _mb=state.mid;addOut('sortie',m,q,d,p.dossier,'');audit('Dispensation',`Dossier ${p.dossier} · ${mname(med(m))} × ${q}${isNew?' · nouveau patient':''}`);
+    p.disp.push({date:d,med:m,qte:q,jours:j,movs:state.mov.filter(x=>x.id>_mb).map(x=>x.id)});
+    B.upsert({dossier:p.dossier,rdv:addDays(d,j)});
+    persistSave();resetDisp();renderDis();toast(isNew?'Dispensation enregistrée : le patient est ajouté au registre (ordre '+state.pat.length+')':'Dispensation enregistrée : stock et registre mis à jour');
+  });
+};
+
+// Vider entièrement le formulaire de dispensation après validation
+function resetDisp(){
+  dPat=null;dNo=false;
+  ['dDos','dFilt','dNom','dCon','dObs'].forEach(i=>{if($(i))$(i).value=''});
+  $('dQte').value=1;$('dJours').value=30;$('dDate').value=today;
+  $('dsJ').value=30;$('dsDiff').checked=false;$('dsLines').innerHTML='';
+  $('dPat').innerHTML='';$('dNext').innerHTML='';$('dStock').textContent='';$('dErr').textContent='';
+  $('dNewBox').hidden=true;$('dNomBox').hidden=true;$('dSingle').hidden=false;$('dSchema').hidden=true;$('dOk').disabled=false;
+  fillMeds();updDis();
+}
+
+// =============== PATIENTS ===============
+$('pQ').oninput=renderPat;$('pNew').onclick=()=>openNewPatient();
+function renderPat(){
+  syncFromBase();
+  const q=$('pQ').value.trim();
+  const ql=q.toLowerCase(),L=B.list.map((b,i)=>({b,i})).filter(x=>!q||x.b.dossier.includes(q)||(x.b.nom||'').toLowerCase().includes(ql));
+  $('pT').innerHTML=`<thead><tr><th class="c">Ordre</th><th>N° de dossier</th><th>Nom et prénom</th><th>Date</th><th class="r">Âge</th><th>Sexe</th><th>Téléphone</th><th>RDV</th><th>Protocole</th><th></th></tr></thead><tbody>`+
+  (L.length?L.map(({b,i})=>`<tr><td class="c">${i+1}</td><td>${dispDos(b.dossier)}</td><td>${b.nom?esc(b.nom):'<span class="pill warn">À compléter</span>'}</td><td>${fdate(b.premiere)}</td><td class="r">${b.age||'—'}</td><td>${b.sexe||'—'}</td><td>${esc(b.contact)||'—'}</td><td>${b.rdv?(b.rdv<today?`<span class="neg">${fdate(b.rdv)}</span>`:fdate(b.rdv)):'—'}</td><td>${b.proto?esc(b.proto):'<span class="pill warn">À compléter</span>'}</td><td><button class="link" data-pr="${esc(b.dossier)}">Modifier</button> <button class="link neg" data-del="${esc(b.dossier)}">Supprimer</button></td></tr>`).join(''):'<tr><td colspan="10" class="muted">Aucun patient pour le moment.</td></tr>')+'</tbody>';
+  $('pT').querySelectorAll('[data-pr]').forEach(btn=>btn.onclick=()=>openPatientSheet(B.find(btn.dataset.pr)));
+  $('pT').querySelectorAll('[data-del]').forEach(btn=>btn.onclick=()=>deleteFiche(btn.dataset.del));
+}
+// suppression d'une fiche : sans justificatif, mais avec confirmation et trace ; l'historique (reçus, dispensations, registre) est conservé
+function deleteFiche(d){
+  if(isLab())return;
+  const b=B.find(d);if(!b)return;
+  const ps=state.pat.find(p=>p.dossier===d),nd=ps?ps.disp.length:0;
+  const nc=(window.parent&&window.parent.CAISSE_API&&window.parent.CAISSE_API.visits)?window.parent.CAISSE_API.visits(d).length:0;
+  confirmSheet('Supprimer cette fiche ?',[['Patient',(b.nom||'sans nom')+' · n° '+d],['Effet','La fiche disparaît de la base commune (caisse, pharmacie, PTME).'],['Historique conservé','Reçus de la caisse : '+nc+' · dispensations : '+nd]],()=>{
+    B.remove(d);audit('Fiche patient supprimée',d+' · '+(b.nom||'sans nom'));renderPat();try{renderReg()}catch(e){}toast('Fiche supprimée');
+  },'Supprimer');
+}
+
+// ---------- Base patients commune (pharmacie + caisse) : création de fiche, n° de dossier facultatif puis attribué
+const PROV=/^SN-\d+$/,isProv=d=>PROV.test(d||'');
+const dispDos=d=>isProv(d)?'<span class="pill warn">N° à attribuer</span> <small class="muted">'+esc(d)+'</small>':'<b>'+esc(d)+'</b>';
+function nextProv(){let n=0;B.list.forEach(b=>{if(isProv(b.dossier))n=Math.max(n,+b.dossier.slice(3))});return 'SN-'+String(n+1).padStart(4,'0')}
+function resolvePat(t){t=(t||'').trim();if(!t||B.find(t))return t;const q=nrm(t);if(q.length<3)return t;const m=B.list.filter(b=>nrm(b.nom||'').includes(q));return m.length===1?m[0].dossier:t}
+function nameMatches(t){const q=nrm((t||'').trim());return q.length<3?0:B.list.filter(b=>nrm(b.nom||'').includes(q)).length}
+function openNewPatient(pre,after){
+  if(isLab())return;
+  pre=pre||{};
+  openSheet(`<h3>Nouvelle fiche patient</h3>
+    <p class="muted" style="margin-top:0;font-size:.85rem">La fiche rejoint la base commune avec la caisse.</p>
+    <label for="np_nom">Nom et prénom <span class="muted">(obligatoire)</span></label><input type="text" id="np_nom" value="${esc(pre.nom||'')}" autocomplete="off">
+    <label for="np_dos">N° de dossier <span class="muted">(obligatoire)</span></label><input type="text" id="np_dos" value="${esc(pre.dossier||'')}" inputmode="numeric" autocomplete="off" placeholder="ex. 0231">
+    <div class="row"><div><label for="np_sx">Sexe</label><select id="np_sx"><option value="">—</option><option value="F">Féminin</option><option value="M">Masculin</option></select></div><div><label for="np_ag">Âge</label><input type="number" id="np_ag" min="0" max="120" inputmode="numeric"></div></div>
+    <div class="row"><div><label for="np_as">Assuré CNAMGS</label><select id="np_as"><option value="">—</option><option value="1">Oui</option><option value="0">Non</option></select></div><div><label for="np_st">Statut</label><select id="np_st"><option value="">—</option><option value="plein">Plein</option><option value="ald">Plein ALD</option><option value="exo">Exonéré</option></select></div></div>
+    <div class="row"><div><label for="np_ct">Numéro de contact</label><input type="text" id="np_ct" autocomplete="off" inputmode="tel"></div><div><label for="np_dt">Date de première venue</label><input type="date" id="np_dt" value="${today}"></div></div>
+    <label for="np_ob">Observation</label><input type="text" id="np_ob" autocomplete="off">
+    <div class="err" id="np_err" role="alert"></div>
+    <div class="acts"><button class="btn ghost" id="np_no" style="flex:1">Annuler</button><button class="btn" id="np_ok" style="flex:1">Créer la fiche</button></div>`);
+  $('np_no').onclick=closeSheet;
+  $('np_ok').onclick=()=>{
+    const E=t=>{$('np_err').textContent=t},nom=$('np_nom').value.trim(),dos=$('np_dos').value.trim();
+    if(!nom){E('Saisissez le nom et prénom.');return}
+    if(!dos){E('Saisissez le n° de dossier : la pharmacie ne crée pas de fiche sans numéro.');return}
+    if(isProv(dos)){E('Saisissez le vrai n° de dossier.');return}
+    if(B.find(dos)){E('Ce n° de dossier existe déjà ('+(B.find(dos).nom||'sans nom')+') : deux patients ne peuvent pas avoir le même n°.');return}
+    const dn=B.sameName(nom,dos);if(dn){E('Ce nom existe déjà sous le n° '+dn.dossier+' : utilisez cette fiche, pour éviter un doublon.');return}
+    const key=dos,ag=Math.round(Number($('np_ag').value));
+    B.upsert({dossier:key,nom,sexe:$('np_sx').value,age:ag>0?ag:undefined,assure:$('np_as').value===''?undefined:$('np_as').value==='1',statut:$('np_st').value||undefined,contact:$('np_ct').value.trim(),obs:$('np_ob').value.trim(),premiere:$('np_dt').value||today});
+    audit('Patient créé (pharmacie)','dossier '+key);
+    closeSheet();renderPat();toast('Fiche créée dans la base commune');
+    if(after)after(key);else openPatientSheet(B.find(key));
+  };
+  $('np_nom').focus();
+}
+// changement du n° de dossier (attribution d'un n° à une fiche provisoire, ou correction d'une erreur) : base, registre, mouvements, caisse et PTME suivent
+function changeDossier(b,nd,done){
+  const old=b.dossier,t=B.find(nd);
+  if(t&&t!==b){toast('Ce n° appartient déjà à '+(t.nom||'un autre patient')+' : deux patients ne peuvent pas avoir le même n°.');return false}
+  const go=()=>{
+    const po=state.pat.find(p=>p.dossier===old);if(po)po.dossier=nd;
+    state.mov.forEach(x=>{if(x.ref===old)x.ref=nd});
+    b.dossier=nd;
+    try{window.parent.CAISSE_API&&window.parent.CAISSE_API.renameDossier&&window.parent.CAISSE_API.renameDossier(old,nd)}catch(e){}
+    try{window.parent.PTME_API&&window.parent.PTME_API.renameDossier&&window.parent.PTME_API.renameDossier(old,nd)}catch(e){}
+    audit(isProv(old)?'N° de dossier attribué':'N° de dossier corrigé',old+' → '+nd);done();
+  };
+  if(isProv(old)){go();return true}
+  confirmSheet('Corriger le n° de dossier',[['Ancien n°',old],['Nouveau n°',nd],['Effet','Le n° change partout : base patients, caisse (reçus et dette), PTME, registre.']],go,'Corriger');
+  return true;
+}
+function openPatientSheet(b){try{parent.AUDIT_READ('Pharmacie',b.dossier)}catch(e){}
+  const legacy=()=>{const m=state.meds.find(x=>x.cat==='arv'&&mname(x)===b.proto);return m?[m.id]:[]};
+  const cur=(b.schema&&b.schema.length?b.schema:legacy()).filter(i=>med(i));
+  let draft=cur.slice(),mode=draft.length===1&&molsOf(med(draft[0])).length>1?'combo':'mol',edit=false;
+  const arv=state.meds.filter(m=>isARV(m)&&live(m)),idOf=(n,d)=>{const m=arv.find(x=>x.nom===n&&x.dos===d);return m?m.id:null};
+  const PRE=[['TLD (1 comprimé)',[idOf('Dolutegravir + lamivudine + ténofovir','50 + 300 + 300 mg')]],['Abacavir + lamivudine + dolutegravir',[idOf('Abacavir','300 mg'),idOf('Lamivudine','150 mg'),idOf('Dolutegravir','50 mg')]],['Ténofovir + lamivudine + dolutegravir',[idOf('Ténofovir','300 mg'),idOf('Lamivudine','150 mg'),idOf('Dolutegravir','50 mg')]],['Darunavir + ritonavir + dolutegravir',[idOf('Darunavir','400 mg'),idOf('Ritonavir','100 mg'),idOf('Dolutegravir','50 mg')]]].filter(p=>p[1].every(x=>x));
+  const hist=(b.protoHist||[]).slice().reverse().slice(0,4);
+  const allMols=ids=>ids.flatMap(i=>molsOf(med(i)));
+  const controls=()=>{
+    const out=[],m=allMols(draft),dup=m.filter((x,i)=>m.indexOf(x)!==i);
+    if(!draft.length)out.push(['bad','Ajoutez au moins une ligne.']);
+    if(dup.length)out.push(['bad','Molécule en double : '+[...new Set(dup)].join(', ')+'. Retirez une des lignes.']);
+    const cl={};m.forEach(x=>{const c=CLS[x]||'?';(cl[c]=cl[c]||[]).push(x)});
+    Object.entries(cl).forEach(([c,a])=>{if(['INNTI','INSTI','IP'].includes(c)&&new Set(a).size>1)out.push(['warn','Deux produits de la même classe ('+c+') : '+[...new Set(a)].join(' + ')+'. À vérifier.'])});
+    if(draft.length&&!m.some(x=>['INSTI','INNTI','IP'].includes(CLS[x])))out.push(['warn','Aucun troisième agent (INSTI, INNTI ou IP) : schéma incomplet ?']);
+    if(draft.length&&!out.length)out.push(['ok','Aucune anomalie détectée.']);
+    return out;
+  };
+  const prov=isProv(b.dossier);
+  openSheet(`<h3>Patient${prov?' · n° à attribuer':' · dossier '+esc(b.dossier)}</h3>
+    <label for="pr_nom">Nom et prénom</label><input type="text" id="pr_nom" value="${esc(b.nom||'')}" autocomplete="off">
+    <label for="pr_dos">N° de dossier</label><input type="text" id="pr_dos" value="${prov?'':esc(b.dossier)}" inputmode="numeric" autocomplete="off" placeholder="À attribuer"${canFix()?'':' disabled'}>
+    <p class="muted" style="font-size:.8rem;margin:4px 0 0">${prov?'Nouveau patient venu de la caisse sans n° (réf. '+esc(b.dossier)+') : saisissez le n° dès qu’il est attribué.':(canFix()?'En cas d’erreur, le n° peut être corrigé : il change partout (caisse, PTME, registre).':'Le n° ne peut être modifié que par le responsable de la pharmacie.')}</p>
+    <div class="row"><div><label for="pr_sx">Sexe</label><select id="pr_sx"><option value="">—</option><option value="F"${b.sexe==='F'?' selected':''}>Féminin</option><option value="M"${b.sexe==='M'?' selected':''}>Masculin</option></select></div><div><label for="pr_ag">Âge</label><input type="number" id="pr_ag" min="0" max="120" value="${b.age||''}" inputmode="numeric"></div></div>
+    <div class="row"><div><label for="pr_as">Assuré CNAMGS</label><select id="pr_as"><option value="">—</option><option value="1"${b.assure===true?' selected':''}>Oui</option><option value="0"${b.assure===false?' selected':''}>Non</option></select></div><div><label for="pr_st">Statut</label><select id="pr_st"><option value="">—</option><option value="plein"${b.statut==='plein'?' selected':''}>Plein</option><option value="ald"${b.statut==='ald'?' selected':''}>Plein ALD</option><option value="exo"${b.statut==='exo'?' selected':''}>Exonéré</option></select></div></div>
+    <label for="pr_ct">Numéro de contact</label><input type="text" id="pr_ct" value="${esc(b.contact||'')}" autocomplete="off" inputmode="tel">
+    <label for="pr_ob">Observation</label><input type="text" id="pr_ob" value="${esc(b.obs||'')}" autocomplete="off">
+    <label>Schéma ARV actuel</label><div class="sch-prev" id="pr_cur">${cur.length?esc(schemaTxt(cur)):'<span class="muted">Pas encore défini</span>'}</div>
+    <button class="btn ghost" id="pr_chg" style="margin-top:8px;width:auto;padding:8px 12px">${cur.length?'Changer le schéma':'Définir le schéma'}</button>
+    <div id="pr_ed" hidden>
+      <h4 style="margin:14px 0 4px">Nouveau schéma</h4>
+      <div class="muted" style="font-size:.82rem">Schémas courants (exemples à adapter)</div><div id="pr_pre">${PRE.map((p,i)=>`<button type="button" class="sch-chip" data-p="${i}">${esc(p[0])}</button>`).join('')}</div>
+      <div class="seg" role="group" aria-label="Type de schéma" style="margin:8px 0"><button type="button" id="pr_mc" aria-pressed="false">Combinaison en 1 comprimé</button><button type="button" id="pr_mm" aria-pressed="true">Molécules seules</button></div>
+      <label for="pr_q">Rechercher un ARV</label><input type="text" id="pr_q" placeholder="ex. abac, dolut, ténof…" autocomplete="off">
+      <div class="sch-list" id="pr_cat" role="listbox" aria-label="ARV du catalogue"></div>
+      <h4 style="margin:14px 0 2px">Composition (<span id="pr_n">0</span>)</h4><div id="pr_dr"></div><div id="pr_ct"></div>
+      <label>Aperçu (repris dans le registre et la base)</label><div class="sch-prev" id="pr_pv">—</div>
+      <div class="row"><div><label for="pr_dt">Date du changement</label><input type="date" id="pr_dt" value="${today}"></div><div><label for="pr_mo">Motif (facultatif)</label><input type="text" id="pr_mo" placeholder="ex. intolérance, rupture" autocomplete="off"></div></div>
+    </div>
+    ${hist.length?`<h4 style="margin:14px 0 4px">Historique des schémas</h4><div class="scroll"><table><thead><tr><th>Date</th><th>Ancien</th><th>Nouveau</th><th>Motif</th><th>Par</th></tr></thead><tbody>${hist.map(x=>`<tr><td>${fdate(x.date)}</td><td style="white-space:normal">${esc(x.ancien)}</td><td style="white-space:normal">${esc(x.nouveau)}</td><td>${esc(x.motif)}</td><td>${esc(x.par||'')}</td></tr>`).join('')}</tbody></table></div>`:''}
+    <div class="err" id="pr_err" role="alert"></div>
+    <div class="acts"><button class="btn ghost" id="pr_no" style="flex:1">Annuler</button><button class="btn" id="pr_ok" style="flex:1">Enregistrer</button></div>`);
+  const render=()=>{
+    $('pr_n').textContent=draft.length;
+    $('pr_dr').innerHTML=draft.length?draft.map((id,k)=>`<div class="sch-line"><span class="n"><b>${esc(med(id).nom)}</b> <span class="muted">${esc(med(id).dos)} · ${esc(med(id).forme||'')}</span></span><button type="button" class="sch-x" data-k="${k}" aria-label="Retirer ${esc(mname(med(id)))}">×</button></div>`).join(''):'<div class="muted" style="font-size:.85rem">Aucune ligne pour le moment.</div>';
+    $('pr_dr').querySelectorAll('.sch-x').forEach(x=>x.onclick=()=>{draft.splice(+x.dataset.k,1);render()});
+    $('pr_ct').innerHTML=controls().map(([t,x])=>`<div class="sch-ctl ${t}">${esc(x)}</div>`).join('');
+    $('pr_pv').textContent=draft.length?schemaTxt(draft):'—';
+    const q=nrm($('pr_q').value.trim()),used=allMols(draft);
+    const L=arv.filter(m=>(mode==='combo'?molsOf(m).length>1:molsOf(m).length===1)&&(!q||nrm(mname(m)+' '+(m.forme||'')).includes(q)));
+    $('pr_cat').innerHTML=L.length?L.map(m=>{const dis=molsOf(m).some(x=>used.includes(x));return `<button type="button" data-i="${m.id}"${dis?' disabled title="Déjà dans le schéma"':''}>${esc(mname(m))}${m.forme?' · '+esc(m.forme):''}${dis?' <span class="muted">· déjà présent</span>':''}</button>`}).join(''):'<div class="muted" style="padding:8px;font-size:.85rem">Aucun résultat.</div>';
+    $('pr_cat').querySelectorAll('button').forEach(x=>x.onclick=()=>{const id=+x.dataset.i;if(mode==='combo')draft=[id];else draft.push(id);render()});
+  };
+  const setMode=m=>{mode=m;$('pr_mc').setAttribute('aria-pressed',m==='combo');$('pr_mm').setAttribute('aria-pressed',m==='mol');if(m==='combo'&&draft.length>1)draft=[];render()};
+  $('pr_mc').onclick=()=>setMode('combo');$('pr_mm').onclick=()=>setMode('mol');$('pr_q').oninput=render;
+  $('pr_pre').querySelectorAll('button').forEach(x=>x.onclick=()=>{draft=PRE[+x.dataset.p][1].slice();setMode(draft.length===1&&molsOf(med(draft[0])).length>1?'combo':'mol')});
+  $('pr_chg').onclick=()=>{edit=true;draft=cur.slice();$('pr_ed').hidden=false;$('pr_chg').hidden=true;setMode(mode);$('pr_q').focus()};
+  $('pr_no').onclick=closeSheet;
+  $('pr_ok').onclick=()=>{
+    const nm=$('pr_nom').value.trim();
+    if(edit){const C=controls();if(C.some(c=>c[0]==='bad')){$('pr_err').textContent=C.filter(c=>c[0]==='bad').map(c=>c[1]).join(' ');return}}
+    if(nm!==(b.nom||'')){audit('Nom du patient modifié','dossier '+b.dossier);b.nom=nm}
+    {const sx=$('pr_sx').value,ag=Math.round(Number($('pr_ag').value)),ct=$('pr_ct').value.trim();
+     if(sx!==(b.sexe||''))b.sexe=sx;if(ag>0&&ag!==b.age)b.age=ag;else if(!(ag>0))delete b.age;if(ct!==(b.contact||''))b.contact=ct;
+     const as=$('pr_as').value,st=$('pr_st').value,ob=$('pr_ob').value.trim();
+     if(as==='')delete b.assure;else b.assure=as==='1';if(st)b.statut=st;else delete b.statut;if(ob!==(b.obs||''))b.obs=ob;}
+    const ndRaw=canFix()?$('pr_dos').value.trim():'',nd=ndRaw&&ndRaw!==b.dossier?ndRaw:'';
+    if(canFix()&&!ndRaw&&!prov){$('pr_err').textContent='Le n° de dossier ne peut pas être vide.';return}
+    if(nd&&isProv(nd)){$('pr_err').textContent='Saisissez le vrai n° de dossier.';return}
+    if(nd&&B.find(nd)){$('pr_err').textContent='Ce n° appartient déjà à '+(B.find(nd).nom||'un autre patient')+' : deux patients ne peuvent pas avoir le même n°.';return}
+    if(edit&&draft.join()!==cur.join()){
+      b.protoHist=b.protoHist||[];b.protoHist.push({date:$('pr_dt').value||today,ancien:cur.length?schemaTxt(cur):'—',nouveau:schemaTxt(draft),motif:$('pr_mo').value.trim()||'—',par:whoName()});
+      b.schema=draft.slice();b.proto=schemaTxt(draft);
+      audit('Schéma ARV modifié','dossier '+b.dossier+' · '+(cur.length?schemaTxt(cur):'—')+' → '+schemaTxt(draft));
+    }
+    const fin=()=>{syncFromBase();closeSheet();renderPat();try{renderReg()}catch(e){}toast('Fiche mise à jour dans la base, la caisse et le registre')};
+    if(nd){closeSheet();changeDossier(b,nd,fin);return}
+    fin();
+  };
+}
+
+// ---------- Export Word : registre ARV et état du stock (modèles cta/modeles/)
+const expPar=()=>whoName()||'Responsable pharmacie';
+let PN=false;const pnClick=id=>{PN=true;try{$(id).click()}finally{PN=false}};
+async function exportDocx(modele,fichier,champs,boucles){
+  if(PN){PN=false;try{window.parent.printModele(modele,fichier,champs,boucles||{});try{audit('Impression',fichier)}catch(e){}}catch(e){toast('Impression indisponible : '+(e&&e.message?e.message:e))}return}
+  try{
+    const r=await fetch('api.php?a=docx',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CTA':'1'},body:JSON.stringify({modele,fichier,champs,boucles:boucles||{}})});
+    const ct=r.headers.get('content-type')||'';
+    if(!r.ok||ct.indexOf('application/json')>=0){
+      let m='Export Word impossible ('+(r.status||'réseau')+').';
+      try{const j=await r.json();if(j&&j.err)m=j.err}catch(e){}
+      toast(m);return;
+    }
+    const url=URL.createObjectURL(await r.blob()),a=document.createElement('a');
+    a.href=url;a.download=fichier+'.docx';document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    audit('Export Word',fichier+'.docx');toast('Fichier Word téléchargé : '+fichier+'.docx');
+  }catch(e){toast('Export Word indisponible : '+(e&&e.message?e.message:e))}
+}
+// Registre ARV de l’année affichée, une ligne par patient, 12 colonnes de mois
+function exportRegistreWord(){
+  const Y=$('regY').value||today.slice(0,4),q=$('regQ').value.trim();
+  const L=state.pat.filter(p=>!q||p.dossier.includes(q));
+  const moisTxt=(p,mi)=>{
+    const k=Y+'-'+String(mi+1).padStart(2,'0'),ds=p.disp.filter(d=>d.date.startsWith(k));
+    if(ds.length)return '✓ '+[...new Set(ds.map(d=>d.date.slice(8)+'/'+d.date.slice(5,7)))].join(' ');
+    const cv=covMonth(p,Y,mi);return cv?('couvert'+(cv.full?'':' jusqu’au '+fdate(cv.last))):'';
+  };
+  const lignes=L.map((p,i)=>{
+    const o={n:String(i+1),dossier:p.dossier,protocole:schemaTxt(schemaOf(p)),contact:(B.find(p.dossier)||{}).contact||p.contact||'',obs:p.obs||''};
+    for(let mi=0;mi<12;mi++)o['m'+(mi+1)]=moisTxt(p,mi);
+    const n=nextRenew(p);o.renouvellement=n?fdate(n)+(daysBetween(n,today)>0?` (${daysBetween(n,today)} j de retard)`:''):'—';
+    return o;
+  });
+  exportDocx('registre_pharma',`Registre_ARV_${Y}`,{annee:Y,edite_le:fdate(today),edite_par:expPar(),nb_patients:N(L.length)},{lignes});
+}
+// État du stock du compartiment affiché (médicaments courants, consommables, ARV, réactifs)
+function exportStockWord(){
+  const rows=medsOf().filter(received).sort(byName);
+  if(!rows.length){toast('Aucun article à exporter dans ce compartiment');return}
+  const lignes=rows.map((m,i)=>{const t=stockAt(m.id),c=cmm(m.id),s=statut(m);return{n:String(i+1),designation:mname(m),dosage:m.dos||'—',forme:m.forme||'—',stock:N(t),cmm:N(c),mois_stock:c>0?(t/c).toFixed(1).replace('.',','):'—',peremption:fmonth(nearestPer(m.id))||'—',statut:s[0]}});
+  const nb=k=>N(rows.filter(m=>statut(m)[0]===k).length);
+  exportDocx('stock_pharma',`Stock_${cat}_${today}`,{compartiment:CATS[cat],date:fdate(today),edite_par:expPar(),nb_articles:N(rows.length),nb_ruptures:nb('Rupture'),nb_bas:nb('Stock bas')},{lignes});
+}
+$('regWord').onclick=exportRegistreWord;
+$('stWord').onclick=exportStockWord;
+// Documents : fiche mensuelle, inventaire, commande — le document affiché part en Word
+function exportDocWord(){
+  const par=expPar(),catLbl=CATS[cat];
+  if(docMode==='fiche'){
+    const [y,mo]=docMonth.split('-');
+    const lignes=recMeds().map((m,i)=>{const s=monthStats(m,docMonth);return{n:String(i+1),molecule:m.nom,dosage:m.dos||'—',forme:m.forme||'—',debut:N(s.debut),recu:N(s.recu),utilise:N(s.util),perdu:s.perdu?N(s.perdu):'',correction:s.aj?(s.aj<0?'+':'−')+N(Math.abs(s.aj)):'',fin:N(s.fin),rupture:s.rupt?(s.rupt===1&&s.debut<=0?'dès le 1er':'le '+s.rupt):''}});
+    if(!lignes.length){toast('Aucun article à exporter pour ce compartiment');return}
+    exportDocx('fiche_mensuelle',`Fiche_mensuelle_${cat}_${docMonth}`,{compartiment:catLbl,mois:MFULL[+mo-1]+' '+y,edite_le:fdate(today),edite_par:par},{lignes});
+    return;
+  }
+  if(docMode==='inv'){
+    const lignes=recMeds().map((m,i)=>{const out=state.mov.filter(x=>x.med===m.id&&(x.type==='sortie'||x.type==='depannage')&&x.date>invFrom&&x.date<=invTo).reduce((s,x)=>s+x.qte,0);
+      return{n:String(i+1),designation:m.nom,dosage:m.dos||'—',forme:m.forme||'—',patients:m.cat==='arv'?String(state.pat.filter(p=>schemaOf(p).includes(m.id)).length):'—',cmm:N(cmm(m.id)),stock_debut:N(stockAt(m.id,invFrom)),peremption:fmonth(nearestPer(m.id))||'—',sorties:N(out),reste:N(stockAt(m.id,invTo))}});
+    if(!lignes.length){toast('Aucun article à exporter pour ce compartiment');return}
+    exportDocx('inventaire_pharma',`Inventaire_${cat}_${invTo}`,{compartiment:catLbl,date_debut:fdate(invFrom),date_fin:fdate(invTo),edite_le:fdate(today),edite_par:par,nb_articles:N(lignes.length)},{lignes});
+    return;
+  }
+  const end=addDays(today,30*cmdMonths),since=addDays(today,-90);
+  const rows=recMeds().map(m=>{const c=cmm(m.id),s0=stockAt(m.id),soon=state.lots.filter(l=>l.med===m.id&&l.per>=today&&l.per<end).reduce((a,l)=>a+remaining(l),0),per=state.mov.filter(x=>x.med===m.id&&x.type==='perte'&&/^Péremption/.test(x.motif||'')&&x.date>since).reduce((a,x)=>a+x.qte,0),need=c*cmdMonths,q=Math.max(0,need-(s0-soon));return{m,c,s0,soon,per,need,q}}).filter(r=>r.c>0||r.per>0);
+  const lignes=rows.map((r,i)=>({n:String(i+1),medicament:mname(r.m),stock:N(r.s0),cmm:N(r.c),perimes:r.per?N(r.per):'—',perimant:r.soon?N(r.soon):'—',besoin:N(r.need),a_commander:r.q>0?N(r.q):'—'}));
+  if(!lignes.length){toast('Aucune ligne de commande à exporter pour ce compartiment');return}
+  exportDocx('commande_pharma',`Commande_${cat}_${today}`,{compartiment:catLbl,mois_vises:String(cmdMonths),date:fdate(today),date_limite:fdate(end),edite_le:fdate(today),edite_par:par,nb_lignes:N(lignes.length)},{lignes});
+}
+$('docWord').onclick=exportDocWord;
+$('regPrint').onclick=()=>pnClick('regWord');$('stPrint').onclick=()=>pnClick('stWord');$('docPrint').onclick=()=>pnClick('docWord');
+
+// =============== STOCK ===============
+function renderSto(){
+  $('stTitle').textContent='Stock · '+CATS[cat];
+  const st=medsOf().filter(m=>stockAt(m.id)>0).map(m=>({m,s:statut(m)})),stAll=medsAll().filter(received).map(m=>({m,s:statut(m)}));
+  const cnt=k=>stAll.filter(x=>x.s[0]===k).length;
+  $('stK').innerHTML=[['Articles en stock',medsAll().filter(m=>stockAt(m.id)>0).length],['Ruptures',cnt('Rupture')],['Stocks bas',cnt('Stock bas')],['Péremptions à surveiller',cnt('Péremption proche')+cnt('Périmé en stock')]].map(([k,n])=>`<div class="kpi"><div class="k">${k}</div><div class="n">${n}</div></div>`).join('');
+  $('stT').innerHTML=`<thead><tr><th>Médicament</th><th>Forme</th><th class="r">Stock (boîtes)</th><th class="r">CMM</th><th class="r">Mois de stock</th><th>Péremption la plus proche</th><th>Statut</th></tr></thead><tbody>`+
+   st.map(({m,s})=>{const t=stockAt(m.id),c=cmm(m.id);return `<tr><td>${esc(mname(m))}</td><td>${m.forme}</td><td class="r"><b>${N(t)}</b></td><td class="r">${N(c)}</td><td class="r">${c>0?(t/c).toFixed(1).replace('.',','):'—'}</td><td>${fmonth(nearestPer(m.id))}</td><td><span class="pill ${s[1]}">${s[0]}</span></td></tr>`}).join('')+'</tbody>';
+  const lots=state.lots.filter(l=>{const m=med(l.med);return m&&m.cat===cat&&live(m)&&(!catQv||(mname(m)+' '+(m.forme||'')).toLowerCase().includes(catQv))&&(remaining(l)>0||l.date>=addDays(today,-30))}).sort((a,b)=>mname(med(a.med)).localeCompare(mname(med(b.med)),'fr',{sensitivity:'base',numeric:true})||(a.per||'').localeCompare(b.per||'')||a.id-b.id);
+  $('lotT').innerHTML=`<thead><tr><th>Produit</th><th>Lot</th><th>Péremption</th><th>Reçu le</th><th class="r">Quantité reçue</th><th class="r">Restant</th><th></th></tr></thead><tbody>`+(lots.length?lots.map(l=>{const r=remaining(l);return `<tr class="${r<=0?'muted':''}"><td>${esc(mname(med(l.med)))}</td><td>${esc(l.num||'—')}</td><td>${fmonth(l.per)}${l.per&&l.per<today?' <span class="pill bad">périmé</span>':''}</td><td>${fdate(l.date)}</td><td class="r">${N(l.qte)}</td><td class="r"><b>${N(r)}</b></td><td class="r">${canEditLot()?`<button class="btn ghost" data-lot="${l.id}" style="width:auto;padding:5px 10px">Modifier</button>`:''}</td></tr>`}).join(''):'<tr><td colspan="7" class="muted">Aucun lot enregistré dans cette liste.</td></tr>')+'</tbody>';
+  $('lotT').querySelectorAll('[data-lot]').forEach(b=>b.onclick=()=>editLot(+b.dataset.lot));
+  renderMov();
+}
+// ---------- Contrôle de stock par lot : chaque écart est corrigé dans le lot concerné
+let lcVals={};
+function openLotCtl(){
+  lcVals={};
+  const lots=state.lots.filter(l=>{const m=med(l.med);return m&&m.cat===cat&&live(m)&&(!catQv||(mname(m)+' '+(m.forme||'')).toLowerCase().includes(catQv))&&remaining(l)>0})
+    .sort((a,b)=>mname(med(a.med)).localeCompare(mname(med(b.med)),'fr',{sensitivity:'base',numeric:true})||(a.per||'').localeCompare(b.per||'')||a.id-b.id);
+  openSheet(`<h3>Contrôle de stock par lot</h3>
+  <p class="muted" style="margin-top:0">Compartiment : <b>${esc(CATS[cat]||cat)}</b>. Comptez chaque lot sur l'étagère : l'écart est constaté et corrigé dans <b>ce lot</b>. Le stock du médicament est la somme de ses lots.</p>
+  <div class="scroll"><table><thead><tr><th>Produit</th><th>Lot</th><th>Péremption</th><th class="r">Stock informatique</th><th class="r">Stock physique</th><th class="r">Écart</th></tr></thead><tbody>${
+    lots.length?lots.map(l=>`<tr><td>${esc(mname(med(l.med)))}</td><td>${esc(l.num||'—')}</td><td>${fmonth(l.per)}</td><td class="r">${N(remaining(l))}</td><td class="r"><input type="number" min="0" inputmode="numeric" data-lc="${l.id}" style="max-width:100px" aria-label="Stock physique du lot ${esc(l.num||l.id)}"></td><td class="r" id="lce${l.id}"></td></tr>`).join(''):'<tr><td colspan="6" class="muted">Aucun lot en stock dans ce compartiment.</td></tr>'
+  }</tbody></table></div>
+  <div class="err" id="lcErr" role="alert"></div>
+  <div class="acts"><button class="btn ghost" id="lcNo" style="flex:1">Annuler</button><button class="btn" id="lcOk" style="flex:1">Enregistrer les écarts</button></div>`);
+  const setE=id=>{const l=lots.find(x=>x.id===+id),e=$('lce'+id);if(!l||!e)return;const v=lcVals[id];if(v===undefined||v===''||isNaN(Number(v))){e.textContent='';return}const d=Math.round(Number(v))-remaining(l);e.innerHTML=d===0?'<span class="pill">Conforme</span>':`<span class="neg" style="font-weight:700">${sgn(d)}</span>`};
+  $('modal').querySelectorAll('[data-lc]').forEach(i=>i.oninput=()=>{lcVals[i.dataset.lc]=i.value;setE(i.dataset.lc)});
+  $('lcNo').onclick=closeSheet;
+  $('lcOk').onclick=()=>{
+    const E=t=>{$('lcErr').textContent=t};
+    const lines=lots.map(l=>({l,v:lcVals[l.id]})).filter(x=>x.v!==undefined&&x.v!=='').map(x=>({l:x.l,phys:Math.round(Number(x.v)),old:remaining(x.l)})).filter(x=>!isNaN(x.phys)&&x.phys>=0&&x.phys!==x.old);
+    if(!lines.length){E('Aucun écart à enregistrer : saisissez au moins un lot compté.');return}
+    E('');
+    confirmSheet('Enregistrer les écarts par lot',lines.map(x=>[mname(med(x.l.med))+' · lot '+(x.l.num||x.l.id),x.old+' → '+x.phys+' ('+sgn(x.phys-x.old)+')']),()=>{
+      lines.forEach(x=>{
+        state.mov.push({id:++state.mid,date:today,type:'correction',med:x.l.med,qte:-(x.phys-x.old),lot:x.l.id,ref:'CTL-'+today,motif:'Contrôle par lot'});
+        audit('Contrôle par lot',mname(med(x.l.med))+' · lot '+(x.l.num||x.l.id)+' · '+x.old+' → '+x.phys+' · écart '+(x.phys-x.old>0?'+':'')+(x.phys-x.old)+' · par '+(whoName()||'—')+' le '+fdate(today));
+      });
+      lcVals={};persistSave();closeSheet();renderSto();toast('Contrôles enregistrés : chaque lot a été corrigé');
+    },'Enregistrer');
+  };
+}
+$('bLotCtl').onclick=openLotCtl;
+
+// ---------- Mouvements : tous conservés, tri par date, journée par défaut
+let mvDate=today,mvAll=false,mvAsc=false;
+const MVT={entree:'Entrée',sortie:'Sortie',perte:'Perte',correction:'Correction',depannage:'Dépannage'};
+const mvDetail=x=>[x.ref,x.motif].filter(Boolean).join(' · ');
+function mvList(){
+  const L=state.mov.filter(x=>mvAll||x.date===(mvDate||today));
+  L.sort((a,b)=>(mvAsc?1:-1)*(a.date.localeCompare(b.date)||a.id-b.id));
+  return L;
+}
+function renderMov(){
+  const L=mvList();
+  $('mvSum').textContent=`${N(L.length)} mouvement(s) affiché(s) · ${N(state.mov.length)} mouvement(s) conservé(s) au total · ${mvAll?'toutes les dates':'le '+fdate(mvDate||today)}`;
+  $('mvT').innerHTML=`<thead><tr><th>Date</th><th>Type</th><th>Médicament</th><th class="r">Boîtes</th><th>Lot</th><th>Référence / motif</th></tr></thead><tbody>`+
+    (L.length?L.map(x=>{const l=state.lots.find(l=>l.id===x.lot),m=med(x.med);
+      return `<tr><td>${fdate(x.date)}</td><td><span class="pill ${x.type==='perte'?'bad':x.type==='depannage'?'warn':''}">${MVT[x.type]||x.type}</span></td><td>${esc(m?mname(m):'—')}</td><td class="r">${(x.type==='entree'||(x.type==='correction'&&x.qte<0))?'+':'−'}${N(Math.abs(x.qte))}</td><td>${esc(l?l.num:'')}</td><td>${esc(mvDetail(x))}</td></tr>`}).join('')
+    :'<tr><td colspan="6" class="muted">Aucun mouvement pour cette date. Choisissez une autre date ou cochez « Toutes les dates ».</td></tr>')+'</tbody>';
+}
+$('mvDate').value=today;
+$('mvDate').onchange=()=>{mvDate=$('mvDate').value||today;mvAll=false;$('mvAll').checked=false;$('mvDate').disabled=false;renderMov()};
+$('mvAll').onchange=()=>{mvAll=$('mvAll').checked;$('mvDate').disabled=mvAll;renderMov()};
+$('mvToday').onclick=()=>{mvDate=today;mvAll=false;$('mvDate').value=today;$('mvDate').disabled=false;$('mvAll').checked=false;renderMov()};
+$('mvSort').onclick=()=>{mvAsc=!mvAsc;$('mvSort').textContent='Trier : '+(mvAsc?'plus ancien d’abord':'plus récent d’abord');renderMov()};
+
+// ---------- Dépannage
+function depMeds(){return state.meds.filter(m=>live(m)&&stockAt(m.id)>0).sort(byName)}
+const dpStockTxt=()=>{const m=med(+$('dpMed').value);return m?`Stock utilisable : ${N(usable(m.id))} boîte(s) · stock logiciel : ${N(stockAt(m.id))}`:'Choisissez un article.'};
+function renderDep(){
+  const ms=depMeds(),cur=$('dpMed').value;
+  $('dpMed').innerHTML=ms.length?ms.map(m=>`<option value="${m.id}">${esc(mname(m))} · ${CATS[m.cat]} (stock ${N(stockAt(m.id))})</option>`).join(''):'<option value="">Aucun article en stock</option>';
+  if(ms.some(m=>String(m.id)===cur))$('dpMed').value=cur;
+  $('dpStock').textContent=dpStockTxt();
+  const L=state.mov.filter(x=>x.type==='depannage').sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  $('dpT').innerHTML=`<thead><tr><th>Date</th><th>Article</th><th class="r">Boîtes</th><th>Bénéficiaire</th><th>Motif</th></tr></thead><tbody>`+
+    (L.length?L.map(x=>{const m=med(x.med);return `<tr><td>${fdate(x.date)}</td><td>${esc(m?mname(m):'—')}</td><td class="r">−${N(x.qte)}</td><td>${esc(x.ref||'—')}</td><td>${esc(x.motif||'—')}</td></tr>`}).join(''):'<tr><td colspan="5" class="muted">Aucun dépannage enregistré.</td></tr>')+'</tbody>';
+}
+$('dpDate').value=today;
+$('dpMed').onchange=()=>{$('dpStock').textContent=dpStockTxt()};
+$('dpOk').onclick=()=>{
+  const E=t=>{$('dpErr').textContent=t};
+  const m=med(+$('dpMed').value),q=Math.round(Number($('dpQ').value)),d=$('dpDate').value||today,to=$('dpTo').value.trim(),mot=$('dpM').value.trim();
+  if(!m){E('Aucun article en stock : enregistrez d’abord une entrée.');return}
+  if(!(q>0)){E('Saisissez la quantité à débiter.');return}
+  if(q>usable(m.id)){E('Stock insuffisant : '+N(usable(m.id))+' boîte(s) utilisable(s).');return}
+  if(!to&&!mot){E('Renseignez le bénéficiaire ou le motif du dépannage.');return}
+  E('');
+  const done=addOut('depannage',m.id,q,d,to,mot);
+  if(done<q)E('Attention : seules '+N(done)+' boîte(s) ont pu être débitées (lots disponibles).');
+  $('dpQ').value='';$('dpTo').value='';$('dpM').value='';
+  persistSave();renderDep();
+  toast('Dépannage enregistré : stock débité et mouvement conservé');
+};
+$('bIn').onclick=()=>{
+  openSheet(`<h3>Enregistrer une entrée</h3>
+  <label for="e_med">Médicament</label><select id="e_med">${medsOf().map(m=>`<option value="${m.id}">${esc(mname(m))}</option>`).join('')}</select>
+  <div class="row"><div><label for="e_q">Quantité (boîtes)</label><input type="number" id="e_q" min="1" inputmode="numeric"></div><div><label for="e_d">Date de réception</label><input type="date" id="e_d" value="${today}"></div></div>
+  <div class="row"><div><label for="e_l">N° de lot</label><input type="text" id="e_l" autocomplete="off"></div><div><label for="e_p">Date de péremption</label><input type="date" id="e_p"></div></div>
+  <div class="err" id="e_err" role="alert"></div>
+  <div class="acts"><button class="btn ghost" id="e_no" style="flex:1">Annuler</button><button class="btn" id="e_ok" style="flex:1">Enregistrer</button></div>`);
+  $('e_no').onclick=closeSheet;
+  $('e_ok').onclick=()=>{
+    const q=Math.round(Number($('e_q').value)),l=$('e_l').value.trim(),p=$('e_p').value,d=$('e_d').value||today;
+    if(!(q>0)||!l||!p){$('e_err').textContent='Renseignez la quantité, le n° de lot et la date de péremption.';return}
+    if(p<=d){$('e_err').textContent='La date de péremption doit être postérieure à la réception.';return}
+    addIn(+$('e_med').value,q,d,l,p);closeSheet();renderSto();toast('Entrée enregistrée');
+  };
+};
+$('bOut').onclick=()=>{
+  openSheet(`<h3>Enregistrer une sortie</h3>
+  <p class="muted" style="margin-top:0">La sortie est déduite du stock (boîtes) et enregistrée dans les mouvements et les documents.</p>
+  <label for="o_med">Médicament</label><select id="o_med">${medsOf().filter(m=>stockAt(m.id)>0).map(m=>`<option value="${m.id}">${esc(mname(m))} (stock ${N(stockAt(m.id))})</option>`).join('')}</select>
+  <div class="row"><div><label for="o_q">Quantité (boîtes)</label><input type="number" id="o_q" min="1" inputmode="numeric"></div><div><label for="o_d">Date de sortie</label><input type="date" id="o_d" value="${today}"></div></div>
+  <label for="o_to">Destinataire / service</label><input type="text" id="o_to" autocomplete="off" placeholder="ex. service, structure, patient dépanné">
+  <label for="o_m">Motif (facultatif)</label><input type="text" id="o_m" autocomplete="off">
+  <div class="err" id="o_err" role="alert"></div>
+  <div class="acts"><button class="btn ghost" id="o_no" style="flex:1">Annuler</button><button class="btn" id="o_ok" style="flex:1">Enregistrer</button></div>`);
+  $('o_no').onclick=closeSheet;
+  $('o_ok').onclick=()=>{
+    const E=t=>{$('o_err').textContent=t};
+    const m=med(+$('o_med').value),q=Math.round(Number($('o_q').value)),d=$('o_d').value||today,to=$('o_to').value.trim(),mot=$('o_m').value.trim();
+    if(!m){E('Aucun médicament en stock : enregistrez d’abord une entrée.');return}
+    if(!(q>0)){E('Saisissez une quantité.');return}
+    if(q>usable(m.id)){E('Stock insuffisant : '+N(usable(m.id))+' boîte(s) utilisable(s).');return}
+    if(!to){E('Indiquez le destinataire ou le service de la sortie.');return}
+    E('');
+    const done=addOut('sortie',m.id,q,d,to,mot);
+    if(done<q)E('Attention : seules '+N(done)+' boîte(s) ont pu être sorties (lots disponibles).');
+    audit('Sortie de stock',`${mname(m)} × ${q} · ${to}${mot?' · '+mot:''}`);
+    persistSave();closeSheet();renderSto();toast('Sortie enregistrée : stock débité');
+  };
+};
+$('bLoss').onclick=()=>{
+  openSheet(`<h3>Déclarer une perte</h3>
+  <label for="l_med">Médicament</label><select id="l_med">${medsOf().filter(m=>stockAt(m.id)>0).map(m=>`<option value="${m.id}">${esc(mname(m))} (stock ${N(stockAt(m.id))})</option>`).join('')}</select>
+  <div class="row"><div><label for="l_q">Quantité (boîtes)</label><input type="number" id="l_q" min="1" inputmode="numeric"></div>
+  <div><label for="l_m">Motif</label><select id="l_m"><option>Péremption</option><option>Détérioration</option><option>Vol ou perte</option><option>Autre</option></select></div></div>
+  <div id="l_aw" hidden><label for="l_a">Précisez le motif</label><input type="text" id="l_a" autocomplete="off" placeholder="Ex. flacon cassé au transport"></div>
+  <div class="err" id="l_err" role="alert"></div>
+  <div class="acts"><button class="btn ghost" id="l_no" style="flex:1">Annuler</button><button class="btn" id="l_ok" style="flex:1">Enregistrer</button></div>`);
+  $('l_no').onclick=closeSheet;
+  $('l_m').onchange=()=>{$('l_aw').hidden=$('l_m').value!=='Autre';if(!$('l_aw').hidden)$('l_a').focus()};
+  $('l_ok').onclick=()=>{
+    const q=Math.round(Number($('l_q').value)),m=+$('l_med').value;
+    if(!(q>0)){$('l_err').textContent='Saisissez une quantité.';return}
+    if($('l_m').value==='Autre'&&!$('l_a').value.trim()){$('l_err').textContent='Précisez le motif de la perte.';$('l_a').focus();return}
+    if(q>stockAt(m)){$('l_err').textContent='La perte dépasse le stock disponible.';return}
+    addOut('perte',m,q,today,'',$('l_m').value==='Autre'?'Autre : '+$('l_a').value.trim():$('l_m').value);closeSheet();renderSto();toast('Perte enregistrée');
+  };
+};
+
+const canFix=()=>{if(isLab())return false;try{const r=(window.parent.PARAMS.users.find(x=>x.id===window.parent.PARAMS.current)||{}).role;return r==='Pharmacie'||r==='Médecin-chef'}catch(e){return true}};
+
+// ---------- Modifier une entrée de stock (erreur de saisie) : produit, lot, quantité, péremption, date
+const myRoleP=()=>{try{const P=window.parent.PARAMS;return (P.users.find(x=>x.id===P.current)||{}).role||''}catch(e){return ''}};
+const isLab=()=>window.LABMODE===true;
+const canEditLot=()=>{const r=myRoleP();return r==='Pharmacie'||r==='Médecin-chef'||r==='Laboratoire'||r===''};
+function editLot(id){
+  const l=state.lots.find(x=>x.id===id);if(!l)return;
+  if(!canEditLot()){toast('Modification réservée au responsable de la pharmacie ou du laboratoire');return}
+  const m0=med(l.med),used=l.qte-remaining(l),usedMov=state.mov.some(x=>x.lot===l.id&&x.type!=='entree');
+  const opts=state.meds.filter(m=>m.cat===m0.cat&&live(m)).sort(byName);
+  openSheet(`<h3>Modifier l’entrée</h3><p class="muted" style="margin-top:0">${esc(mname(m0))} · lot ${esc(l.num||'—')} · reçu le ${fdate(l.date)}${usedMov?' · '+N(used)+' boîte(s) déjà sortie(s) de ce lot':''}</p>
+  <label for="x_med">Produit</label><select id="x_med"${usedMov?' disabled':''}>${opts.map(m=>`<option value="${m.id}"${m.id===l.med?' selected':''}>${esc(mname(m))}</option>`).join('')}</select>
+  ${usedMov?'<p class="muted" style="font-size:.8rem;margin:4px 0 0">Le produit ne peut plus changer : des boîtes de ce lot ont déjà été utilisées.</p>':''}
+  <div class="row"><div><label for="x_l">N° de lot</label><input type="text" id="x_l" value="${esc(l.num||'')}" autocomplete="off"></div><div><label for="x_p">Date de péremption</label><input type="date" id="x_p" value="${l.per||''}"></div></div>
+  <div class="row"><div><label for="x_q">Quantité reçue (boîtes)</label><input type="number" id="x_q" min="${Math.max(used,1)}" value="${l.qte}" inputmode="numeric"></div><div><label for="x_d">Date de réception</label><input type="date" id="x_d" value="${l.date}"></div></div>
+  <label for="x_m">Motif (obligatoire)</label><input type="text" id="x_m" autocomplete="off" placeholder="Ex. erreur de saisie du n° de lot">
+  <div class="err" id="x_err" role="alert"></div>
+  <div class="acts"><button class="btn ghost" id="x_no" style="flex:1">Annuler</button><button class="btn" id="x_ok" style="flex:1">Enregistrer</button></div>`);
+  $('x_no').onclick=closeSheet;
+  $('x_ok').onclick=()=>{
+    const E=t=>{$('x_err').textContent=t},nm=usedMov?l.med:+$('x_med').value,num=$('x_l').value.trim(),per=$('x_p').value,q=Math.round(Number($('x_q').value)),d=$('x_d').value,mot=$('x_m').value.trim();
+    if(!num||!per||!(q>0)||!d){E('Renseignez le produit, le lot, la péremption, la quantité et la date.');return}
+    if(q<used){E('La quantité ne peut pas être inférieure à celle déjà sortie ('+used+').');return}
+    if(per<=d){E('La date de péremption doit être postérieure à la réception.');return}
+    const first=state.mov.filter(x=>x.lot===l.id&&x.type!=='entree').map(x=>x.date).sort()[0];
+    if(first&&d>first){E('La date de réception ne peut pas être après la première sortie de ce lot ('+fdate(first)+').');return}
+    if(nm===l.med&&num===(l.num||'')&&per===l.per&&q===l.qte&&d===l.date){E('Aucun changement à enregistrer.');return}
+    if(!mot){E('Le motif est obligatoire.');return}
+    const av=`${mname(med(l.med))} · lot ${l.num||'—'} · ${l.qte} · péremption ${fmonth(l.per)} · reçu ${fdate(l.date)}`;
+    l.med=nm;l.num=num;l.per=per;l.qte=q;l.date=d;
+    state.mov.filter(x=>x.lot===l.id).forEach(x=>{x.med=nm;if(x.type==='entree'){x.qte=q;x.date=d;x.ref=num}});
+    audit('Entrée de stock modifiée',`Motif : ${mot} · AVANT ${av} · APRÈS ${mname(med(nm))} · lot ${num} · ${q} · péremption ${fmonth(per)} · reçu ${fdate(d)}`);
+    closeSheet();renderSto();toast('Entrée modifiée : stock recalculé');
+  };
+}
+
+function applyMode(){
+  const lab=isLab();
+  if(lab&&!['reactif','consommable'].includes(cat))cat='reactif';
+  $('nav').querySelectorAll('button').forEach(b=>b.hidden=lab?!LABP.includes(b.dataset.p):['fin','cpt','labo'].includes(b.dataset.p));
+  $('catSeg').hidden=false;$('catSeg').querySelectorAll('button').forEach(b=>b.hidden=lab&&!['reactif','consommable'].includes(b.dataset.v));
+  $('bLoss').hidden=lab;
+  $('catSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===cat));
+  if(lab&&!LABP.includes(cur))cur='fin';
+  if(!lab&&cur==='')cur='dis';
+  document.body.classList.toggle('lab',lab);
+}
+
+// =============== MEDICAMENTS ===============
+const protoUsers=id=>{const k=new Set();B.list.forEach(b=>{if((b.schema||[]).includes(id))k.add(b.dossier)});state.pat.forEach(p=>{if(schemaOf(p).includes(id))k.add(p.dossier)});return k.size};
+function editMed(id){
+  const m=med(id);if(!m)return;
+  openSheet(`<h3>Modifier l’article</h3><label for="ed_n">Désignation</label><input type="text" id="ed_n" value="${esc(m.nom)}" autocomplete="off">
+  <div class="row"><div><label for="ed_d">Dosage</label><input type="text" id="ed_d" value="${esc(m.dos)}" autocomplete="off"></div><div><label for="ed_f">Forme</label><input type="text" id="ed_f" value="${esc(m.forme||'')}" autocomplete="off"></div></div>
+  <div class="err" id="ed_err" role="alert"></div><div class="acts"><button class="btn ghost" id="ed_no" style="flex:1">Annuler</button><button class="btn" id="ed_ok" style="flex:1">Enregistrer</button></div>`);
+  $('ed_no').onclick=closeSheet;
+  $('ed_ok').onclick=()=>{
+    const n=$('ed_n').value.trim(),d=$('ed_d').value.trim(),f=$('ed_f').value.trim();
+    if(!n){$('ed_err').textContent='La désignation est obligatoire.';return}
+    const ex=state.meds.find(x=>x.id!==id&&x.cat===m.cat&&live(x)&&NR(x.nom)===NR(n)&&(m.cat==='reactif'||NR(x.dos)===NR(d)));
+    if(ex){$('ed_err').textContent='Un article identique existe déjà : « '+(ex.nom+' '+ex.dos).trim()+' ».';return}
+    const old=mname(m);m.nom=n;m.dos=d;m.forme=f;relabel();
+    B.list.forEach(b=>{if((b.schema||[]).includes(id))b.proto=schemaTxt(b.schema.filter(i=>med(i)))});syncFromBase();
+    audit('Article modifié',CATS[m.cat]+' · '+old+' → '+mname(m));closeSheet();renderMed();toast('Article modifié');
+  };
+}
+function delMed(id){
+  const m=med(id);if(!m)return;
+  const st=stockAt(id),u=protoUsers(id);
+  const nope=t=>openSheet(`<h3>Suppression impossible</h3><p>${t}</p><div class="acts"><button class="btn" id="dl_ok" style="flex:1">Compris</button></div>`)||($('dl_ok').onclick=closeSheet);
+  if(st>0)return nope(esc(mname(m))+' a encore '+N(st)+' boîte(s) en stock. Déclarez-les d’abord en perte (ou dispensez-les), puis supprimez l’article.');
+  if(u>0)return nope(esc(mname(m))+' figure dans le protocole de '+u+' patient(s). Changez d’abord leur protocole dans l’onglet Patients.');
+  const hist=state.mov.some(x=>x.med===id);
+  confirmSheet('Supprimer l’article',[['Article',mname(m)],['Liste',CATS[m.cat]],['Effet',hist?'Retiré des listes ; son historique de mouvements est conservé':'Supprimé définitivement']],()=>{
+    if(hist)m.arch=true;else state.meds=state.meds.filter(x=>x.id!==id);
+    relabel();audit('Article supprimé',CATS[m.cat]+' · '+mname(m));renderMed();toast('Article supprimé');
+  },'Supprimer');
+}
+function renderMed(){
+  $('medTitle').textContent='Liste · '+CATS[cat];$('addTitle').textContent='Ajouter dans : '+CATS[cat];
+  const R=cat==='reactif';
+  $('medT').innerHTML=`<thead><tr><th class="c">N°</th><th>Désignation</th><th>Dosage</th><th>Forme</th><th>Type</th>${R?'<th class="r">Stock (boîtes)</th><th class="r">Tests par boîte</th>':''}<th class="r">Actions</th></tr></thead><tbody>`+medsOf().map((m,i)=>`<tr><td class="c">${i+1}</td><td><b>${esc(m.nom)}</b></td><td>${esc(m.dos)}</td><td>${m.forme}</td><td>${CATS[m.cat]}</td>${R?`<td class="r">${N(usable(m.id))}</td><td class="r"><input type="number" min="1" value="${kitSize(m)}" data-ks="${m.id}" style="width:84px" aria-label="Tests par boîte, ${esc(m.nom)}"></td>`:''}<td class="r" style="white-space:nowrap"><button class="btn ghost" data-ed="${m.id}" style="width:auto;padding:5px 10px">Modifier</button> ${isLab()?'':`<button class="btn ghost" data-del="${m.id}" style="width:auto;padding:5px 10px">Supprimer</button>`}</td></tr>`).join('')+'</tbody>';
+  $('medT').querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>editMed(+b.dataset.ed));
+  $('medT').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delMed(+b.dataset.del));
+  $('medT').querySelectorAll('[data-ks]').forEach(i=>i.onchange=()=>{const v=Math.max(1,Math.round(Number(i.value)||1));state.kit.size[i.dataset.ks]=v;i.value=v;audit('Tests par boîte modifié',med(+i.dataset.ks).nom+' : '+v)});
+}
+$('mFor').onchange=()=>{$('mForXw').hidden=$('mFor').value!=='Autre'};
+$('mAdd').onclick=()=>{
+  const n=$('mNom').value.trim(),d=$('mDos').value.trim();
+  if(!n){$('mErr').textContent='Saisissez la désignation.';return}
+  {const ex=state.meds.find(m=>m.cat===cat&&NR(m.nom)===NR(n)&&(cat==='reactif'||NR(m.dos)===NR(d)));if(ex&&ex.arch){let fo=$('mFor').value;if(fo==='Autre')fo=$('mForX').value.trim()||ex.forme;delete ex.arch;ex.forme=fo;relabel();audit('Article rétabli',CATS[cat]+' · '+mname(ex));$('mNom').value='';$('mDos').value='';renderMed();toast('Article rétabli dans la liste');return}if(ex){$('mErr').textContent='Cet article existe déjà dans cette liste : « '+(ex.nom+' '+ex.dos).trim()+' ». Pas de doublon.';return}}
+  $('mErr').textContent='';let fo=$('mFor').value;if(fo==='Autre'){fo=$('mForX').value.trim();if(!fo){$('mErr').textContent='Précisez ce que signifie « Autre ».';return}}
+  state.meds.push({id:Math.max(...state.meds.map(x=>x.id))+1,cat,nom:n,dos:d,forme:fo});$('mForX').value='';$('mFor').value='Comprimé';$('mForXw').hidden=true;
+  relabel();audit('Article ajouté',CATS[cat]+' · '+n+' '+d);
+  $('mNom').value='';$('mDos').value='';renderMed();toast('Ajouté au compartiment « '+CATS[cat]+' »');
+};
+
+// =============== DOCUMENTS ===============
+let docMode='fiche',docMonth='2026-01',invFrom=addDays(today,-90),invTo=today,cmdMonths=3;
+$('docSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{docMode=b.dataset.v;renderDoc()});
+function monthStats(m,ym){
+  const first=ym+'-01',mv=state.mov.filter(x=>x.med===m.id).sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+  let debut=0,recu=0,util=0,perdu=0,aj=0,run=0,rupt=null;
+  mv.forEach(x=>{const dl=x.type==='entree'?x.qte:-x.qte;
+    if(x.date<first){debut+=dl;run=debut}
+    else if(x.date.startsWith(ym)){run+=dl;if(x.type==='entree')recu+=x.qte;else if(x.type==='sortie'||x.type==='depannage')util+=x.qte;else if(x.type==='correction')aj-=x.qte;else perdu+=x.qte;if(run<=0&&rupt===null)rupt=+x.date.slice(8)}});
+  if(debut<=0&&(util>0||cmm(m.id)>0))rupt=1;
+  return{debut,recu,util,perdu,aj,fin:debut+recu-util-perdu+aj,rupt};
+}
+function renderDoc(){
+  $('docSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===docMode));
+  let h='';
+  if(docMode==='fiche'){
+    const [y,mo]=docMonth.split('-');
+    const SA=recMeds().some(m=>monthStats(m,docMonth).aj);
+    h=`<label for="fm">Mois</label><input type="month" id="fm" value="${docMonth}" style="max-width:200px">
+    <h2 style="margin:16px 0 8px;font-size:1rem">Fiche mensuelle · ${CATS[cat]} · ${MFULL[+mo-1]} ${y}</h2>
+    <div class="scroll"><table><thead><tr><th>Molécule</th><th>Dosage</th><th>Forme</th><th class="r">Stock début du mois</th><th class="r">Quantité reçue</th><th class="r">Quantité utilisée</th><th class="r">Quantité perdue</th>${SA?'<th class="r">Correction d’inventaire</th>':''}<th class="r">Stock fin du mois</th><th class="r">Jour de rupture</th></tr></thead><tbody>`+
+    recMeds().map(m=>{const s=monthStats(m,docMonth);return `<tr><td>${esc(m.nom)}</td><td>${esc(m.dos)}</td><td>${m.forme}</td><td class="r">${N(s.debut)}</td><td class="r">${N(s.recu)}</td><td class="r">${N(s.util)}</td><td class="r">${s.perdu?N(s.perdu):''}</td>${SA?`<td class="r">${s.aj?(s.aj<0?'+':'−')+N(Math.abs(s.aj)):''}</td>`:''}<td class="r"><b>${N(s.fin)}</b></td><td class="r">${s.rupt?(s.rupt===1&&s.debut<=0?'dès le 1er':'le '+s.rupt):''}</td></tr>`}).join('')+'</tbody></table></div><p class="muted" style="font-size:.85rem">Stock fin du mois = stock début + reçu − utilisé − perdu. Quantités en boîtes. Tout est calculé à partir des mouvements.</p>';
+  }else if(docMode==='inv'){
+    h=`<div class="row" style="max-width:420px"><div><label for="i1">Du</label><input type="date" id="i1" value="${invFrom}"></div><div><label for="i2">Au</label><input type="date" id="i2" value="${invTo}"></div></div>
+    <h2 style="margin:16px 0 4px;font-size:1rem">Inventaire de stock · ${CATS[cat]} · ${fdate(invTo)}</h2>
+    <p class="muted" style="margin:0 0 8px;font-size:.85rem">Centre de Traitement Ambulatoire de Lambaréné</p>
+    <div class="scroll"><table><thead><tr><th>Désignation</th><th>Dosage</th><th>Forme</th><th class="r">Patients sous la molécule</th><th class="r">CMM</th><th class="r">Stock au ${fdate(invFrom)}</th><th>Date de péremption</th><th class="r">Sorties du ${fdate(invFrom)} au ${fdate(invTo)}</th><th class="r">Reste en stock à ce jour</th></tr></thead><tbody>`+
+    recMeds().map(m=>{const out=state.mov.filter(x=>x.med===m.id&&(x.type==='sortie'||x.type==='depannage')&&x.date>invFrom&&x.date<=invTo).reduce((s,x)=>s+x.qte,0);
+      return `<tr><td>${esc(m.nom)}</td><td>${esc(m.dos)}</td><td>${m.forme}</td><td class="r">${m.cat==='arv'?state.pat.filter(p=>schemaOf(p).includes(m.id)).length:'—'}</td><td class="r">${N(cmm(m.id))}</td><td class="r">${N(stockAt(m.id,invFrom))}</td><td>${fmonth(nearestPer(m.id))}</td><td class="r">${N(out)}</td><td class="r"><b>${N(stockAt(m.id,invTo))}</b></td></tr>`}).join('')+
+    `</tbody></table></div><div class="sign"><div>Responsable pharmacie</div><div>Médecin chef</div></div>`;
+  }else{
+    const end=addDays(today,30*cmdMonths),since=addDays(today,-90);
+    const rows=recMeds().map(m=>{const c=cmm(m.id),s0=stockAt(m.id),soon=state.lots.filter(l=>l.med===m.id&&l.per>=today&&l.per<end).reduce((a,l)=>a+remaining(l),0),per=state.mov.filter(x=>x.med===m.id&&x.type==='perte'&&/^Péremption/.test(x.motif||'')&&x.date>since).reduce((a,x)=>a+x.qte,0),need=c*cmdMonths,q=Math.max(0,need-(s0-soon));return{m,c,s0,soon,per,need,q}}).filter(r=>r.c>0||r.per>0);
+    h=`<label for="cm">Mois de stock visés</label><input type="number" id="cm" min="1" max="12" value="${cmdMonths}" style="max-width:140px" inputmode="numeric">
+    <h2 style="margin:16px 0 4px;font-size:1rem">Commande proposée · ${CATS[cat]}</h2>
+    <p class="muted" style="margin:0 0 8px;font-size:.85rem">Calculée à partir des quantités utilisées (CMM) et des périmés : à commander = CMM × mois visés − (stock − lots qui périmeront avant ${fdate(end)}).</p>
+    <div class="scroll"><table><thead><tr><th>Médicament</th><th class="r">Stock</th><th class="r">Utilisés (CMM)</th><th class="r">Périmés retirés (3 mois)</th><th class="r">Périmant avant ${fdate(end)}</th><th class="r">Besoin (CMM × ${cmdMonths})</th><th class="r">À commander</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr><td>${esc(mname(r.m))}</td><td class="r">${N(r.s0)}</td><td class="r">${N(r.c)}</td><td class="r">${r.per?`<span class="neg">${N(r.per)}</span>`:'—'}</td><td class="r">${r.soon?N(r.soon):'—'}</td><td class="r">${N(r.need)}</td><td class="r">${r.q>0?`<b>${N(r.q)}</b>`:'<span class="muted">—</span>'}</td></tr>`).join('')+'</tbody></table></div>';
+  }
+  $('docBody').innerHTML=h;
+  if($('fm'))$('fm').onchange=()=>{docMonth=$('fm').value||docMonth;renderDoc()};
+  if($('i1')){$('i1').onchange=()=>{invFrom=$('i1').value||invFrom;renderDoc()};$('i2').onchange=()=>{invTo=$('i2').value||invTo;renderDoc()}}
+  if($('cm'))$('cm').onchange=()=>{cmdMonths=Math.max(1,Math.min(12,Math.round(Number($('cm').value))||3));renderDoc()};
+}
+
+// =============== CONTROLE ===============
+let phys={};
+function renderCtl(){
+  $('ctl').innerHTML=`<thead><tr><th>Médicament</th><th class="r">Stock informatique</th><th class="r">Stock physique</th><th class="r">Écart</th></tr></thead><tbody>`+
+  recMeds().map(m=>`<tr><td>${esc(mname(m))}</td><td class="r">${N(stockAt(m.id))}</td><td class="r"><input type="number" min="0" inputmode="numeric" data-m="${m.id}" value="${phys[m.id]??''}" aria-label="Stock physique ${esc(mname(m))}"></td><td class="r" id="ec${m.id}"></td></tr>`).join('')+'</tbody>';
+  $('ctl').querySelectorAll('input').forEach(i=>i.oninput=()=>{phys[i.dataset.m]=i.value;ecarts()});
+  ecarts();
+  const U=unusual(),T={perte:'Perte déclarée'};
+  $('unT').innerHTML=`<thead><tr><th>Date</th><th>Médicament</th><th class="r">Boîtes</th><th>Pourquoi</th></tr></thead><tbody>`+(U.length?U.map(([x,why])=>`<tr><td>${fdate(x.date)}</td><td>${esc(mname(med(x.med)))}</td><td class="r">${N(x.qte)}</td><td>${esc(why)}${x.ref&&x.type==='sortie'?' · '+esc(x.ref):''}${x.motif?' · '+esc(x.motif):''}</td></tr>`).join(''):'<tr><td colspan="4" class="muted">Rien d’inhabituel.</td></tr>')+'</tbody>';
+}
+function ecarts(){
+  recMeds().forEach(m=>{const v=phys[m.id];const e=$('ec'+m.id);
+    if(v===undefined||v===''){e.textContent='';return}
+    const d=Math.round(Number(v))-stockAt(m.id);
+    e.innerHTML=d===0?'<span class="pill">Conforme</span>':`<span class="neg">${d>0?'+':''}${N(d)}</span>`});
+}
+function unusual(){
+  const out=[];
+  medsOf().forEach(m=>{
+    const s=state.mov.filter(x=>x.med===m.id&&x.type==='sortie').map(x=>x.qte).sort((a,b)=>a-b),md=s.length?s[Math.floor(s.length/2)]:0;
+    state.mov.filter(x=>x.med===m.id).forEach(x=>{
+      if(x.type==='perte')out.push([x,'Perte déclarée']);
+      else if(x.type==='correction')out.push([{...x,qte:Math.abs(x.qte)},(x.qte<0?'Correction de stock en hausse : ':'Correction de stock en baisse : ')+(x.motif||'')]);
+      else if(x.type==='sortie'&&md>0&&x.qte>=Math.max(5,3*md))out.push([x,`Sortie très supérieure à la normale (habituellement ${md})`]);
+    });
+  });
+  return out.sort((a,b)=>b[0].date.localeCompare(a[0].date)).slice(0,8);
+}
+$('cSave').onclick=()=>{
+  const todo=recMeds().map(m=>({m,v:phys[m.id]})).filter(x=>x.v!==undefined&&x.v!=='').map(x=>({m:x.m,d:Math.round(Number(x.v))-stockAt(x.m.id)})).filter(x=>x.d!==0);
+  if(!todo.length){$('cErr').textContent='Aucun écart à enregistrer.';return}
+  $('cErr').textContent='';
+  confirmSheet('Enregistrer les écarts',todo.map(x=>[mname(x.m),(x.d>0?'+':'')+x.d+' boîte(s)']),()=>{
+    todo.forEach(x=>{
+      if(x.d<0)addOut('perte',x.m.id,-x.d,today,'','Écart d’inventaire');
+      else addIn(x.m.id,x.d,today,'REG-'+today,nearestPer(x.m.id)||addDays(today,365));
+    });
+    phys={};renderCtl();toast('Écarts enregistrés : stock informatique régularisé');
+  });
+};
+
+try{window.parent.PHARMA_API={meds:()=>state.meds.filter(live).map(m=>({id:m.id,cat:m.cat,nom:m.nom,dos:m.dos,forme:m.forme,stock:stockAt(m.id),used:state.mov.some(x=>x.med===m.id)})),addMed:o=>{state.meds.push({id:Math.max(...state.meds.map(x=>x.id))+1,cat:o.cat,nom:o.nom,dos:o.dos||'',forme:o.forme||''});relabel()},arvs:()=>state.meds.filter(m=>isARV(m)&&live(m)).map(mname),consume:(nom,n)=>consumeReagent(nom,n||1),kits:()=>state.meds.filter(m=>m.cat==='reactif').map(m=>({nom:m.nom,boites:usable(m.id),testsOuverts:(state.kit.open[m.id]||0),parBoite:kitSize(m)})),reagent:nom=>{const ms=state.meds.filter(m=>m.cat==='reactif'&&NR(m.nom)===NR(nom));return ms.length?{known:true,ok:ms.some(m=>usable(m.id)>0)}:{known:false,ok:true}},reagents:()=>state.meds.filter(m=>m.cat==='reactif').map(m=>({nom:m.nom,ok:usable(m.id)>0,termine:false})),examOff:nom=>!!EXO()[exKey(nom)],examsOff:()=>Object.keys(EXO()),delMed:id=>{const i=state.meds.findIndex(m=>m.id===id);if(i>=0&&!state.mov.some(x=>x.med===id))state.meds.splice(i,1)},arvList:()=>state.meds.filter(m=>live(m)&&(isARV(m)||m.cat==='courant')).map(m=>({id:m.id,cat:m.cat,nom:mname(m),mols:molsOf(m),cls:molsOf(m).map(x=>CLS[x]||'?'),stock:usable(m.id)})),
+ schemaOf:d=>{syncFromBase();const b=B.find(d);return b&&b.schema?b.schema.filter(i=>med(i)):[]},
+ setSchema:(d,ids,motif,date)=>{const b=B.find(d);if(!b)return false;const cur=(b.schema||[]).filter(i=>med(i));if(cur.join()===ids.join())return true;
+   b.protoHist=b.protoHist||[];b.protoHist.push({date:date||today,ancien:cur.length?schemaTxt(cur):'—',nouveau:schemaTxt(ids),motif:motif||'—',par:whoName()+' (module PTME)'});
+   b.schema=ids.slice();b.proto=schemaTxt(ids);audit('Schéma ARV modifié','dossier '+d+' (depuis PTME) · '+(cur.length?schemaTxt(cur):'—')+' → '+schemaTxt(ids));syncFromBase();return true},
+ dispense:o=>{const d=o.date||today,L=(o.lines||[]).filter(x=>x.q>0);
+   if(!L.length)return{ok:false,msg:'Aucune quantité à dispenser.'};
+   for(const x of L){if(!med(x.id))return{ok:false,msg:'Article inconnu.'};if(!(x.j>0))return{ok:false,msg:'Renseignez la durée de chaque ligne.'};if(x.q>usable(x.id))return{ok:false,msg:'Stock insuffisant pour '+mname(med(x.id))+' : '+usable(x.id)+' boîte(s) utilisable(s).'}}
+   const ref=o.ref||o.dossier||'';const _mv=L.map(x=>{const b=state.mid;addOut('sortie',x.id,x.q,d,ref,'');return state.mov.filter(y=>y.id>b).map(y=>y.id)});
+   if(!o.baby){let p=state.pat.find(x=>x.dossier===o.dossier);if(!p){p={id:++state.pid,dossier:o.dossier,proto:L[0].id,schema:L.map(x=>x.id),contact:'',obs:'',disp:[]};state.pat.push(p)}
+     L.forEach((x,i)=>p.disp.push({date:d,med:x.id,qte:x.q,jours:x.j,movs:_mv[i]}));B.upsert({dossier:o.dossier,rdv:nextRenew(p)})}
+   audit(o.baby?'Dispensation nouveau-né (PTME)':'Dispensation mère (PTME)',ref+' · '+L.map(x=>mname(med(x.id))+' × '+x.q).join(', '));
+   return{ok:true,rdv:addDays(d,Math.min(...L.map(x=>x.j)))}},
+ CATS:CATS,next:d=>{const p=state.pat.find(x=>x.dossier===d);return p?nextRenew(p):''},disp:d=>{const p=state.pat.find(x=>x.dossier===d);return p?p.disp.map(x=>({date:x.date,med:mname(med(x.med)),qte:x.qte})):[]}}}catch(e){}
+window.onShow=()=>{applyMode();go(cur)};
+go('dis');
+AUD=true;perAlert();if(RA)audit('Réactifs ajoutés au stock',RA+' article(s) de la nomenclature des examens');
+</script>
+<script>window.XLS_MOD='pharma';
+/* Export Excel (.xlsx) sans bibliothèque externe : fonctionne hors ligne */
+(function(){
+if(window.XLS)return;
+const enc=new TextEncoder();
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+const esc=s=>String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const colName=i=>{let s='';i++;while(i>0){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26)}return s};
+function zip(files){
+  const parts=[],cen=[];let off=0;
+  const u16=v=>[v&255,(v>>8)&255],u32=v=>[v&255,(v>>8)&255,(v>>16)&255,(v>>>24)&255];
+  files.forEach(f=>{
+    const name=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+    const lh=new Uint8Array([0x50,0x4b,3,4,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),0,0]);
+    parts.push(lh,name,data);
+    cen.push(new Uint8Array([0x50,0x4b,1,2,20,0,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),0,0,0,0,0,0,0,0,0,0,0,0,...u32(off)]),name);
+    off+=lh.length+name.length+data.length;
+  });
+  const cl=cen.reduce((s,a)=>s+a.length,0);
+  const end=new Uint8Array([0x50,0x4b,5,6,0,0,0,0,...u16(files.length),...u16(files.length),...u32(cl),...u32(off),0,0]);
+  return new Blob([...parts,...cen,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+const safeSheet=(n,used)=>{let s=String(n||'Feuille').replace(/[\[\]:*?\/\\]/g,' ').replace(/\s+/g,' ').trim().slice(0,28)||'Feuille';let r=s,i=2;while(used.has(r.toLowerCase()))r=s.slice(0,26)+' '+i++;used.add(r.toLowerCase());return r};
+function sheetXml(sh){
+  const bold=new Set(sh.bold||[]);let maxc=0;
+  const rows=sh.rows.map((row,ri)=>{
+    maxc=Math.max(maxc,row.length);
+    const cells=row.map((v,ci)=>{
+      if(v===''||v==null)return'';
+      const r=colName(ci)+(ri+1),st=bold.has(ri)?' s="1"':'';
+      if(typeof v==='number'&&isFinite(v))return`<c r="${r}"${st}><v>${v}</v></c>`;
+      return`<c r="${r}"${st} t="inlineStr"><is><t xml:space="preserve">${esc(v)}</t></is></c>`;
+    }).join('');
+    return`<row r="${ri+1}">${cells}</row>`;
+  }).join('');
+  const w=[];for(let c=0;c<maxc;c++){let m=8;sh.rows.forEach(r=>{const v=r[c];if(v!=null&&v!=='')m=Math.max(m,Math.min(60,String(v).length+2))});w.push(`<col min="${c+1}" max="${c+1}" width="${m}" customWidth="1"/>`)}
+  return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/>${w.length?'<cols>'+w.join('')+'</cols>':''}<sheetData>${rows}</sheetData></worksheet>`;
+}
+function build(sheets){
+  const used=new Set(),S=sheets.map(s=>({name:safeSheet(s.name,used),rows:s.rows&&s.rows.length?s.rows:[['(aucune donnée)']],bold:s.bold}));
+  const files=[
+   {name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${S.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}</Types>`},
+   {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+   {name:'xl/workbook.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${S.map((s,i)=>`<sheet name="${esc(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets></workbook>`},
+   {name:'xl/_rels/workbook.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${S.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${S.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+   {name:'xl/styles.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs></styleSheet>'},
+   ...S.map((s,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,data:sheetXml(s)}))
+  ];
+  return zip(files);
+}
+const NUM=/^-?(0|[1-9]\d{0,2}([\s  ]\d{3})+|[1-9]\d{0,5}|0)(,\d+)?$/;
+function cellVal(t){
+  t=String(t).replace(/\s+/g,' ').trim();
+  const m=t.replace(/\s?(F|FCFA)$/,'');
+  if(m!==''&&NUM.test(m)){const n=Number(m.replace(/[\s  ]/g,'').replace(',','.'));if(isFinite(n))return n}
+  return t;
+}
+function fromTable(tb){
+  const rows=[],bold=[];
+  tb.querySelectorAll('tr').forEach(tr=>{
+    if(tr.closest('table')!==tb)return;
+    const row=[];let isHead=false;
+    tr.querySelectorAll(':scope>th,:scope>td').forEach(c=>{
+      if(c.tagName==='TH')isHead=true;
+      let v;const inp=c.querySelector('input,select,textarea');
+      if(inp){v=inp.type==='checkbox'?(inp.checked?'oui':'non'):inp.tagName==='SELECT'?(inp.options[inp.selectedIndex]||{}).text||'':inp.value}
+      else v=c.innerText!==undefined?c.innerText:c.textContent;
+      const cs=Math.max(1,+c.getAttribute('colspan')||1);
+      row.push(isHead?String(v).replace(/\s+/g,' ').trim():cellVal(v));
+      for(let k=1;k<cs;k++)row.push('');
+    });
+    if(row.some(x=>x!==''))rows.push(row);if(isHead&&row.some(x=>x!==''))bold.push(rows.length-1);
+  });
+  return{rows,bold};
+}
+const slug=s=>String(s||'tableau').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,50)||'tableau';
+const stamp=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())};
+function audit(a,d){try{const P=window.parent&&window.parent.AUDIT?window.parent:window;P.AUDIT&&P.AUDIT(window.XLS_MOD||'Application',a,d)}catch(e){}}
+function download(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+function save(name,sheets){
+  const f=name.replace(/\.xlsx$/i,'')+'.xlsx';
+  download(f,build(sheets));audit('Export Excel',f);
+  try{(window.toast||(window.parent&&window.parent.toast))&&(window.toast||window.parent.toast)('Fichier Excel téléchargé : '+f)}catch(e){}
+  return f;
+}
+function titleOf(tb){
+  const t=tb.getAttribute('data-title');if(t)return t;
+  let el=tb.closest('.scroll')||tb;
+  for(let hop=0;hop<6&&el;hop++){
+    let p=el.previousElementSibling;
+    while(p){
+      if(/^H[1-4]$/.test(p.tagName)||p.classList.contains('blk-h')){return(p.querySelector('b')&&p.classList.contains('blk-h')?p.querySelector('b').textContent:p.textContent).trim().slice(0,60)}
+      const h=p.querySelector&&p.querySelector('h2,h3');if(h)return h.textContent.trim().slice(0,60);
+      p=p.previousElementSibling;
+    }
+    el=el.parentElement;
+    if(el&&/^SECTION$|^BODY$/.test(el.tagName)){const h=el.querySelector('h2,h3,.bar b');return h?h.textContent.trim().slice(0,60):'Tableau'}
+  }
+  return'Tableau';
+}
+function enhance(){return;
+  document.querySelectorAll('table').forEach(tb=>{
+    if(tb.dataset.noxl||tb.closest('#recu')||!tb.querySelector('tr'))return;
+    const w=tb.closest('.scroll')||tb;
+    const prev=w.previousElementSibling;
+    if(prev&&prev.classList&&prev.classList.contains('xlbar'))return;
+    if(tb.closest('.xlbar'))return;
+    const bar=document.createElement('div');bar.className='xlbar';bar.style.cssText='display:flex;justify-content:flex-end;margin:6px 0 2px';
+    const b=document.createElement('button');b.type='button';b.textContent='Exporter ce tableau en Excel';b.title='Télécharger ce tableau au format Excel (.xlsx)';
+    b.style.cssText='font:inherit;font-size:.8rem;padding:5px 10px;border:1px solid #9aa5a1;border-radius:8px;background:#fff;color:#14342b;cursor:pointer';
+    b.onclick=e=>{e.preventDefault();e.stopPropagation();const t=titleOf(tb),d=fromTable(tb);save(`CTA_${slug(window.XLS_MOD||'app')}_${slug(t)}_${stamp()}`,[{name:t,rows:d.rows,bold:d.bold}])};
+    bar.appendChild(b);w.parentNode.insertBefore(bar,w);
+  });
+}
+let tmr;
+function start(){
+  const st=document.createElement('style');st.textContent='@media print{.xlbar{display:none!important}}';document.head.appendChild(st);
+  enhance();
+  new MutationObserver(()=>{clearTimeout(tmr);tmr=setTimeout(enhance,250)}).observe(document.body,{childList:true,subtree:true});
+}
+window.XLS={build,save,fromTable,enhance,cellVal};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+app/logs/
+app/data/
+.preview/router.php
+.preview/shell.js
+.preview/*.png
