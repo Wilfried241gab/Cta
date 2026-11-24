@@ -300,7 +300,7 @@ function openMod(m){
 }
 document.querySelectorAll('.mod').forEach(b=>b.onclick=()=>openMod(b.dataset.m));
 // le menu ne montre que les modules autorisés au profil connecté
-function applyRights(){const vu=curUser().role==='Administrateur';document.querySelectorAll('.mod').forEach(b=>{const ok=allowed(b.dataset.m);b.disabled=!ok;b.hidden=!ok&&!vu;b.title=ok?'':'Accès non autorisé pour ce rôle'})}
+function applyRights(){document.querySelectorAll('.mod').forEach(b=>{const ok=allowed(b.dataset.m);b.disabled=!ok;b.hidden=false;b.title=ok?'':'Module d’un autre poste : accès non autorisé pour votre rôle'})}
 applyRights();
 refreshWho();
 document.querySelectorAll('.back').forEach(b=>b.onclick=()=>show('home'));
@@ -493,7 +493,7 @@ const HELP={
 };
 function renderHelp(){
   const r=curUser().role,sec=[...HELP.commun,...(r==='Médecin-chef'?['Caisse','Pharmacie','RH','PTME','Médecin-chef'].flatMap(k=>HELP[k]):(HELP[r]||[]))];
-  $('helpBody').innerHTML=`<p class="muted">Aide pour le rôle : <b>${esc(r)}</b></p>`+sec.map(([t,x])=>`<div class="card"><h2>${esc(t)}</h2><p style="margin:0;white-space:pre-line">${esc(x)}</p></div>`).join('');
+  $('helpBody').innerHTML=`<p class="muted">Aide pour le rôle : <b>${esc(r)}</b><br>Toutes les cartes du menu sont visibles ; celles des autres postes sont grisées et ne s’ouvrent pas.</p>`+sec.map(([t,x])=>`<div class="card"><h2>${esc(t)}</h2><p style="margin:0;white-space:pre-line">${esc(x)}</p></div>`).join('');
 }
 // ----- Guide complété : une section par module (à quoi il sert, étapes, droits)
 const GUIDE={
@@ -515,7 +515,7 @@ renderHelp=function(){
   const add=x=>{if(!seen.has(x[0])){seen.add(x[0]);sec.push(x)}};
   (GUIDE_BY_ROLE[r]||[]).forEach(k=>{(GUIDE[k]||HELP[k]||[]).forEach(add)});
   (HELP[r]||[]).forEach(add);
-  $('helpBody').innerHTML=`<p class="muted">Aide pour le rôle : <b>${esc(r)}</b></p>`+sec.map(([t,x])=>`<div class="card"><h2>${esc(t)}</h2><p style="margin:0;white-space:pre-line">${esc(x)}</p></div>`).join('');
+  $('helpBody').innerHTML=`<p class="muted">Aide pour le rôle : <b>${esc(r)}</b><br>Toutes les cartes du menu sont visibles ; celles des autres postes sont grisées et ne s’ouvrent pas.</p>`+sec.map(([t,x])=>`<div class="card"><h2>${esc(t)}</h2><p style="margin:0;white-space:pre-line">${esc(x)}</p></div>`).join('');
 };
 // --- Paramètres : utilisateurs par poste (plusieurs comptes par service)
 const POSTES=['Caisse','IDEP','Pharmacie','RH','CNAMGS','PTME','Laboratoire'];

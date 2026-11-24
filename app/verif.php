@@ -9,7 +9,7 @@
 
 $attendus = [
     'app.html'                       => 29052,
-    'assets/app-66a4949a40.js'       => 813777,
+    'assets/app-66a4949a40.js'       => 813976,
     'assets/app-607e8be36c.js'       => 9893,
     'assets/app-5e24bbac98.js'       => 4752,
     'assets/app-48034cc073.js'       => 10343,
