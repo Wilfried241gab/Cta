@@ -135,7 +135,7 @@ $pilote = is_array($cfg) ? ($cfg['pilote'] ?? '?') : 'config.php introuvable';
 </table>
 
 <div class="note">
- <p><strong>Version du code installé :</strong> <code><?= vh($versionCode) ?></code> (attendue : <code>15-2026-11-24</code>)</p>
+ <p><strong>Version du code installé :</strong> <code><?= vh($versionCode) ?></code> (attendue : <code>16-2026-11-24</code>)</p>
  <p><strong>Environnement :</strong> PHP <?= vh(PHP_VERSION) ?> · pilote de base déclaré : <code><?= vh($pilote) ?></code></p>
  <p><strong>Fichiers présents dans assets/ :</strong><br><code><?= vh(implode(' · ', $assets)) ?></code></p>
  <p><strong>Que faire si un fichier est « ANCIEN » ou « ABSENT » :</strong> recopiez le fichier correspondant depuis l'archive
