@@ -1,7 +1,7 @@
 <?php
 // CTA Lambaréné — fonctions communes : configuration, base de données, migrations, session, droits, journal
 date_default_timezone_set('Africa/Libreville');
-const CTA_VERSION = '14-serveur';
+const CTA_VERSION = '15-preview-2026-11-24';
 const CTA_SCHEMA = 2;
 const CTA_CLES = '/^cta\.(shell|caisse|pharma|rh|ptme|audit)\.v1$/';
 const CTA_ROLES = ['Médecin-chef', 'Administrateur', 'Caisse', 'IDEP', 'Pharmacie', 'RH', 'CNAMGS', 'PTME', 'Laboratoire'];
