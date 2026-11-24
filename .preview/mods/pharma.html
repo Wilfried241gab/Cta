@@ -1084,14 +1084,21 @@ function renderPat(){
   $('pT').querySelectorAll('[data-pr]').forEach(btn=>btn.onclick=()=>openPatientSheet(B.find(btn.dataset.pr)));
   $('pT').querySelectorAll('[data-del]').forEach(btn=>btn.onclick=()=>deleteFiche(btn.dataset.del));
 }
-// suppression d'une fiche : sans justificatif, mais avec confirmation et trace ; l'historique (reçus, dispensations, registre) est conservé
+// suppression d'une fiche : sans justificatif, mais avec confirmation et trace ; la fiche quitte la base commune et le registre ARV, et les boîtes dispensées retournent au stock
 function deleteFiche(d){
   if(isLab())return;
   const b=B.find(d);if(!b)return;
   const ps=state.pat.find(p=>p.dossier===d),nd=ps?ps.disp.length:0;
+  // mouvements de sortie liés aux dispensations du registre : ils sont annulés, donc les boîtes reviennent dans leurs lots
+  const mvs=[];
+  if(ps)ps.disp.forEach(x=>dispMovs(ps,x).forEach(mv=>{if(mv.type==='sortie'&&mvs.indexOf(mv)<0)mvs.push(mv)}));
+  const qte=mvs.reduce((s,mv)=>s+(+mv.qte||0),0);
   const nc=(window.parent&&window.parent.CAISSE_API&&window.parent.CAISSE_API.visits)?window.parent.CAISSE_API.visits(d).length:0;
-  confirmSheet('Supprimer cette fiche ?',[['Patient',(b.nom||'sans nom')+' · n° '+d],['Effet','La fiche disparaît de la base commune (caisse, pharmacie, PTME).'],['Historique conservé','Reçus de la caisse : '+nc+' · dispensations : '+nd]],()=>{
-    B.remove(d);audit('Fiche patient supprimée',d+' · '+(b.nom||'sans nom'));renderPat();try{renderReg()}catch(e){}toast('Fiche supprimée');
+  confirmSheet('Supprimer cette fiche ?',[['Patient',(b.nom||'sans nom')+' · n° '+d],['Effet','La fiche disparaît de la base commune (caisse, pharmacie, PTME) et du registre ARV.'],['Stock rendu',qte?N(qte)+' boîte(s) retournent au stock ('+nd+' dispensation(s) annulée(s))':'Aucune dispensation à annuler'],['Reçus de la caisse','Conservés : '+nc]],()=>{
+    if(ps){mvs.forEach(mv=>{const i=state.mov.indexOf(mv);if(i>=0)state.mov.splice(i,1)});state.pat=state.pat.filter(p=>p!==ps)}
+    B.remove(d);audit('Fiche patient supprimée',d+' · '+(b.nom||'sans nom')+(nd?' · '+nd+' dispensation(s) annulée(s) · '+N(qte)+' boîte(s) rendues au stock':''));
+    renderPat();try{renderReg()}catch(e){}try{renderDis()}catch(e){}try{renderSto()}catch(e){}persistSave();
+    toast(qte?'Fiche supprimée : '+N(qte)+' boîte(s) rendues au stock':'Fiche supprimée');
   },'Supprimer');
 }
 
