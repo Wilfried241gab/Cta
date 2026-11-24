@@ -733,7 +733,7 @@ function renderLabo(){
   };
   L.sort((a,b)=>{const ka=val(a),kb=val(b);const c=typeof ka==='number'?ka-kb:String(ka).localeCompare(String(kb),'fr',{numeric:true});return labSort.asc?c:-c});
   const th=(k,t)=>`<th><button class="link" data-sk="${k}" style="font:inherit">${t}${labSort.k===k?(labSort.asc?' ▲':' ▼'):''}</button></th>`;
-  $('labT').innerHTML=`<thead><tr>${th('date','Date')}${th('nom','Patient')}${th('age','Âge')}<th>Sexe</th>${th('exams','Nombre')}<th>Examens demandés</th>${th('statut','État')}<th>Reçu</th><th>Caissier</th></tr></thead><tbody>`+
+  $('labT').innerHTML=`<thead><tr>${th('date','Date')}${th('nom','Patient')}${th('age','Âge')}<th>Sexe</th>${th('exams','Nombre')}<th>Examens demandés</th>${th('statut','État')}<th>Reçu</th><th>Caisse</th></tr></thead><tbody>`+
    (L.length?L.map(x=>`<tr><td>${fdate(x.date)}${x.heure?' · '+esc(x.heure):''}</td><td><b>${esc(x.nom||'—')}</b></td><td class="r">${x.age||'—'}</td><td>${x.sexe==='F'?'Féminin':x.sexe==='M'?'Masculin':'—'}</td><td class="r">${(x.exams||[]).length}</td><td style="white-space:normal">${esc((x.exams||[]).join(', '))}</td><td>${x.statut==='paye'?'<span class="pill">Encaissé</span>':'<span class="pill warn">Demandé</span>'}</td><td>${esc(x.recu||'—')}</td><td>${esc(x.agent||'—')}</td></tr>`).join(''):'<tr><td colspan="9" class="muted">Aucun patient pour le moment : la liste se remplit dès que la caisse sélectionne des examens.</td></tr>')+'</tbody>';
   $('labT').querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{const k=b.dataset.sk;if(labSort.k===k)labSort.asc=!labSort.asc;else labSort={k,asc:k!=='date'};renderLabo()});
 }

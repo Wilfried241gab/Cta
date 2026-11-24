@@ -9,7 +9,7 @@
 
 $attendus = [
     'app.html'                       => 29052,
-    'assets/app-66a4949a40.js'       => 813917,
+    'assets/app-66a4949a40.js'       => 813777,
     'assets/app-607e8be36c.js'       => 9893,
     'assets/app-5e24bbac98.js'       => 4752,
     'assets/app-48034cc073.js'       => 10343,
@@ -22,7 +22,7 @@ $attendus = [
 // Repères attendus dans le bundle des modules (base64 -> texte).
 $reperes = [
     'pharma' => ['resetDisp', 'openLotCtl', 'Contrôle par lot', 'openDispList', 'Stock insuffisant', 'MODAL_DOWN'],
-    'caisse' => ['Caissier(ère)', 'laboPush'],
+    'caisse' => ['Caisse : <b>', 'laboPush'],
     'rh'     => ['gSuggestions', 'MODAL_DOWN'],
     'ptme'   => ['MODAL_DOWN'],
 ];

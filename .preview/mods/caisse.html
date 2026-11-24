@@ -356,7 +356,7 @@ header h1{font-size:1.55rem;background:var(--grad);-webkit-background-clip:text;
   </div>
   
 </header>
-<div id="agentBar" style="max-width:1000px;margin:0 auto;padding:0 16px"><label for="agent" style="margin:6px 0 4px">Caissier(ère) :</label><input type="text" id="agent" value="Agent de caisse" readonly style="max-width:320px;background:var(--bg)"></div>
+<div id="agentBar" style="max-width:1000px;margin:0 auto;padding:0 16px"><label for="agent" style="margin:6px 0 4px">Caisse :</label><input type="text" id="agent" value="Agent de caisse" readonly style="max-width:320px;background:var(--bg)"></div>
 
 <nav role="tablist" aria-label="Pages du module">
   <button role="tab" data-tab="acc" aria-selected="true">Accueil</button>
@@ -918,7 +918,7 @@ const cloNote=()=>{
 function printClo(id){
   const cl=data.cl.find(c=>c.id===id);if(!cl)return;
   const row=(l,v,b)=>`<tr><td>${l}</td><td class="r">${b?'<b>'+fmt(v)+'</b>':fmt(v)}</td></tr>`;
-  const html=`<h1>Bordereau de clôture de caisse n° ${cl.id}</h1><p>Caissier : <b>${esc(cl.agent)}</b>${cl.par?' (clôturée par '+esc(cl.par)+')':''}<br>Période : ${cl.du?fdate(cl.du):'—'}${cl.au&&cl.au!==cl.du?' au '+fdate(cl.au):''} · ${cl.n} reçu(s) valide(s)${cl.nan?' · '+cl.nan+' annulé(s)':''}</p>
+  const html=`<h1>Bordereau de clôture de caisse n° ${cl.id}</h1><p>Caisse : <b>${esc(cl.agent)}</b>${cl.par?' (clôturée par '+esc(cl.par)+')':''}<br>Période : ${cl.du?fdate(cl.du):'—'}${cl.au&&cl.au!==cl.du?' au '+fdate(cl.au):''} · ${cl.n} reçu(s) valide(s)${cl.nan?' · '+cl.nan+' annulé(s)':''}</p>
   <table class="t"><tbody>${row('Encaissements PVVIH',cl.pvvih)}${row('Consultations et examens externes',cl.ext)}${row('Certificats médicaux',cl.cert)}${row('Total encaissé',cl.rec,1)}${row('Dépenses',-cl.dep)}${row('Montant à remettre',cl.attendu,1)}</tbody></table>
   ${cl.obs?`<p>Observation : ${esc(cl.obs)}</p>`:''}
   <p class="m">Clôturé le ${fdate(cl.date)} à ${esc(cl.heure)}</p>
@@ -928,7 +928,7 @@ function printClo(id){
 function renderClo(){
   const me=agentName(),oa=openAgents(),line=(l,v,b)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;${b?'border-top:1px solid var(--line);font-weight:700':''}"><span>${l}</span><span class="num">${fmt(v)}</span></div>`;
   const mine=oa.find(x=>x.agent===me),F=mine?mine.F:cloFig({prest:[],ext:[],extEx:[],cert:[],dep:[]});
-  let h=`<div class="banner"><b>Caissier connecté : ${esc(me)}</b>. Les encaissements, annulations et dépenses sont enregistrés à son nom.</div>`;
+  let h=`<div class="banner"><b>Caisse : ${esc(me)}</b>. Les encaissements, annulations et dépenses sont enregistrés à son nom.</div>`;
   h+=`<h3 style="margin:14px 0 6px;font-size:1rem">Votre caisse (non clôturée)</h3><div class="kpis"><div class="kpi"><div class="k">Reçus valides</div><div class="n">${F.n}</div><div class="d">${F.nan} annulé(s)</div></div><div class="kpi"><div class="k">Encaissé</div><div class="n">${fmt(F.rec)}</div></div><div class="kpi"><div class="k">Dépenses</div><div class="n">${fmt(F.dep)}</div></div><div class="kpi"><div class="k">À remettre</div><div class="n">${fmt(F.attendu)}</div></div></div>
   ${line('Encaissements PVVIH',F.pvvih)}${line('Consultations et examens externes',F.ext)}${line('Certificats médicaux',F.cert)}${line('Dépenses',-F.dep)}${line('Montant à remettre',F.attendu,1)}
   <label for="cloObs">Observation (facultative)</label><input type="text" id="cloObs" autocomplete="off">
@@ -1115,7 +1115,7 @@ function showRecu(r,dup){
   <div class="rl"><span>Âge</span><b>${age?age+' ans':'—'}</b></div>
   <table class="mini"><tbody>${rows}</tbody></table>
   ${exo?'<div class="rl b"><span>Exonéré : aucun paiement</span></div>':`<div class="rl b"><span>Total payé</span><b>${fmt(r.encaisse)}</b></div>`}
-  <div class="rl agent"><span>Caissier (agent de caisse) : <b>${esc(r.agent||'—')}</b></span></div>`;
+  <div class="rl agent"><span>Caisse : <b>${esc(r.agent||'—')}</b></span></div>`;
   const copies=recuCopiesPvvih(r);
   $('recu').innerHTML=recuCopies(one,denseFs(r.lignes.length+copies.length+2),copies);
   $('recuModal').hidden=false;
@@ -1125,7 +1125,7 @@ function showRecuCert(r,dup){
   <div class="rl" style="margin-top:8px"><span>N° <b>${r.recu}</b></span><span>${fdate(r.date)} · ${r.heure||''}</span></div>
   <div style="font-size:.9rem;line-height:1.6">Nom et prénom : <b>${esc(r.nom)}</b><br>Date de naissance : ${fdate(r.naiss)}<br>Pièce d’identité n° : ${esc(r.piece)}<br>Motif : ${esc(r.obs||'—')}</div>
   <div class="rl b"><span>Montant payé</span><b>${fmt(r.montant)}</b></div>
-  <div class="rl agent" style="margin-top:18px"><span>Caissier (agent de caisse) : <b>${esc(r.agent||'—')}</b></span><span>Signature du demandeur : ________</span></div>`;
+  <div class="rl agent" style="margin-top:18px"><span>Caisse : <b>${esc(r.agent||'—')}</b></span><span>Signature du demandeur : ________</span></div>`;
   $('recuModal').hidden=false;
 }
 $('rcClose').onclick=()=>$('recuModal').hidden=true;
@@ -1302,7 +1302,7 @@ function showRecuExt(r,dup){
   <div class="scroll"><table><thead><tr><th>Désignation</th><th class="r">Prix</th></tr></thead><tbody><tr><td>Consultation · ${esc(r.consultN)}</td><td class="r">${fmt(r.consultP)}</td></tr></tbody></table></div>
   <div style="margin-top:10px"><div class="rl b"><span>Total payé</span><b>${fmt(r.prestation)}</b></div></div>
   ${med?`<div class="rl"><span>Médecin prescripteur</span><b>${esc(med)}</b></div>`:''}
-  <div class="rl agent" style="margin-top:18px"><span>Caissier (agent de caisse) : <b>${esc(r.agent||'—')}</b></span></div>`;
+  <div class="rl agent" style="margin-top:18px"><span>Caisse : <b>${esc(r.agent||'—')}</b></span></div>`;
   // Le reçu de consultation part au patient et à la caisse (psychologique : au psychologue et à la caisse).
   // Les examens prescrits sont payés plus tard, sur leur propre reçu (laboratoire, caisse, patient).
   const copies=r.consult==='psy'?['PSYCHOLOGUE','CAISSE']:['PATIENT','CAISSE'];
@@ -1316,7 +1316,7 @@ function showRecuExam(r,dup){
     <table class="mini"><tbody>${r.exams.map(e=>`<tr><td>${esc(e.n)}</td><td class="r">${e.p?fmt(e.p):'Gratuit'}</td></tr>`).join('')}</tbody></table>
     <div class="rl b"><span>Total payé</span><b>${fmt(r.prestation)}</b></div>
     <div class="rl"><span>Médecin prescripteur</span><b>${esc(r.medecin||'—')}</b></div>
-    <div class="rl agent"><span>Caissier (agent de caisse) : <b>${esc(r.agent||'—')}</b></span></div>`;
+    <div class="rl agent"><span>Caisse : <b>${esc(r.agent||'—')}</b></span></div>`;
   $('recu').innerHTML=recuCopies(one,denseFs(r.exams.length+6),['LABORATOIRE','CAISSE','PATIENT']);
   $('recuModal').hidden=false;
 }
