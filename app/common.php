@@ -1,7 +1,7 @@
 <?php
 // CTA Lambaréné — fonctions communes : configuration, base de données, migrations, session, droits, journal
 date_default_timezone_set('Africa/Libreville');
-const CTA_VERSION = '15-preview-2026-11-24';
+const CTA_VERSION = '15-2026-11-24';
 const CTA_SCHEMA = 2;
 const CTA_CLES = '/^cta\.(shell|caisse|pharma|rh|ptme|audit)\.v1$/';
 const CTA_ROLES = ['Médecin-chef', 'Administrateur', 'Caisse', 'IDEP', 'Pharmacie', 'RH', 'CNAMGS', 'PTME', 'Laboratoire'];
@@ -9,7 +9,7 @@ const CTA_POSTES = ['Caisse', 'IDEP', 'Pharmacie', 'RH', 'CNAMGS', 'PTME', 'Labo
 // Documents que chaque rôle peut lire / écrire (le serveur applique ces règles, pas le navigateur)
 const CTA_DROITS = [
     'Médecin-chef'  => ['shell', 'caisse', 'pharma', 'rh', 'ptme', 'audit'],
-    'Administrateur'=> ['shell', 'audit'],
+    'Administrateur'=> ['shell'],
     'Caisse'        => ['shell', 'caisse'],
     'IDEP'          => ['shell', 'caisse'],
     'Pharmacie'     => ['shell', 'pharma'],

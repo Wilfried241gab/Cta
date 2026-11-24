@@ -8,8 +8,8 @@
 // ============================================================
 
 $attendus = [
-    'app.html'                       => 29060,
-    'assets/app-66a4949a40.js'       => 813716,
+    'app.html'                       => 29052,
+    'assets/app-66a4949a40.js'       => 813295,
     'assets/app-607e8be36c.js'       => 9893,
     'assets/app-5e24bbac98.js'       => 4752,
     'assets/app-48034cc073.js'       => 10343,
@@ -135,7 +135,7 @@ $pilote = is_array($cfg) ? ($cfg['pilote'] ?? '?') : 'config.php introuvable';
 </table>
 
 <div class="note">
- <p><strong>Version du code installé :</strong> <code><?= vh($versionCode) ?></code> (attendue : <code>15-preview-2026-11-24</code>)</p>
+ <p><strong>Version du code installé :</strong> <code><?= vh($versionCode) ?></code> (attendue : <code>15-2026-11-24</code>)</p>
  <p><strong>Environnement :</strong> PHP <?= vh(PHP_VERSION) ?> · pilote de base déclaré : <code><?= vh($pilote) ?></code></p>
  <p><strong>Fichiers présents dans assets/ :</strong><br><code><?= vh(implode(' · ', $assets)) ?></code></p>
  <p><strong>Que faire si un fichier est « ANCIEN » ou « ABSENT » :</strong> recopiez le fichier correspondant depuis l'archive
